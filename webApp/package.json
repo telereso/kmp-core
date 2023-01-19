@@ -1,0 +1,50 @@
+{
+  "name": "core-webreact-sample",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@craco/craco": "^6.4.5",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "core-client": "file:../lib/build/productionLibrary",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test",
+    "eject": "react-scripts eject",
+    "build:package": "cd ../ && ./gradlew jsBrowserProductionLibraryDistribution",
+    "build:serve": "yarn build && serve -s build",
+    "serve": "yarn build:serve",
+    "watch": "yarn build && watch-run -d 500 -p src/**/* yarn build:serve",
+    "refresh": "yarn build:package && yarn add file:../lib/build/productionLibrary",
+    "preinstall": "yarn build:package"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "copy-webpack-plugin": "^11.0.0",
+    "watch-run": "^1.2.5"
+  }
+}
