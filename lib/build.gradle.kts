@@ -8,6 +8,7 @@ plugins {
     id("org.jetbrains.kotlinx.kover") version "0.6.1"
     id("com.adarshr.test-logger") version "3.2.0"
     id("org.jetbrains.dokka")
+    id("io.telereso.kmp")
 }
 
 
@@ -388,11 +389,6 @@ kotlin {
             }
         }
     }
-}
-
-tasks.create<Delete>("jsCleanLibraryDistribution") {
-    group = "Clean"
-    delete("${rootDir}/lib/build/productionLibrary")
 }
 
 tasks.named<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile>("compileKotlinJs").configure {

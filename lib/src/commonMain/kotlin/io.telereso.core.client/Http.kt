@@ -23,7 +23,7 @@ object Http {
      * sets up Ktor Json Configuration.
      */
     val ktorConfigJson: Json = Json {
-        prettyPrint = true
+        prettyPrint = false
         isLenient = true
         ignoreUnknownKeys = true
     }
@@ -84,45 +84,6 @@ object Http {
     }
 
     /**
-     * Generates headers based on the past params. checks if passed param is null or empty before its added to the list of headers.
-     * The headers are mostly useful when making an API call.
-     * @param origin The origin string mapped as Origin
-     * @param apiKey The client apiKey mapped as X-Api-Key
-     * @param client_id The client id mapped as X-Aa-Client-Id
-     * @param accessToken The accessToken mapped as Authorization
-     * @param contentType The content Type mapped as Content-Type we mostly use Json as type.
-     * @return a paired list of headers.
-     */
-    fun getHeaders(
-        origin: String? = null,
-        apiKey: String? = null,
-        client_id: String? = null,
-        accessToken: String? = null,
-        contentType: ContentType? = null
-    ): MutableList<Pair<String, String>> {
-        val headersList = arrayListOf<Pair<String, String>>()
-
-        if (contentType != null) {
-            headersList.add(Pair(HttpHeaders.ContentType, contentType.toString()))
-        }
-
-        if (!origin.isNullOrEmpty()) {
-            headersList.add(Pair(HttpHeaders.Origin, origin))
-        }
-
-        if (!apiKey.isNullOrEmpty()) {
-            headersList.add(Pair("X-Api-Key", apiKey))
-        }
-        if (!client_id.isNullOrEmpty()) {
-            headersList.add(Pair("X-Aa-Client-Id", client_id))
-        }
-        if (!accessToken.isNullOrEmpty()) {
-            headersList.add(Pair(HttpHeaders.Authorization, accessToken))
-        }
-        return headersList
-    }
-
-    /**
      * @return a [URLProtocol] based on the given protocol
      * @param protocol passed protocol as String.
      * This will return https as default given null or empty or illegal protocol
@@ -144,16 +105,19 @@ object Http {
      * @return a [ClientException] with values filled
      */
     suspend fun HttpResponse.asClientException(
-        message: String = "",
+        message: String? = null,
         cause: Throwable? = null
     ): ClientException {
         return try {
             val body = this.bodyAsText()
+            val apiError by lazy {
+                ApiErrorBody.fromJson(body)
+            }
             ClientException(
                 httpStatusCode = this.status.value.toString(),
                 errorBody = body,
-                message = message.ifEmpty { this.toString() },
-                errorType = getApiErrorCode(body),
+                message = message ?: apiError.message ?: this.toString(),
+                errorType = ApiErrorBody.fromJson(body).code,
                 cause = cause
             )
         } catch (e: Throwable) {
@@ -170,16 +134,20 @@ object Http {
      * the ResponseException thrown by Ktor.
      */
     suspend fun ResponseException.asClientException(
-        message: String = "",
-        cause: Throwable? = null
+        message: String? = null,
+        cause: Throwable? = null,
+        errorType: String? = null
     ): ClientException {
         return try {
             val body = this.response.bodyAsText()
+            val apiError by lazy {
+                ApiErrorBody.fromJson(body)
+            }
             ClientException(
                 httpStatusCode = this.response.status.value.toString(),
                 errorBody = body,
-                message = message.ifEmpty { this.toString() },
-                errorType = getApiErrorCode(body),
+                message = message ?: apiError.message ?: this.toString(),
+                errorType = errorType ?: apiError.code,
                 cause = cause
             )
         } catch (e: Throwable) {

@@ -11,6 +11,18 @@ import kotlinx.serialization.json.Json
  */
 object Utils {
 
+    val jsonSerializer = Json {
+        prettyPrint = false
+        isLenient = true
+        ignoreUnknownKeys = true
+    }
+
+    val jsonPrettySerializer = Json {
+        prettyPrint = true
+        isLenient = true
+        ignoreUnknownKeys = true
+    }
+
     /**
      * Caution: this is only intented for UNit Testing.
      * it allows us to time travel so access tokens not expire during running unit tests.

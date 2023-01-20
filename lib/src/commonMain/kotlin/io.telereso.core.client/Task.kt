@@ -8,8 +8,8 @@ import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
 
 /**
- *A discriminated union that encapsulates a successful outcome with a value of type [ResultT] or a failure with an arbitrary Throwable [ClientException].
- * @param scope aCoroutineScope defaulted to Default can provide your own scope as well, ensure its testable by injectin the provider.
+ * A discriminated union that encapsulates a successful outcome with a value of type [ResultT] or a failure with an arbitrary Throwable [ClientException].
+ * @param scope a CoroutineScope defaulted to Default can provide your own scope as well, ensure its testable by injecting the provider.
  */
 @ExperimentalJsExport
 @JsExport
@@ -35,7 +35,7 @@ class Task<ResultT>(val scope: CoroutineScope = ContextScope.get(DispatchersProv
 
     /**
      * using the Task's instance, we can cancel and running coroutines of this Task's scope.
-     * alternaively we can use the Task's cancel fun @see [Task.cancel]
+     * alternatively we can use the Task's cancel fun @see [Task.cancel]
      */
     var cancelTask: ((ClientException) -> Unit)? = null
 

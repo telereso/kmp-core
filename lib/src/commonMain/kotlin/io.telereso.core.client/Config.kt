@@ -7,7 +7,7 @@ import kotlin.js.JsExport
 import kotlin.native.concurrent.ThreadLocal
 
 /**
- * This class acts as the point of entry into the client sdk.
+ * All common config for client mangers
  *
  * @param builder used to construct.
  * @constructor a private constructor due to the build pattern.
@@ -102,7 +102,6 @@ class Config private constructor(
          * @param host the url host without a /
          * @param protocol the url protocol. if empty it will default to HTTPS. all caps or small does not have any effect. if pass illegal protocol the API will fail.
          * check [URLProtocol] for supported protocols and proper namings.
-         * [value] a consumer host path. e.g stg.example.com minus the http prefix and / postfix
          */
         fun withHost(protocol: String?, host: String?): Builder {
             this.host = host

@@ -7,9 +7,9 @@ import kotlin.js.JsExport
 import kotlin.js.JsName
 
 /**
- * ClientException class wraps exception and throwables across the code base.
- * We encourage to use this class when dealing with Error response or throwing.
- * @param httpStatusCode the API code returned e.g 200, 400
+ * ClientException class wraps exception and throwable across the code base.
+ * We encourage to use this class when dealing with Http Error response or throwing exceptions .
+ * @param httpStatusCode the API code returned e.g 500, 400
  * @param errorBody The error returned as a Json string.
  * @param message the message related to this Exception.
  * @param cause the cause related to this exception.
@@ -32,7 +32,7 @@ class ClientException(
      */
     companion object {
         /**
-         * We want to still log the internal exceptions in the sdk.
+         * Expose a global listener to use with third party analytics and crashlytics.
          */
         var listener: ((t: Throwable) -> Unit) = {  }
     }
@@ -46,16 +46,16 @@ class ClientException(
  */
 @Serializable
 data class ApiErrorBody(
-    val code:String? =null,
-    val message:String? =null
-): Model {
+    val code: String? = null,
+    val message: String? = null
+) {
 
-    override fun toJson(): String {
-        return jsonSerializer.encodeToString(serializer(), this)
+    fun toJson(): String {
+        return Utils.jsonSerializer.encodeToString(serializer(), this)
     }
 
-    override fun toJsonPretty(): String {
-        return jsonPrettySerializer.encodeToString(serializer(), this)
+    fun toJsonPretty(): String {
+        return Utils.jsonPrettySerializer.encodeToString(serializer(), this)
     }
 
     /**
@@ -68,16 +68,10 @@ data class ApiErrorBody(
          * @return an objet of [ApiErrorBody]
          */
         fun fromJson(json: String): ApiErrorBody {
-            return jsonSerializer.decodeFromString(json)
+            return Utils.jsonSerializer.decodeFromString(json)
         }
-    }
-}
 
-/**
- * converts a given string body into an [ApiErrorBody] json string.
- */
-fun getApiErrorCode(body: String): String? {
-    return Http.ktorConfigJson.decodeFromString<ApiErrorBody>(body).code
+    }
 }
 
 /**

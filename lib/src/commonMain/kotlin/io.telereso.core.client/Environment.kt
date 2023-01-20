@@ -4,16 +4,16 @@ import kotlin.js.JsExport
 
 /**
  * Defines the different Environments the sdk support.
- * this is usally passed to the SDK via the [Config] builder.
+ * this is usually passed to the SDK via the [Config] builder.
  */
 @JsExport
 enum class Environment {
     /**
-     * staging enviromnent value
+     * staging environment value
      */
     STAGING,
     /**
-     * production enviromnent value
+     * production environment value
      */
     PRODUCTION,
 }

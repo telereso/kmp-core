@@ -1,7 +1,7 @@
 package io.telereso.core.client
 
 /**
- * class provides an in memory verison of the settings, mostly useful during unit tests.
+ * class provides an in memory version of the settings, mostly useful during unit tests.
  */
 class InMemorySetting : Settings {
 

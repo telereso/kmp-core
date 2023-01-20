@@ -3,7 +3,7 @@ package io.telereso.core.client
 /**
  * A Wrapper for saving simple key-value data.
  * Currently it only supports saving of primitive data types.
- * TODO later we can add couritines support or settings listnerners  since our implmentation can support it.
+ * TODO later we can add coroutines support or settings listeners  since our implementation can support it.
  * TODO later we can support wrapped using a property delegate.
  *
  */
