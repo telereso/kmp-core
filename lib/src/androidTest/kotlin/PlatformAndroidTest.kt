@@ -1,1 +1,1 @@
-package com.airasia.core.client
+package io.telereso.core.client

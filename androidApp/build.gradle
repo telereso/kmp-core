@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.airasia.core.client.app'
+    namespace 'io.telereso.core.client.app'
     compileSdk 32
 
     defaultConfig {
-        applicationId "com.airasia.core.client.app"
+        applicationId "io.telereso.core.client.app"
         minSdk 26
         targetSdk 32
         versionCode 1

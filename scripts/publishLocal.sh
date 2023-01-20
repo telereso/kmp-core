@@ -3,11 +3,6 @@
 scriptDir=$(dirname "$0")
 
 # run the following before running this script
-export JF_HOST='https://airasia.jfrog.io/artifactory'
-export JF_USER="<>"
-export JF_PASS="<>"
-export DEPLOY_VERSION="v0.0.1"
-export ARTIFACT="core-client"
 
 
 PUBLISH_VERSION="${DEPLOY_VERSION:1}${CI_BUILD_NUMBER}"

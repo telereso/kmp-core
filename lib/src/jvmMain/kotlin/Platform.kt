@@ -1,4 +1,4 @@
-package com.airasia.core.client
+package io.telereso.core.client
 
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig

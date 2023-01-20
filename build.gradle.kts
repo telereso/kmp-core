@@ -43,8 +43,8 @@ buildscript {
 
 
 // Packaging
-val groupId by extra { "com.airasia" }
-val scope by extra { "airasia" }
+val groupId by extra { "io.telereso" }
+val scope by extra { "telereso" }
 val projectPackageName by extra { "core.client" }
 
 // Android

@@ -1,4 +1,4 @@
-package com.airasia.core.client
+package io.telereso.core.client
 
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
@@ -40,5 +40,5 @@ actual fun httpClient(
  */
 @JsExport
 fun initLogger() {
-    Napier.base(DebugAntilog("SsoClient"))
+    Napier.base(DebugAntilog("CoreClient"))
 }

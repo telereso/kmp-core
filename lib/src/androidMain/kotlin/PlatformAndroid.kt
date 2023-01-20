@@ -1,4 +1,4 @@
-package com.airasia.core.client
+package io.telereso.core.client
 
 import android.os.Build
 import io.github.aakira.napier.DebugAntilog

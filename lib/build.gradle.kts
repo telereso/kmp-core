@@ -433,7 +433,7 @@ android {
 kover {
     filters {
         classes {
-            //includes += listOf("*.*ViewModelImpl*", "com.airasia.core.client.cache.*")
+            //includes += listOf("*.*ViewModelImpl*", "io.telereso.core.client.cache.*")
             // exclude any classes named with Test
             excludes += listOf("*.*Test*")
         }
@@ -444,7 +444,7 @@ kover {
         // Add VMs in the includes [list]. VMs added,their coverage % will be tracked.
         filters {
             classes {
-                //includes += listOf("*.*ViewModelImpl*", "com.airasia.core.client.cache.*")
+                //includes += listOf("*.*ViewModelImpl*", "io.telereso.core.client.cache.*")
                 excludes += listOf("*.*Test*")
             }
         }
