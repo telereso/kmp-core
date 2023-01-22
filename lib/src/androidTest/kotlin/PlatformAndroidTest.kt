@@ -1,1 +1,1 @@
-package io.telereso.core.client
+package io.telereso.kmp.core

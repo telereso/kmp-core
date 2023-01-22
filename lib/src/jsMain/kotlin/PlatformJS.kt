@@ -1,4 +1,4 @@
-package io.telereso.core.client
+package io.telereso.kmp.core
 
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier

@@ -21,6 +21,9 @@ allprojects {
 }
 
 
+group = "io.telereso.kmp"
+version = project.findProperty("publishVersion") ?: "0.0.1"
+
 
 buildscript {
     repositories {
@@ -37,13 +40,6 @@ buildscript {
     //     set("minSdkVersions", 21)
     // }
 }
-
-
-
-// Packaging
-val groupId by extra { "io.telereso" }
-val scope by extra { "telereso" }
-val projectPackageName by extra { "core.client" }
 
 // Android
 val buildToolsVersion by extra { "31.0.0" }

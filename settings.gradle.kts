@@ -17,7 +17,8 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "core-client"
+rootProject.name = "core"
+includeBuild("convention-plugins")
 include(":lib")
 project(":lib").name = rootProject.name
 include(":androidApp")
