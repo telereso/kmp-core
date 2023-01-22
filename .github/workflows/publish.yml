@@ -44,7 +44,7 @@ jobs:
       uses: mathieudutour/github-tag-action@v6.1
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        dry_run: "${{ github.ref == 'refs/heads/main' && false || true }}"
+        dry_run: "${{ github.ref != 'refs/heads/main' }}"
 
     - name: Build Artifacts
       run: |
