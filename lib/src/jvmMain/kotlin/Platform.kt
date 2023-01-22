@@ -1,4 +1,4 @@
-package io.telereso.core.client
+package io.telereso.kmp.core
 
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig

@@ -1,4 +1,4 @@
-package io.telereso.core.client
+package io.telereso.kmp.core
 
 import android.os.Build
 import io.github.aakira.napier.DebugAntilog

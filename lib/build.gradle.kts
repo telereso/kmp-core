@@ -9,13 +9,11 @@ plugins {
     id("com.adarshr.test-logger") version "3.2.0"
     id("org.jetbrains.dokka")
     id("io.telereso.kmp")
+    id("convention.publication")
 }
 
 
 // Setup extras variables
-val groupId: String by rootProject.extra
-val scope: String by rootProject.extra
-val projectPackageName: String by rootProject.extra
 val ktorVersion: String by rootProject.extra
 val sqlDelightVersion: String by rootProject.extra
 val coroutinesVersion: String by rootProject.extra
@@ -31,8 +29,8 @@ val multiplatformSettingsVersion: String by rootProject.extra
 val baseProjectName = rootProject.name.replace("-client", "")
 project.ext["artifactName"] = "${baseProjectName}-${project.name}"
 
-group = "$groupId.${project.name}"
-version = project.findProperty("publishVersion") ?: "0.0.1"
+group = rootProject.group
+version = rootProject.version
 
 publishing {
     repositories {
@@ -414,7 +412,7 @@ tasks.named("iosX64Test", org.jetbrains.kotlin.gradle.targets.native.tasks.Kotli
 
 
 android {
-    namespace = "$groupId.$projectPackageName"
+    namespace = "$group.${project.name}"
     compileSdk = compileSdkVer
     buildFeatures {
         buildConfig = false
@@ -429,7 +427,7 @@ android {
 kover {
     filters {
         classes {
-            //includes += listOf("*.*ViewModelImpl*", "io.telereso.core.client.cache.*")
+            //includes += listOf("*.*ViewModelImpl*", "io.telereso.kmp.core.cache.*")
             // exclude any classes named with Test
             excludes += listOf("*.*Test*")
         }
@@ -440,7 +438,7 @@ kover {
         // Add VMs in the includes [list]. VMs added,their coverage % will be tracked.
         filters {
             classes {
-                //includes += listOf("*.*ViewModelImpl*", "io.telereso.core.client.cache.*")
+                //includes += listOf("*.*ViewModelImpl*", "io.telereso.kmp.core.cache.*")
                 excludes += listOf("*.*Test*")
             }
         }
