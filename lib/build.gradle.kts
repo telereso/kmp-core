@@ -538,7 +538,7 @@ tasks.register("createCoverageBadge") {
         }
 
         download(
-            "https://img.shields.io/badge/coverage-${coverage ?: "unknown"}-$badgeColor",
+            "https://img.shields.io/badge/coverage-${coverage?.toString().plus("%25") ?: "unknown"}-$badgeColor",
             "$rootDir/public/tests/kover/badge.svg"
         )
     }
