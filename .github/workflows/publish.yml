@@ -11,8 +11,12 @@ on:
   workflow_dispatch:
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - '**/README.md'
   pull_request:
     branches: [ "main" ]
+    paths-ignore:
+      - '**/README.md'
 
 permissions:
   contents: read
@@ -80,7 +84,9 @@ jobs:
       uses: actions/upload-artifact@v2 
       with:
         name: build-artifacts
-        path: build/.m2/
+        path: |
+          build/.m2/
+          public
         retention-days: 2
 
   pages:
