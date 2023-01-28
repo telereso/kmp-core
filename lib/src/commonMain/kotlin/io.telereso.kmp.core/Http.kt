@@ -3,6 +3,9 @@ package io.telereso.kmp.core
 import io.ktor.client.plugins.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.telereso.kmp.core.models.ClientException
+import io.telereso.kmp.core.models.asClientException
+import io.telereso.kmp.core.models.getErrorBody
 import kotlinx.serialization.json.Json
 
 /**
@@ -51,7 +54,7 @@ object Http {
                 }
                 else -> {
                     // this should no normally happen since Ktor only handles Server and Client specific execptions.
-                    throw exception.toClientException()
+                    throw exception.asClientException()
                 }
             }
         }
@@ -105,26 +108,26 @@ object Http {
      * @return a [ClientException] with values filled
      */
     suspend fun HttpResponse.asClientException(
-        message: String? = null,
+        message: String = "",
         cause: Throwable? = null
     ): ClientException {
         return try {
             val body = this.bodyAsText()
-            val apiError by lazy {
-                ApiErrorBody.fromJson(body)
-            }
+            val errorBody = getErrorBody(body)
+            val errorMessage = message.ifEmpty { errorBody.message?:this.toString() }
             ClientException(
-                httpStatusCode = this.status.value.toString(),
-                errorBody = body,
-                message = message ?: apiError.message ?: this.toString(),
-                errorType = ApiErrorBody.fromJson(body).code,
-                cause = cause
+                httpStatusCode = this.status.value,
+                errorBody = getErrorBody(body),
+                message = errorMessage,
+                errorType = "HTTP",
+                cause = cause,
+                errorString = body
             )
         } catch (e: Throwable) {
-            ClientException.listener(e.toClientException())
+            ClientException.listener(e.asClientException())
             throw ClientException(
                 cause = e,
-                message = "Failed to convert $this into ClientException"
+                message = "Failed to convert $this into a ClientException."
             )
         }
     }
@@ -132,29 +135,42 @@ object Http {
     /**
      * similar to the HttpResponse.asClientException only that it covers
      * the ResponseException thrown by Ktor.
+     *
+     * asClientException is an extension function for the ResponseException class,
+     * it converts a ResponseException object into a ClientException object.
+     *
+     * @param message : a string that contains a custom error message, it's optional
+     * @param cause : a Throwable object that represents the cause of the error, it's optional
+     *
+     * @return : a ClientException object that represents the converted error
      */
     suspend fun ResponseException.asClientException(
-        message: String? = null,
-        cause: Throwable? = null,
-        errorType: String? = null
+        message: String = "",
+        cause: Throwable? = null
     ): ClientException {
         return try {
+            // Getting the response body as text
             val body = this.response.bodyAsText()
-            val apiError by lazy {
-                ApiErrorBody.fromJson(body)
-            }
+            // Extracting the error body from the response
+            val errorBody = getErrorBody(body)
+            // Setting the error message, it's either the extracted error message or the custom message or the default string representation of the exception
+            val errorMessage = message.ifEmpty { errorBody.message?:this.message }
+            // Creating the ClientException object
             ClientException(
-                httpStatusCode = this.response.status.value.toString(),
-                errorBody = body,
-                message = message ?: apiError.message ?: this.toString(),
-                errorType = errorType ?: apiError.code,
-                cause = cause
+                httpStatusCode = this.response.status.value, // setting the http status code
+                errorBody = errorBody, // setting the error body
+                message = errorMessage, // setting the error message
+                errorType = "HTTP", // setting the error type
+                cause = cause?:this, // setting the cause of the error
+                errorString = body // setting the error string
             )
         } catch (e: Throwable) {
-            ClientException.listener(e.toClientException())
+            // Logging the exception
+            ClientException.listener(e.asClientException())
+            // Throwing a new ClientException object with a custom message that indicates the failure.
             throw ClientException(
                 cause = e,
-                message = "Failed to convert $this into ClientException"
+                message = "Failed to convert $this into a ClientException."
             )
         }
     }

@@ -3,6 +3,7 @@ package io.telereso.kmp.core
 import io.telereso.kmp.core.Log.logError
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
+import io.telereso.kmp.core.models.ClientException
 import kotlinx.datetime.Instant
 import kotlin.test.Test
 
