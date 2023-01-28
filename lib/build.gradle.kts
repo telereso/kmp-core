@@ -1,4 +1,9 @@
+import groovy.util.Node
+import groovy.xml.XmlParser
 import org.gradle.configurationcache.extensions.capitalized
+import org.codehaus.groovy.runtime.ProcessGroovyMethods
+import java.text.DecimalFormat
+import java.math.RoundingMode
 
 plugins {
     id("com.android.library")
@@ -54,7 +59,7 @@ tasks.dokkaHtml.configure {
 
     outputDirectory.set(
         rootDir.resolve(
-            "public${
+            "public/docs/${project.name}/${
                 project.findProperty("publishVersion")?.let { "/$it" } ?: ""
             }"
         )
@@ -70,7 +75,7 @@ tasks.dokkaHtml.configure {
             //suppress.set(false)
 
             // Use to include or exclude non public members THIS IS DEPRACATED
-           // includeNonPublic.set(true)
+            // includeNonPublic.set(true)
 
             /**
              * includeNonPublic is currently deprcated. recommened way to expose private or internal classes and funs is using this approach
@@ -83,9 +88,9 @@ tasks.dokkaHtml.configure {
                 setOf(
                     org.jetbrains.dokka.DokkaConfiguration.Visibility.PUBLIC, // Same for both Kotlin and Java
                     org.jetbrains.dokka.DokkaConfiguration.Visibility.PRIVATE, // Same for both Kotlin and Java
-                   // DokkaConfiguration.Visibility.PROTECTED, // Same for both Kotlin and Java
+                    // DokkaConfiguration.Visibility.PROTECTED, // Same for both Kotlin and Java
                     org.jetbrains.dokka.DokkaConfiguration.Visibility.INTERNAL, // Kotlin-specific internal modifier
-                  //  DokkaConfiguration.Visibility.PACKAGE, // Java-specific package-private visibility
+                    //  DokkaConfiguration.Visibility.PACKAGE, // Java-specific package-private visibility
                 )
             )
 
@@ -102,7 +107,7 @@ tasks.dokkaHtml.configure {
             // displayName.set("JVM")
 
             // Platform used for code analysis. See the "Platforms" section of this readme
-           // platform.set(org.jetbrains.dokka.Platform.jvm)
+            // platform.set(org.jetbrains.dokka.Platform.jvm)
 
 
             // Allows to customize documentation generation options on a per-package basis
@@ -400,12 +405,17 @@ tasks.register<Copy>("copyiOSTestResources") {
 }
 tasks.findByName("iosSimulatorArm64Test")?.dependsOn("copyiOSTestResources")
 
-tasks.named("iosSimulatorArm64Test", org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest::class.java
+tasks.named(
+    "iosSimulatorArm64Test",
+    org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest::class.java
 ).configure {
     deviceId = "iPhone 14 Pro"
 }
 
-tasks.named("iosX64Test", org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest::class.java).configure {
+tasks.named(
+    "iosX64Test",
+    org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest::class.java
+).configure {
     deviceId = "iPhone 14 Pro"
 }
 
@@ -442,19 +452,18 @@ kover {
                 excludes += listOf("*.*Test*")
             }
         }
-       // Enforce Test Coverage
-       rule {
-           name = "Minimal line coverage rate in percent"
-           bound {
-               minValue = 50
-           }
-       }
+        // Enforce Test Coverage
+        rule {
+            name = "Minimal line coverage rate in percent"
+            bound {
+                minValue = 50
+            }
+        }
     }
 
-    // We can configure the test results index.html to be stored anywhere within our propejct. normally its generated in the build folder
-//    htmlReport {
-//        reportDir.set(File("testresults"))
-//    }
+    htmlReport {
+        reportDir.set(rootDir.resolve("public/tests/kover"))
+    }
 }
 
 testlogger {
@@ -490,4 +499,64 @@ testlogger {
     showFailedStandardStreams = true
 
     logLevel = LogLevel.LIFECYCLE
+}
+
+tasks.register<Copy>("copyTestReportToPublish") {
+    from("${buildDir}/reports/tests")
+    into("${rootDir}/public/tests/${project.name}/")
+}
+
+
+tasks.register("createCoverageBadge") {
+    doLast {
+
+        val report = buildDir.resolve("reports/kover/xml/report.xml")
+        val coverage = if (report.exists()) {
+            val node = (XmlParser().parse(report)
+                .children()
+                .first { (it as Node).attribute("type") == "LINE" } as Node)
+
+            val missed = node.attribute("missed").toString().toDouble()
+            val covered = node.attribute("covered").toString().toDouble()
+            val total = missed + covered
+            val coverage = DecimalFormat("#.#").apply {
+                roundingMode = RoundingMode.UP
+            }.format((covered * 100) / total)
+            coverage.toDouble()
+        } else {
+            null
+        }
+
+        val badgeColor = when {
+            coverage == null -> "inactive"
+            coverage >= 90 -> "brightgreen"
+            coverage >= 65 -> "green"
+            coverage >= 50 -> "yellowgreen"
+            coverage >= 35 -> "yellow"
+            coverage >= 20 -> "orange"
+            else -> "red"
+        }
+
+        download(
+            "https://img.shields.io/badge/coverage-${coverage?.toString().plus("%25") ?: "unknown"}-$badgeColor",
+            "$rootDir/public/tests/kover/badge.svg"
+        )
+    }
+}
+
+tasks.findByName("koverReport")?.apply {
+    finalizedBy("copyTestReportToPublish")
+    finalizedBy("createCoverageBadge")
+}
+
+
+fun String.execute(): Process = ProcessGroovyMethods.execute(this)
+fun Process.text(): String = ProcessGroovyMethods.getText(this)
+
+
+fun download(url: String, path: String) {
+    val destFile = File(path)
+    if (!destFile.exists())
+        destFile.createNewFile()
+    ant.invokeMethod("get", mapOf("src" to url, "dest" to destFile))
 }

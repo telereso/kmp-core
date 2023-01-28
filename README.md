@@ -1,5 +1,7 @@
 # Core
 
+[![coverage report](https://telereso.github.io/kmp-core/tests/kover/badge.svg)](https://telereso.github.io/kmp-core/tests/kover) 
+
 
 # Docs
 

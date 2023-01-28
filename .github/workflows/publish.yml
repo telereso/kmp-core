@@ -14,9 +14,17 @@ on:
   pull_request:
     branches: [ "main" ]
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 jobs:
   build:
-
     runs-on: macos-latest
     permissions:
       contents: read
@@ -46,6 +54,10 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         dry_run: "${{ github.ref != 'refs/heads/main' }}"
 
+    - name: Setup Pages
+      if: github.ref == 'refs/heads/main'
+      uses: actions/configure-pages@v3
+
     - name: Build Artifacts
       run: |
         echo ${{ secrets.SIGNING_SECRET_KEY_RING_FILE }} | base64 -d > secret_key
@@ -58,9 +70,27 @@ jobs:
         SIGNING_SECRET_KEY_RING_FILE: "/Users/runner/work/kmp-core/kmp-core/secret_key"
         SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
 
+    - name: Upload pages artifact
+      if: github.ref == 'refs/heads/main'
+      uses: actions/upload-pages-artifact@v1
+      with:
+        path: 'public'
+
     - name: Archive artifacts
       uses: actions/upload-artifact@v2 
       with:
         name: build-artifacts
         path: build/.m2/
         retention-days: 2
+
+  pages:
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
