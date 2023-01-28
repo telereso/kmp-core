@@ -1,6 +1,8 @@
 #!/bin/bash
 
-classCoverage="$(cat lib/build/reports/kover/xml/report.xml | grep -o '<counter type="LINE.*/>' | tail -n 1)"
+koverReportPath=${1:-lib/build/reports/kover/xml/report.xml}
+
+classCoverage="$(cat "$koverReportPath" | grep -o '<counter type="LINE.*/>' | tail -n 1)"
 
 missedPrefix='<counter type="LINE" missed="'
 missedSuffix='" covered='

@@ -500,7 +500,7 @@ tasks.register<Copy>("copyTestReportToPublish") {
 
 tasks.register("createCoverageBadge") {
     doLast {
-        "bash scripts/coverage.sh".execute().text().trim().lines().lastOrNull()
+        "bash scripts/coverage.sh ${buildDir}/reports/kover/xml/report.xml".execute().text().trim().lines().lastOrNull()
             ?.removePrefix("Badge: ")
             ?.let {
                 download(it, "$rootDir/public/tests/kover/badge.svg")
