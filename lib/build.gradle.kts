@@ -1,4 +1,5 @@
 import org.gradle.configurationcache.extensions.capitalized
+import org.codehaus.groovy.runtime.ProcessGroovyMethods
 
 plugins {
     id("com.android.library")
@@ -54,7 +55,7 @@ tasks.dokkaHtml.configure {
 
     outputDirectory.set(
         rootDir.resolve(
-            "public${
+            "public/docs/${project.name}/${
                 project.findProperty("publishVersion")?.let { "/$it" } ?: ""
             }"
         )
@@ -451,10 +452,9 @@ kover {
        }
     }
 
-    // We can configure the test results index.html to be stored anywhere within our propejct. normally its generated in the build folder
-//    htmlReport {
-//        reportDir.set(File("testresults"))
-//    }
+    htmlReport {
+        reportDir.set(rootDir.resolve("public/tests/kover"))
+    }
 }
 
 testlogger {
@@ -490,4 +490,39 @@ testlogger {
     showFailedStandardStreams = true
 
     logLevel = LogLevel.LIFECYCLE
+}
+
+tasks.register<Copy>("copyTestReportToPublish") {
+    from("${buildDir}/reports/tests")
+    into("${rootDir}/public/tests/${project.name}/")
+}
+
+
+tasks.register("createCoverageBadge") {
+    doLast {
+        "bash scripts/coverage.sh".execute().text().trim().lines().lastOrNull()
+            ?.removePrefix("Badge: ")
+            ?.let {
+                download(it, "$rootDir/public/tests/kover/badge.svg")
+            } ?: kotlin.run {
+            println("Badge url not found!")
+        }
+    }
+}
+
+tasks.findByName("koverHtmlReport")?.apply {
+    finalizedBy("copyTestReportToPublish")
+    finalizedBy("createCoverageBadge")
+}
+
+
+fun String.execute(): Process = ProcessGroovyMethods.execute(this)
+fun Process.text(): String = ProcessGroovyMethods.getText(this)
+
+
+fun download(url: String, path: String) {
+    val destFile = File(path)
+    if (!destFile.exists())
+        destFile.createNewFile()
+    ant.invokeMethod("get", mapOf("src" to url, "dest" to destFile))
 }
