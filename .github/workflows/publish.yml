@@ -83,7 +83,7 @@ jobs:
         path: build/.m2/
         retention-days: 2
 
-  deploy:
+  pages:
     if: github.ref == 'refs/heads/main'
     environment:
       name: github-pages
