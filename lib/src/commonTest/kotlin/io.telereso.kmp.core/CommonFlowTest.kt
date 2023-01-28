@@ -3,6 +3,7 @@ package io.telereso.kmp.core
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import io.telereso.kmp.core.models.ClientException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -44,7 +45,7 @@ class CommonFlowTest {
     @Test
     fun exceptionShouldBeNullOnEach()= runTest {
         var value:String?= null
-        var fail:ClientException? = null
+        var fail: ClientException? = null
         val abcFlow: Flow<String> = flow {
            emit("Some")
         }

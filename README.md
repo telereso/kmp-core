@@ -1,4 +1,4 @@
-# core-client
+# Core
 
 
 # Docs

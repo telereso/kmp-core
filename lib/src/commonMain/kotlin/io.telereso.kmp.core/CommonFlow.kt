@@ -1,7 +1,8 @@
 package io.telereso.kmp.core
 
+import io.telereso.kmp.core.models.ClientException
+import io.telereso.kmp.core.models.asClientException
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -37,7 +38,7 @@ class CommonFlow<T>(private val origin: Flow<T>) : Flow<T> by origin {
         onEach {
             block(it, null)
         }.catch { error: Throwable ->
-            ClientException.listener(error.toClientException())
+            ClientException.listener(error.asClientException())
             // Only pass on Exceptions.
             // This also correctly converts Exception to Swift Error.
             if (error is ClientException) {

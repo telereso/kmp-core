@@ -1,6 +1,9 @@
 package io.telereso.kmp.core
 
 import io.ktor.util.*
+import io.telereso.kmp.core.models.ClientException
+import io.telereso.kmp.core.models.JwtPayload
+import io.telereso.kmp.core.models.asClientException
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.decodeFromString
@@ -34,7 +37,7 @@ object Utils {
             val split = encodeJwt.split(".").toTypedArray()
             split[1].decodeBase64String()
         } catch (e: Throwable) {
-            ClientException.listener(e.toClientException())
+            ClientException.listener(e.asClientException())
             ""
         }
     }
@@ -63,14 +66,14 @@ object Utils {
         // Attempt to decode the JSON body into an object of type DecodeResponse
         return try {
             //Decode the response from json string to object
-            val decodedResponse = Json.decodeFromString<JwtPayload>(jsonBody)
+            val decodedResponse =  Http.ktorConfigJson.decodeFromString<JwtPayload>(jsonBody)
             //return expiry time if exist, otherwise throw
-            decodedResponse.exp ?: throw NullPointerException("expire time cannot be null.").toClientException()
+            decodedResponse.exp ?: throw NullPointerException("expire time cannot be null.").asClientException()
         } catch (e: Throwable) {
             // Call the listener function to handle the exception
-            ClientException.listener(e.toClientException())
+            ClientException.listener(e.asClientException())
             // Re-throw the exception
-            throw e.toClientException()
+            throw e.asClientException()
         }
     }
 
@@ -85,15 +88,15 @@ object Utils {
      * @throws Throwable if an exception is thrown during decoding
      */
     @Throws(Throwable::class)
-    fun getDecodedResponse(fromToken: String): JwtPayload {
+    fun getDecodedResponse(fromToken: String): Map<String,String> {
         //retrieve the JSON body of the response by calling getJsonBody() function
         val jsonBody = getJsonBody(fromToken)
         //attempt to decode the JSON body and return the decoded response
         return try {
-            Json.decodeFromString(jsonBody)
+            Http.ktorConfigJson.decodeFromString(jsonBody)
         } catch (e: Throwable) {
             //if an exception is thrown during decoding, call the ClientException.listener method
-            ClientException.listener(e.toClientException())
+            ClientException.listener(e.asClientException())
             //re-throw the exception
             throw e
         }

@@ -1,4 +1,4 @@
-package io.telereso.kmp.core
+package io.telereso.kmp.core.models
 
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
@@ -11,8 +11,4 @@ data class JwtPayload(
     val exp: Long? = null,
     val iat: Long? = null,
     val sub: String? = null,
-    val clientId: String? = null,
-    val userId: String? = null,
-    val type: String? = null,
-    val sessionId: String? = null
 )

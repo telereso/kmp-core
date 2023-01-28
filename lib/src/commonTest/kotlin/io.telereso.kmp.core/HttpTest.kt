@@ -2,6 +2,7 @@ package io.telereso.kmp.core
 
 import io.telereso.kmp.core.Http.asClientException
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContain
@@ -15,6 +16,10 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import io.telereso.kmp.core.models.ClientException
+import io.telereso.kmp.core.models.ErrorBody
+import io.telereso.kmp.core.models.asClientException
+import io.telereso.kmp.core.models.toJson
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -24,7 +29,7 @@ class HttpTest {
 
     @Test
     fun shouldReturnProperClientExceptionGivenHttpResponse() = runTest {
-        val errorBody = ApiErrorBody(code = "TESTING", message = "testing").toJson()
+        val errorBody = ErrorBody(code = "TESTING", message = "testing").toJson()
         val client = HttpClient(MockEngine) {
             engine {
                 addHandler {
@@ -50,17 +55,17 @@ class HttpTest {
         }
 
         httpResponse.asClientException(cause = NullPointerException("sample setting cause")).run {
-            httpStatusCode.shouldBe(HttpStatusCode.BadRequest.value.toString())
+            httpStatusCode.shouldBe(HttpStatusCode.BadRequest.value)
             errorBody.shouldBe(errorBody)
-            errorType.shouldBe("TESTING")
-            message.shouldBe("HttpResponse[https://example.com/hello?clientId=clientId, 400 Bad Request]")
+            errorType.shouldBe("HTTP")
+            message.shouldBe("testing")
             cause?.message.shouldBe("sample setting cause")
         }
 
         httpResponse.asClientException(message = "SomeMessage").run {
-            httpStatusCode.shouldBe(HttpStatusCode.BadRequest.value.toString())
+            httpStatusCode.shouldBe(HttpStatusCode.BadRequest.value)
             errorBody.shouldBe(errorBody)
-            errorType.shouldBe("TESTING")
+            errorType.shouldBe("HTTP")
             message.shouldBe("SomeMessage")
         }
     }
@@ -115,57 +120,9 @@ class HttpTest {
 
         Http.protocol("").shouldBe(URLProtocol.HTTPS)
     }
-
-    @Test
-    fun shouldGetHeaders() {
-        Http.getHeaders(
-            origin = "origin",
-            "apiKey",
-            "clientID",
-            "accessToken",
-            ContentType.Application.Json
-        ).run {
-            size.shouldBe(5)
-            shouldContain(Pair("Origin", "origin"))
-            shouldContain(Pair("X-Api-Key", "apiKey"))
-            shouldContain(Pair("Content-Type", "application/json"))
-            shouldContain(Pair("X-Aa-Client-Id", "clientID"))
-            shouldContain(Pair("Authorization", "accessToken"))
-        }
-    }
-
-    @Test
-    fun shouldGetEmptyHeadersGivenNullOrEmptyValues() {
-        Http.getHeaders().run {
-            shouldBeEmpty()
-        }
-
-        // atleasr one
-        Http.getHeaders(contentType = ContentType.Application.Json).run {
-            shouldNotBeEmpty()
-            shouldContain(Pair("Content-Type", "application/json"))
-        }
-
-        Http.getHeaders(origin = "").run {
-            shouldBeEmpty()
-        }
-
-        Http.getHeaders(apiKey = "").run {
-            shouldBeEmpty()
-        }
-
-        Http.getHeaders(accessToken = "").run {
-            shouldBeEmpty()
-        }
-
-        Http.getHeaders(client_id = "").run {
-            shouldBeEmpty()
-        }
-    }
-
     @Test
     fun getHttpResponseValidatorForKtorClientException() = runTest {
-        val errorBody = ApiErrorBody(code = "TESTING", message = "testing").toJson()
+        val errorBody = ErrorBody(code = "TESTING", message = "testing").toJson()
         val client = HttpClient(MockEngine) {
             engine {
                 addHandler {
@@ -196,17 +153,17 @@ class HttpTest {
                 }
             }
         }.run {
-            httpStatusCode.shouldBe(HttpStatusCode.BadRequest.value.toString())
+            httpStatusCode.shouldBe(HttpStatusCode.BadRequest.value)
             errorBody.shouldBe(errorBody)
-            errorType.shouldBe("TESTING")
-            this.toClientException().message.shouldContain("ClientRequestException: Client request(POST https://example.com/hello?clientId=clientId) invalid: 400 Bad Request. Text: \"{\"code\":\"TESTING\",\"message\":\"testing\"}\"")
+            errorType.shouldBe("HTTP")
+            this.asClientException().message.shouldContain("testing")
         }
     }
 
     @Test
     fun getHttpResponseValidatorForKtorServerException() = runTest {
         val errorBody =
-            ApiErrorBody(code = "SERVER_ERROR", message = "internal server error").toJson()
+            ErrorBody(code = "SERVER_ERROR", message = "internal server error").toJson()
         val client = HttpClient(MockEngine) {
             engine {
                 addHandler {
@@ -237,16 +194,58 @@ class HttpTest {
                 }
             }
         }.run {
-            httpStatusCode.shouldBe(HttpStatusCode.InternalServerError.value.toString())
+            httpStatusCode.shouldBe(HttpStatusCode.InternalServerError.value)
             errorBody.shouldBe(errorBody)
-            errorType.shouldBe("SERVER_ERROR")
-            message.shouldContain("ServerResponseException: Server error(POST https://example.com/hello?clientId=clientId: 500 Internal Server Error. Text: \"{\"code\":\"SERVER_ERROR\",\"message\":\"internal server error\"}\"")
+            errorType.shouldBe("HTTP")
+            message.shouldContain("internal server error")
+        }
+    }
+
+
+    @Test
+    fun getHttpResponseValidatorForKtorServerExceptionWhenErrorBodyMessageNull() = runTest {
+        val errorBody =
+            ErrorBody(code = "SERVER_ERROR", message = null).toJson()
+        val client = HttpClient(MockEngine) {
+            engine {
+                addHandler {
+                    respond(
+                        errorBody,
+                        HttpStatusCode.InternalServerError,
+                        headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
+                    )
+                }
+            }
+            install(ContentNegotiation) {
+                json(Http.ktorConfigJson)
+            }
+        }.config {
+            expectSuccess = true
+            HttpResponseValidator {
+                Http.getHttpResponseValidator(this)
+            }
+        }
+
+        shouldThrow<ClientException> {
+            client.post {
+                url {
+                    protocol = URLProtocol.HTTPS
+                    host = "example.com"
+                    path("hello")
+                    parameter("clientId", "clientId")
+                }
+            }
+        }.run {
+            httpStatusCode.shouldBe(HttpStatusCode.InternalServerError.value)
+            errorBody.shouldBe(errorBody)
+            errorType.shouldBe("HTTP")
+            message.shouldContain("Server error(POST https://example.com/hello?clientId=clientId: 500 Internal Server Error. Text: \"{\"code\":\"SERVER_ERROR\"")
         }
     }
 
     @Test
     fun ktorConfigJson() {
-        Http.ktorConfigJson.configuration.prettyPrint.shouldBeTrue()
+        Http.ktorConfigJson.configuration.prettyPrint.shouldBeFalse()
         Http.ktorConfigJson.configuration.isLenient.shouldBeTrue()
         Http.ktorConfigJson.configuration.ignoreUnknownKeys.shouldBeTrue()
     }
