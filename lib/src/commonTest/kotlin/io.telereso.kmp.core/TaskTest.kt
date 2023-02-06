@@ -107,7 +107,7 @@ class TaskTest {
             it?.let {
                 itemsOnSuccess.addAll(it)
             }
-        }.await()?.let {
+        }.awaitOrNull()?.let {
             it.let {
                 itemsOnSuccess.addAll(it)
             }
@@ -158,7 +158,7 @@ class TaskTest {
             it?.let {
                 itemsOnSuccess.addAll(it)
             }
-        }.await()?.let {
+        }.awaitOrNull()?.let {
             it.let {
                 itemsOnSuccess.addAll(it)
             }
@@ -374,7 +374,7 @@ class TaskTest {
             throw ClientException(message = "Something Went Crazy")
         }.onFailure {
             itemsOnFailure.add(it)
-        }.await()
+        }.awaitOrNull()
 
         itemsOnSuccess.shouldBeEmpty()
         itemsOnFailure.shouldNotBeEmpty()
@@ -497,7 +497,7 @@ class TaskTest {
             itemsOnFailure.add(it)
         }.onFailureUI {
             itemsOnFailure.add(it)
-        }.await()
+        }.awaitOrNull()
 
         itemsOnSuccess.shouldBeEmpty()
         itemsOnFailure.shouldNotBeEmpty()
