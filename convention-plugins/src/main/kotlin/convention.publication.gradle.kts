@@ -61,9 +61,9 @@ publishing {
 
         // Provide artifacts information requited by Maven Central
         pom {
-            name.set("KMP Annotations")
-            description.set("Kotlin Annotations while developing kmp projects")
-            url.set("https://github.com/telereso/kmp-annotations")
+            name.set("KMP Core")
+            description.set("Core classes and tools while developing kmp projects")
+            url.set("https://github.com/telereso/kmp-core")
 
             licenses {
                 license {
@@ -73,13 +73,13 @@ publishing {
             }
             developers {
                 developer {
-                    id.set("AhmedAlnaami")
+                    id.set("ahmedalnaami")
                     name.set("Ahmed Alnaami")
                     email.set("ahmed.alnaami92@gmail.com")
                 }
             }
             scm {
-                url.set("https://github.com/telereso/kmp-annotations")
+                url.set("https://github.com/telereso/kmp-core")
             }
 
         }

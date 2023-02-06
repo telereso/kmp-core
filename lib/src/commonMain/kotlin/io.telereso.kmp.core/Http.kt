@@ -1,5 +1,6 @@
 package io.telereso.kmp.core
 
+import io.ktor.client.call.body
 import io.ktor.client.plugins.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -121,13 +122,17 @@ object Http {
                 message = errorMessage,
                 errorType = "HTTP",
                 cause = cause,
-                errorString = body
+                errorString = body,
+                httpURl = this.request.url.toString()
             )
         } catch (e: Throwable) {
             ClientException.listener(e.asClientException())
             throw ClientException(
                 cause = e,
-                message = "Failed to convert $this into a ClientException."
+                message = "Failed to convert $this into a ClientException.",
+                errorType = "HTTP",
+                httpURl = this.request.url.toString()
+
             )
         }
     }
@@ -162,7 +167,8 @@ object Http {
                 message = errorMessage, // setting the error message
                 errorType = "HTTP", // setting the error type
                 cause = cause?:this, // setting the cause of the error
-                errorString = body // setting the error string
+                errorString = body, // setting the error string,
+                httpURl = this.response.request.url.toString()
             )
         } catch (e: Throwable) {
             // Logging the exception
@@ -170,8 +176,22 @@ object Http {
             // Throwing a new ClientException object with a custom message that indicates the failure.
             throw ClientException(
                 cause = e,
-                message = "Failed to convert $this into a ClientException."
+                message = "Failed to convert $this into a ClientException.",
+                errorType = "HTTP",
+                httpURl = this.response.request.url.toString()
             )
         }
     }
+
+    /**
+     * Returns a Boolean indicating whether the [HttpResponse] has the specified [status] code.
+     * Reusable, as we can reuse the hasStatus function to check for multiple status codes. rather than creating
+     * a single method for each status check e.g isOK,isAccepted,is.....
+     * @param status The [HttpStatusCode] to check against the [HttpResponse] status.
+     * @return True if the [HttpResponse] has the specified [status] code, false otherwise.
+     */
+    fun HttpResponse.hasStatus(status: HttpStatusCode) = (this.status == status)
+
+    fun HttpResponse.successful() = (this.status.value in 200..299)
+
 }

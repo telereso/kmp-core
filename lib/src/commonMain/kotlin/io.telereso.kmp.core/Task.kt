@@ -56,7 +56,7 @@ class Task<ResultT> private constructor(
     }
 
     /**
-     * This scope is used only created and used when invoking [_successUI] and [_failureUI]
+     * This scope is used only created and used when invoking [successUI] and [failureUI]
      */
     private val scopeUI: CoroutineScope by lazy {
         ContextScope.get(DispatchersProvider.Main)
@@ -299,9 +299,17 @@ class Task<ResultT> private constructor(
 
 /**
  * Wait for the task to finish
+ * @return [ResultT] if succeeded , or crash if job failed ,if you don't care about resultT check [awaitOrNull]
+ */
+suspend fun <ResultT> Task<ResultT>.await(): ResultT {
+    return job.await()
+}
+
+/**
+ * Wait for the task to finish
  * @return null if task failed or [ResultT] if succeeded
  */
-suspend fun <ResultT> Task<ResultT>.await(): ResultT? {
+suspend fun <ResultT> Task<ResultT>.awaitOrNull(): ResultT? {
     return try {
         job.await()
     } catch (t: Throwable) {
