@@ -4,12 +4,15 @@
 
 
 # Docs
-Each lib version has it's docs , you can check the latest docs by providing the latest version
+Each version has it's docs , you can check the latest docs by providing the latest `<version>` to the follwoing url
 `https://telereso.github.io/kmp-core/docs/core/<version>/index.html`
 
-The latest version is ![GitHub release (latest by date)](https://img.shields.io/github/v/release/telereso/kmp-core)
+The latest version is 
 
-For example to get docs for version 0.0.4 you can vising
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/telereso/kmp-core)](https://github.com/telereso/kmp-core/releases) 
+
+For example to get docs for version 0.0.4 you can visiting
+
 https://telereso.github.io/kmp-core/docs/core/0.0.4/index.html
 
 # Setup
