@@ -4,7 +4,13 @@
 
 
 # Docs
+Each lib version has it's docs , you can check the latest docs by providing the latest version
+`https://telereso.github.io/kmp-core/docs/core/<version>/index.html`
 
+The latest version is ![GitHub release (latest by date)](https://img.shields.io/github/v/release/telereso/kmp-core)
+
+For example to get docs for version 0.0.4 you can vising
+https://telereso.github.io/kmp-core/docs/core/0.0.4/index.html
 
 # Setup
 The following are the first commands to init all the project examples
@@ -63,4 +69,4 @@ then open `react-native-core-client` in intellij Idea or VSCode and check `READM
 ./gradlew koverHtmlReport 
 ```
 
-
+For more details about contributing check [CONTRIBUTING page](https://github.com/telereso/kmp-core/blob/main/CONTRIBUTING.md)
