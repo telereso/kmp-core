@@ -15,11 +15,16 @@ import java.util.concurrent.TimeUnit
 
 /**
  * A AndroidPlatform class that defines the Android platform type and name.
- * Referernces the names from the Android platform specific [Build] class
+ * References the names from the Android platform specific [Build] class
  */
 class AndroidPlatform : Platform {
     override val type: Platform.TYPE = Platform.TYPE.ANDROID
-    override val name: String = "sdk/${Build.VERSION.RELEASE} device/${Build.MANUFACTURER}-${Build.MODEL}"
+
+    /**
+     * example <AppName>/<version> Dalvik/<version> (Linux; U; Android <android version>; <device ID> Build/<buildtag>)
+     */
+    override val userAgent: String = System.getProperty("http.agent")
+        ?: "(Linux; U; Android ${Build.VERSION.RELEASE}; ${Build.MANUFACTURER} ${Build.MODEL})"
 }
 
 actual fun getPlatform(): Platform = AndroidPlatform()
@@ -37,7 +42,7 @@ actual fun httpClient(
     config(this)
 
     install(UserAgent) {
-        agent = userAgent?: getPlatform().name
+        agent = userAgent ?: getPlatform().userAgent
     }
     /**
      * needed to define the transformation of the HttClient.

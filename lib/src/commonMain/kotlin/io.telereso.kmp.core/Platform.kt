@@ -12,7 +12,7 @@ interface Platform {
      * @suppress
      */
     enum class TYPE {
-        ANDROID, IOS, JS, JVM
+        ANDROID, IOS, BROWSER, JVM
     }
 
     /**
@@ -21,9 +21,9 @@ interface Platform {
     val type: TYPE
 
     /**
-     * name of the platform. mostly passed as lower case of the [TYPE] enum.
+     * User agent for http requests
      */
-    val name: String
+    val userAgent: String
 }
 
 /**

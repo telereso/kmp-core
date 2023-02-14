@@ -1,6 +1,5 @@
 package io.telereso.kmp.core
 
-import io.ktor.client.call.body
 import io.ktor.client.plugins.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -67,7 +66,7 @@ object Http {
      * on core level read platform level and append. if the value userAgent is null then we pass platform as default.
      * sample output
      * android core-client/0.0.19/ app-version/11.40.0
-     * @param platform where the sdk is being used [Platform.TYPE.ANDROID] or [Platform.TYPE.IOS] or [Platform.TYPE.JVM] or [Platform.TYPE.JS]
+     * @param platform where the sdk is being used [Platform.TYPE.ANDROID] or [Platform.TYPE.IOS] or [Platform.TYPE.JVM] or [Platform.TYPE.BROWSER]
      * @param clientSDKName the sdk making api calls name
      * @param clientSDKVersion the sdk making api version
      * @param appVersion version of application where the sdk is being used
@@ -76,14 +75,15 @@ object Http {
         platform: Platform,
         clientSDKName: String,
         clientSDKVersion: String?,
+        appName: String?,
         appVersion: String?,
     ): String {
         val userAgent = StringBuilder()
-        userAgent.append("${platform.type.name.lowercase()}/${appVersion ?: "NA"}")
+        userAgent.append("${appName ?: "NA"}/${appVersion ?: "NA"}")
         userAgent.append(" ")
         userAgent.append("$clientSDKName/${clientSDKVersion ?: "NA"}")
         userAgent.append(" ")
-        userAgent.append(platform.name)
+        userAgent.append(platform.userAgent)
         return userAgent.toString()
     }
 

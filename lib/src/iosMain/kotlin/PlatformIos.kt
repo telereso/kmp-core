@@ -23,7 +23,11 @@ import platform.UIKit.UIDevice
  */
 class IOSPlatform : Platform {
     override val type: Platform.TYPE = Platform.TYPE.IOS
-    override val name: String = "${UIDevice.currentDevice.systemName()}/${UIDevice.currentDevice.systemVersion}  device/${UIDevice.currentDevice.name} "
+
+    /**
+     * example : MyApp/1 iPhone5,2 iOS/10_1 CFNetwork/808.3 Darwin/16.3.0
+     */
+    override val userAgent: String = "${UIDevice.currentDevice.systemName()}/${UIDevice.currentDevice.systemVersion} ${UIDevice.currentDevice.name}"
 }
 
 /**
@@ -51,7 +55,7 @@ actual fun httpClient(
     }
 
     install(UserAgent) {
-        agent = userAgent ?: getPlatform().name
+        agent = userAgent ?: getPlatform().userAgent
     }
 
     install(ContentNegotiation) {

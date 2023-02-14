@@ -7,21 +7,22 @@ import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.js.Js
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.browser.window
 
 /**
  * A class we define platform specific  or actual implmentations for JS Target
  */
 
-class JSPlatform : Platform {
-    override val type: Platform.TYPE = Platform.TYPE.JS
-    override val name: String = type.name.lowercase()
+class BrowserPlatform : Platform {
+    override val type: Platform.TYPE = Platform.TYPE.BROWSER
+    override val userAgent: String = window.navigator.userAgent
 }
 
 /**
  * expected Platform imlmentation for JS platform
  * @return the platform .
  */
-actual fun getPlatform(): Platform = JSPlatform()
+actual fun getPlatform(): Platform = BrowserPlatform()
 
 val jsonClient = HttpClient(Js) {
     install(ContentNegotiation) {
