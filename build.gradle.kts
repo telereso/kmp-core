@@ -9,7 +9,7 @@ plugins {
     id("org.jetbrains.kotlin.native.cocoapods").version("1.7.22").apply(false)
 
     id("com.squareup.sqldelight").version("1.5.3").apply(false)
-    id("io.telereso.kmp").version("0.0.4").apply(false)
+    id("io.telereso.kmp").version("0.0.8").apply(false)
 }
 
 

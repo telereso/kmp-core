@@ -51,13 +51,15 @@ class Config private constructor(
     companion object {
         /**
          * a Kotlin DSL fun that uses scope to build the Manager.
-         * @param databaseDriverFactory a mandatory value needed to be passed
+         * @param appName a mandatory value needed to be passed
+         * @param appVersion a mandatory value needed to be passed
          */
         inline fun builder(
+            appName: String,
             appVersion: String,
             block: Builder.() -> Unit
         ) =
-            Builder(appVersion)
+            Builder(appName, appVersion)
                 .apply(block)
                 .build()
     }
@@ -65,9 +67,10 @@ class Config private constructor(
     /**
      * We may need to pass some compulsory values to the builder.
      * Mandatory param values are part of the constructor.
+     * @param appName mandatory param for the current app name that is using the client
      * @param appVersion mandatory param for the current app version of client
      */
-    class Builder(val appVersion: String) {
+    class Builder(val appName: String, val appVersion: String) {
         var interceptors: List<Any?>? = null
         var logHttpRequests: Boolean = false
         var environment: Environment? = null

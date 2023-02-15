@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit
 
 class JvmPlatform : Platform {
     override val type: Platform.TYPE = Platform.TYPE.JVM
-    override val name: String = type.name.lowercase()
+    override val userAgent: String = System.getProperty("http.agent")
 }
 
 /**
@@ -60,7 +60,7 @@ actual fun httpClient(
     config(this)
 
     install(UserAgent) {
-        agent = userAgent?: getPlatform().name
+        agent = userAgent ?: getPlatform().userAgent
     }
 
     /**

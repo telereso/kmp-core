@@ -33,7 +33,7 @@ class ConfigTest {
 
     @Test
     fun shouldSetConfigAsExpected() {
-        Config.builder("appVersion1.0.0") {
+        Config.builder("test","1.0.0") {
             shouldLogHttpRequests(true)
             withEnvironment(Environment.STAGING)
             withHost("http", "example.com")
@@ -49,7 +49,8 @@ class ConfigTest {
             requestTimeoutMillis.shouldBe(3000L)
             interceptors.shouldNotBeEmpty()
             interceptors?.first().shouldBe("ChuckerPlease")
-            appVersion.shouldBe("appVersion1.0.0")
+            appName.shouldBe("test")
+            appVersion.shouldBe("1.0.0")
         }
     }
 }

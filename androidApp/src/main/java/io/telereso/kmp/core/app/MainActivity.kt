@@ -5,10 +5,12 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import io.telereso.kmp.core.Log.logDebug
 import io.telereso.kmp.core.app.databinding.ActivityMainBinding
 import io.telereso.kmp.core.await
 import io.telereso.kmp.core.Task
 import io.telereso.kmp.core.awaitOrNull
+import io.telereso.kmp.core.getPlatform
 import io.telereso.kmp.core.models.JwtPayload
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +28,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        logDebug(getPlatform().userAgent)
 
         val handler = CoroutineExceptionHandler { _, e ->
             e.printStackTrace()

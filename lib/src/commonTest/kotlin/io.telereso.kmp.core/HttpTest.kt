@@ -28,9 +28,6 @@ import io.telereso.kmp.core.Http.asClientException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
-import io.kotest.matchers.collections.shouldBeEmpty
-import io.kotest.matchers.collections.shouldContain
-import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.ktor.client.*
@@ -144,6 +141,7 @@ class HttpTest {
 
         Http.protocol("").shouldBe(URLProtocol.HTTPS)
     }
+
     @Test
     fun getHttpResponseValidatorForKtorClientException() = runTest {
         val errorBody = ErrorBody(code = "TESTING", message = "testing").toJson()
@@ -282,10 +280,10 @@ class HttpTest {
 
     @Test
     fun testGetUserAgentAndroid() = runTest {
-        val androidPlatform = object :Platform{
+        val androidPlatform = object : Platform {
             override val type: Platform.TYPE
                 get() = Platform.TYPE.ANDROID
-            override val name: String
+            override val userAgent: String
                 get() = "sdk/test device/test"
 
         }
@@ -294,25 +292,25 @@ class HttpTest {
             androidPlatform,
             "TestClient",
             null,
-            null
-        ).shouldBe("android/NA TestClient/NA sdk/test device/test")
+            null, null
+        ).shouldBe("NA/NA TestClient/NA sdk/test device/test")
 
 
         Http.getUserAgent(
             androidPlatform,
             "TestClient",
             "1.0.0",
-            "1.0.1"
-        ).shouldBe("android/1.0.1 TestClient/1.0.0 sdk/test device/test")
+            null, "1.0.1"
+        ).shouldBe("NA/1.0.1 TestClient/1.0.0 sdk/test device/test")
 
     }
 
     @Test
     fun testGetUserAgentIos() = runTest {
-        val iosPlatform = object :Platform{
+        val iosPlatform = object : Platform {
             override val type: Platform.TYPE
                 get() = Platform.TYPE.IOS
-            override val name: String
+            override val userAgent: String
                 get() = "sdk/test device/test"
 
         }
@@ -321,25 +319,25 @@ class HttpTest {
             iosPlatform,
             "TestClient",
             null,
-            null
-        ).shouldBe("ios/NA TestClient/NA sdk/test device/test")
+            null, null
+        ).shouldBe("NA/NA TestClient/NA sdk/test device/test")
 
 
         Http.getUserAgent(
             iosPlatform,
             "TestClient",
             "1.0.0",
-            "1.0.1"
-        ).shouldBe("ios/1.0.1 TestClient/1.0.0 sdk/test device/test")
+            null, "1.0.1"
+        ).shouldBe("NA/1.0.1 TestClient/1.0.0 sdk/test device/test")
 
     }
 
     @Test
     fun testGetUserAgentJvm() = runTest {
-        val jvmPlatform = object :Platform{
+        val jvmPlatform = object : Platform {
             override val type: Platform.TYPE
                 get() = Platform.TYPE.JVM
-            override val name: String
+            override val userAgent: String
                 get() = "sdk/test device/test"
 
         }
@@ -348,25 +346,25 @@ class HttpTest {
             jvmPlatform,
             "TestClient",
             null,
-            null
-        ).shouldBe("jvm/NA TestClient/NA sdk/test device/test")
+            null, null
+        ).shouldBe("NA/NA TestClient/NA sdk/test device/test")
 
 
         Http.getUserAgent(
             jvmPlatform,
             "TestClient",
             "1.0.0",
-            "1.0.1"
-        ).shouldBe("jvm/1.0.1 TestClient/1.0.0 sdk/test device/test")
+            null, "1.0.1"
+        ).shouldBe("NA/1.0.1 TestClient/1.0.0 sdk/test device/test")
 
     }
 
     @Test
     fun testGetUserAgentJs() = runTest {
-        val jsPlatform = object :Platform{
+        val jsPlatform = object : Platform {
             override val type: Platform.TYPE
-                get() = Platform.TYPE.JS
-            override val name: String
+                get() = Platform.TYPE.BROWSER
+            override val userAgent: String
                 get() = "sdk/test device/test"
 
         }
@@ -375,16 +373,16 @@ class HttpTest {
             jsPlatform,
             "TestClient",
             null,
-            null
-        ).shouldBe("js/NA TestClient/NA sdk/test device/test")
+            null, null
+        ).shouldBe("NA/NA TestClient/NA sdk/test device/test")
 
 
         Http.getUserAgent(
             jsPlatform,
             "TestClient",
             "1.0.0",
-            "1.0.1"
-        ).shouldBe("js/1.0.1 TestClient/1.0.0 sdk/test device/test")
+            null, "1.0.1"
+        ).shouldBe("NA/1.0.1 TestClient/1.0.0 sdk/test device/test")
 
     }
 }
