@@ -32,10 +32,7 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.telereso.kmp.core.models.ClientException
 import kotlinx.coroutines.*
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -121,7 +118,7 @@ class TaskAndroidTest : TaskTest()  {
             it?.let {
                 itemsOnSuccess.addAll(it)
             }
-        }.getOrNull()?.let {
+        }.awaitOrNull()?.let {
             it.let {
                 itemsOnSuccess.addAll(it)
             }
@@ -172,7 +169,7 @@ class TaskAndroidTest : TaskTest()  {
             it?.let {
                 itemsOnSuccess.addAll(it)
             }
-        }.getOrNull()?.let {
+        }.awaitOrNull()?.let {
             it.let {
                 itemsOnSuccess.addAll(it)
             }
@@ -388,7 +385,7 @@ class TaskAndroidTest : TaskTest()  {
             throw ClientException(message = "Something Went Crazy")
         }.onFailure {
             itemsOnFailure.add(it)
-        }.getOrNull()
+        }.awaitOrNull()
 
         itemsOnSuccess.shouldBeEmpty()
         itemsOnFailure.shouldNotBeEmpty()
@@ -511,7 +508,7 @@ class TaskAndroidTest : TaskTest()  {
             itemsOnFailure.add(it)
         }.onFailureUI {
             itemsOnFailure.add(it)
-        }.getOrNull()
+        }.awaitOrNull()
 
         itemsOnSuccess.shouldBeEmpty()
         itemsOnFailure.shouldNotBeEmpty()
