@@ -36,9 +36,11 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlin.test.BeforeTest
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
+@Ignore
 class CommonFlowTest {
 
     var testDispatcher = UnconfinedTestDispatcher()

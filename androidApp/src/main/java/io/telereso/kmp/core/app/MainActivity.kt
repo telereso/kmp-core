@@ -7,9 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import io.telereso.kmp.core.Log.logDebug
 import io.telereso.kmp.core.app.databinding.ActivityMainBinding
-import io.telereso.kmp.core.await
 import io.telereso.kmp.core.Task
-import io.telereso.kmp.core.awaitOrNull
 import io.telereso.kmp.core.getPlatform
 import io.telereso.kmp.core.models.JwtPayload
 import kotlinx.coroutines.CoroutineExceptionHandler

@@ -28,9 +28,6 @@ import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.UserAgent
-import io.ktor.client.plugins.auth.Auth
-import io.ktor.client.plugins.auth.providers.BearerTokens
-import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
 import okhttp3.logging.HttpLoggingInterceptor
@@ -38,20 +35,21 @@ import java.util.concurrent.TimeUnit
 
 class JvmPlatform : Platform {
     override val type: Platform.TYPE = Platform.TYPE.JVM
-    override val userAgent: String = System.getProperty("http.agent")
+    override val userAgent: String = System.getProperty("http.agent","kmpJvmPlatform")
 }
 
 /**
- * expected Platform imlmentation for JVM platform
+ * expected Platform implementation for JVM platform
  * @return the platform .
  */
 actual fun getPlatform(): Platform = JvmPlatform()
 
 actual fun httpClient(
-    shouldLogHttpRequests: Boolean ,
+    shouldLogHttpRequests: Boolean,
     interceptors: List<Any?>?,
     userAgent: String?,
-    config: HttpClientConfig<*>.() -> Unit) = HttpClient(OkHttp) {
+    config: HttpClientConfig<*>.() -> Unit
+) = HttpClient(OkHttp) {
 
     // https://github.com/square/okhttp/tree/master/okhttp-logging-interceptor
     val logging = HttpLoggingInterceptor().also {
@@ -94,7 +92,7 @@ actual fun httpClient(
     }
 
     engine {
-        // Here we can add out usual network inteceptors.
+        // Here we can add out usual network interceptors.
         addInterceptor(logging)
         config {
             retryOnConnectionFailure(true)

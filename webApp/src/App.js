@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import React, { useState ,useEffect} from 'react';
-import {CoreClientManager} from "core-client"
+const CoreClient =  require("core-client").io.telereso.kmp.core
 
 const manger = new CoreClientManager.Builder().build()
 window.manger = manger

@@ -230,6 +230,7 @@ kotlin {
         }
 
         val commonMain by getting {
+            kotlin.srcDir("build/generated/ksp/metadata/commonMain/resources/kotlin")
             dependencies {
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
