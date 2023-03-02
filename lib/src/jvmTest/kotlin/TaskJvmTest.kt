@@ -32,10 +32,7 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.telereso.kmp.core.models.ClientException
 import kotlinx.coroutines.*
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -110,6 +107,7 @@ class TaskJvmTest : TaskTest()  {
         itemsOnSuccess.shouldContain("abc")
     }
 
+    @OptIn(RunBlocking::class)
     @Test
     override fun onSuccessOnlyWithAwait() = runTest {
         val itemsOnSuccess = mutableListOf<String>()
@@ -156,6 +154,7 @@ class TaskJvmTest : TaskTest()  {
         itemsOnSuccess.size.shouldBe(3)
         itemsOnSuccess.shouldContain("ClientException")
     }
+    @OptIn(RunBlocking::class)
     @Test
     override fun onSuccessOnlyWithAwaitAndHandledException() = runTest {
         val itemsOnSuccess = mutableListOf<String>()
@@ -379,6 +378,7 @@ class TaskJvmTest : TaskTest()  {
         }
     }
 
+    @OptIn(RunBlocking::class)
     @Test
     override fun onFailureOnlyWithAwait() = runTest {
         val itemsOnSuccess: List<String> = listOf()
@@ -492,6 +492,7 @@ class TaskJvmTest : TaskTest()  {
         }
     }
 
+    @OptIn(RunBlocking::class)
     @Test
     override fun onFailureWithAwaitWithSuccessWithSuccessUIWithFailureUI() = runTest {
         val itemsOnSuccess = mutableListOf<String>()

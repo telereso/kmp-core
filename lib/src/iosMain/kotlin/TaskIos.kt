@@ -29,87 +29,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 
 
-actual class Task<ResultT> private actual constructor(
-    scope: CoroutineScope,
-    block: suspend CoroutineScope.() -> ResultT
-) {
+internal actual class InternalTask<ResultT> actual constructor(_task: Task<ResultT>) {
+    internal actual val task: Task<ResultT> = _task
 
-    actual val _internalTask = InternalTask.builder().withScope(scope).execute(block)
-
-    actual fun cancel(message: String, throwable: ClientException?) {
-        _internalTask.cancel(message, throwable)
+    actual fun get(): ResultT {
+        return runBlocking { task.await() }
     }
 
-    actual fun cancel(message: String) {
-        _internalTask.cancel(message)
-    }
-
-    fun get(): ResultT {
-        return runBlocking { _internalTask.get() }
-    }
-
-    suspend fun getOrNull(): ResultT? {
-        return runBlocking { _internalTask.getOrNull() }
-    }
-
-    actual fun onSuccess(action: (ResultT) -> Unit): Task<ResultT> {
-        _internalTask.onSuccess(action)
-        return this
-    }
-
-    actual fun onSuccessUI(action: (ResultT) -> Unit): Task<ResultT> {
-        _internalTask.onSuccessUI(action)
-        return this
-    }
-
-    actual fun onFailure(action: (ClientException) -> Unit): Task<ResultT> {
-        _internalTask.onFailure(action)
-        return this
-
-    }
-
-    actual fun onFailureUI(action: (ClientException) -> Unit): Task<ResultT> {
-        _internalTask.onFailureUI(action)
-        return this
-    }
-
-    actual fun onCancel(action: (ClientException) -> Unit): Task<ResultT> {
-        _internalTask.onCancel(action)
-        return this
-    }
-
-    actual class Builder {
-        actual var scope: CoroutineScope? = null
-
-        /**
-         * provide your own scope for the task to run on
-         */
-        actual fun withScope(scope: CoroutineScope): Builder {
-            this.scope = scope
-            return this
-        }
-
-        /**
-         * @param block provide your logic
-         */
-        actual fun <ResultT> execute(block: suspend CoroutineScope.() -> ResultT): Task<ResultT> {
-            return Task(scope ?: ContextScope.get(DispatchersProvider.Default), block)
-        }
-
-    }
-
-    actual companion object {
-        /**
-         * Build that will create a task and it's logic
-         * @param block That task logic
-         */
-        actual inline fun <ResultT> execute(noinline block: suspend CoroutineScope.() -> ResultT): Task<ResultT> {
-            return Builder().execute(block)
-        }
-
-        actual fun builder(): Builder {
-            return Builder()
-        }
-
+    actual fun getOrNull(): ResultT? {
+        return runBlocking { task.awaitOrNull() }
     }
 }
