@@ -36,15 +36,17 @@ actual class Task<ResultT> private actual constructor(
     block: suspend CoroutineScope.() -> ResultT
 ) {
 
-    actual val task = InternalTask.builder().withScope(scope).execute(block)
+    actual val _internalTask = InternalTask.builder().withScope(scope).execute(block)
 
-    @JvmOverloads
-    fun cancel(message: String, throwable: ClientException? = null) {
-        task.cancel(message, throwable)
+    actual fun cancel(message: String, throwable: ClientException?) {
+        _internalTask.cancel(message, throwable)
+    }
+    actual fun cancel(message: String) {
+        _internalTask.cancel(message)
     }
 
     fun future(): CompletableFuture<ResultT> {
-        return GlobalScope.future { task.await() }
+        return GlobalScope.future { _internalTask.get() }
     }
 
     fun get(): ResultT {
@@ -55,29 +57,29 @@ actual class Task<ResultT> private actual constructor(
         return runCatching { future().get() }.getOrNull()
     }
 
-    fun onSuccess(action: (ResultT) -> Unit): Task<ResultT> {
-        task.onSuccess(action)
+    actual fun onSuccess(action: (ResultT) -> Unit): Task<ResultT> {
+        _internalTask.onSuccess(action)
         return this
     }
 
-    fun onSuccessUI(action: (ResultT) -> Unit): Task<ResultT> {
-        task.onSuccessUI(action)
+    actual fun onSuccessUI(action: (ResultT) -> Unit): Task<ResultT> {
+        _internalTask.onSuccessUI(action)
         return this
     }
 
-    fun onFailure(action: (ClientException) -> Unit): Task<ResultT> {
-        task.onFailure(action)
+    actual fun onFailure(action: (ClientException) -> Unit): Task<ResultT> {
+        _internalTask.onFailure(action)
         return this
 
     }
 
-    fun onFailureUI(action: (ClientException) -> Unit): Task<ResultT> {
-        task.onFailureUI(action)
+    actual fun onFailureUI(action: (ClientException) -> Unit): Task<ResultT> {
+        _internalTask.onFailureUI(action)
         return this
     }
 
-    fun onCancel(action: (ClientException) -> Unit): Task<ResultT> {
-        task.onCancel(action)
+    actual fun onCancel(action: (ClientException) -> Unit): Task<ResultT> {
+        _internalTask.onCancel(action)
         return this
     }
 

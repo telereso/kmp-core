@@ -27,14 +27,30 @@ package io.telereso.kmp.core
 import io.telereso.kmp.core.models.ClientException
 import io.telereso.kmp.core.models.asClientException
 import kotlinx.coroutines.*
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 import kotlin.jvm.JvmStatic
 
 
+@ExperimentalJsExport
 expect class Task<ResultT> private constructor(
     scope: CoroutineScope,
     block: suspend CoroutineScope.() -> ResultT
 ) {
-    val task: InternalTask<ResultT>
+    val _internalTask: InternalTask<ResultT>
+
+    fun cancel(message: String, throwable: ClientException?)
+    fun cancel(message: String)
+
+    fun onSuccess(action: (ResultT) -> Unit): Task<ResultT>
+
+    fun onSuccessUI(action: (ResultT) -> Unit): Task<ResultT>
+
+    fun onFailure(action: (ClientException) -> Unit): Task<ResultT>
+
+    fun onFailureUI(action: (ClientException) -> Unit): Task<ResultT>
+
+    fun onCancel(action: (ClientException) -> Unit): Task<ResultT>
 
     class Builder {
         var scope: CoroutineScope?
@@ -70,6 +86,8 @@ expect class Task<ResultT> private constructor(
  * A discriminated union that encapsulates a successful outcome with a value of type [ResultT] or a failure with an arbitrary Throwable [ClientException].
  * @param scope a CoroutineScope defaulted to Default can provide your own scope as well, ensure its testable by injecting the provider.
  */
+@ExperimentalJsExport
+@JsExport
 class InternalTask<ResultT> private constructor(
     val scope: CoroutineScope,
     private val block: suspend CoroutineScope.() -> ResultT
@@ -210,7 +228,7 @@ class InternalTask<ResultT> private constructor(
      * Can be used to assign the task job while doing unit testing,
      * not meant to be exposed or used in actull logic
      */
-    private val job: Deferred<ResultT> =
+    internal val job: Deferred<ResultT> =
         scope.async(block = this.block)
 
     init {
@@ -356,25 +374,25 @@ class InternalTask<ResultT> private constructor(
         scope.cancel(message, error)
         cancelTask?.invoke(error)
     }
+}
 
-    /**
-     * Wait for the task to finish
-     * @return [ResultT] if succeeded , or crash if job failed ,if you don't care about resultT check [awaitOrNull]
-     */
-    suspend fun await(): ResultT {
-        return job.await()
-    }
+/**
+ * Wait for the task to finish
+ * @return [ResultT] if succeeded , or crash if job failed ,if you don't care about resultT check [getOrNull]
+ */
+suspend fun <ResultT> InternalTask<ResultT>.get(): ResultT {
+    return job.await()
+}
 
-    /**
-     * Wait for the task to finish
-     * @return null if task failed or [ResultT] if succeeded
-     */
-    suspend fun awaitOrNull(): ResultT? {
-        return try {
-            job.await()
-        } catch (t: Throwable) {
-            ClientException.listener.invoke(t)
-            null
-        }
+/**
+ * Wait for the task to finish
+ * @return null if task failed or [ResultT] if succeeded
+ */
+suspend fun <ResultT> InternalTask<ResultT>.getOrNull(): ResultT? {
+    return try {
+        job.await()
+    } catch (t: Throwable) {
+        ClientException.listener.invoke(t)
+        null
     }
 }

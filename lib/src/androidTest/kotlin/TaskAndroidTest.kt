@@ -121,7 +121,7 @@ class TaskAndroidTest : TaskTest()  {
             it?.let {
                 itemsOnSuccess.addAll(it)
             }
-        }.awaitOrNull()?.let {
+        }.getOrNull()?.let {
             it.let {
                 itemsOnSuccess.addAll(it)
             }
@@ -172,7 +172,7 @@ class TaskAndroidTest : TaskTest()  {
             it?.let {
                 itemsOnSuccess.addAll(it)
             }
-        }.awaitOrNull()?.let {
+        }.getOrNull()?.let {
             it.let {
                 itemsOnSuccess.addAll(it)
             }
@@ -388,7 +388,7 @@ class TaskAndroidTest : TaskTest()  {
             throw ClientException(message = "Something Went Crazy")
         }.onFailure {
             itemsOnFailure.add(it)
-        }.awaitOrNull()
+        }.getOrNull()
 
         itemsOnSuccess.shouldBeEmpty()
         itemsOnFailure.shouldNotBeEmpty()
@@ -511,7 +511,7 @@ class TaskAndroidTest : TaskTest()  {
             itemsOnFailure.add(it)
         }.onFailureUI {
             itemsOnFailure.add(it)
-        }.awaitOrNull()
+        }.getOrNull()
 
         itemsOnSuccess.shouldBeEmpty()
         itemsOnFailure.shouldNotBeEmpty()
