@@ -26,6 +26,7 @@ package io.telereso.kmp.core
 
 import io.telereso.kmp.core.models.ClientException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.asDeferred
 import kotlin.js.Promise
 
 @JsExport
@@ -34,15 +35,20 @@ actual class Task<ResultT> private actual constructor(
     block: suspend CoroutineScope.() -> ResultT
 ) {
 
-    actual val task = InternalTask.builder().withScope(scope).execute(block)
+    actual val _internalTask = InternalTask.builder().withScope(scope).execute(block)
 
-    fun cancel(message: String, throwable: ClientException? = null) {
-        task.cancel(message, throwable)
+    @JsName("cancelWithException")
+    actual fun cancel(message: String, throwable: ClientException?) {
+        _internalTask.cancel(message, throwable)
+    }
+
+    actual fun cancel(message: String) {
+        _internalTask.cancel(message)
     }
 
     fun async(): Promise<ResultT> {
         return Promise { success: (ResultT) -> Unit, failure: (Throwable) -> Unit ->
-            task.onSuccess {
+            _internalTask.onSuccess {
                 success(it)
             }
             onFailure {
@@ -51,29 +57,29 @@ actual class Task<ResultT> private actual constructor(
         }
     }
 
-    fun onSuccess(action: (ResultT) -> Unit): Task<ResultT> {
-        task.onSuccess(action)
+    actual fun onSuccess(action: (ResultT) -> Unit): Task<ResultT> {
+        _internalTask.onSuccess(action)
         return this
     }
 
-    fun onSuccessUI(action: (ResultT) -> Unit): Task<ResultT> {
-        task.onSuccessUI(action)
+    actual fun onSuccessUI(action: (ResultT) -> Unit): Task<ResultT> {
+        _internalTask.onSuccessUI(action)
         return this
     }
 
-    fun onFailure(action: (ClientException) -> Unit): Task<ResultT> {
-        task.onFailure(action)
+    actual fun onFailure(action: (ClientException) -> Unit): Task<ResultT> {
+        _internalTask.onFailure(action)
         return this
 
     }
 
-    fun onFailureUI(action: (ClientException) -> Unit): Task<ResultT> {
-        task.onFailureUI(action)
+    actual fun onFailureUI(action: (ClientException) -> Unit): Task<ResultT> {
+        _internalTask.onFailureUI(action)
         return this
     }
 
-    fun onCancel(action: (ClientException) -> Unit): Task<ResultT> {
-        task.onCancel(action)
+    actual fun onCancel(action: (ClientException) -> Unit): Task<ResultT> {
+        _internalTask.onCancel(action)
         return this
     }
 
