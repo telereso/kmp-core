@@ -24,23 +24,7 @@
 
 package io.telereso.kmp.core
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.future.future
-import java.util.concurrent.CompletableFuture
-
-
-internal actual class InternalTask<ResultT> actual constructor(_task: Task<ResultT>) {
-    internal actual val task: Task<ResultT> = _task
-
-    fun future(): CompletableFuture<ResultT> {
-        return GlobalScope.future { task.await() }
-    }
-
-    actual fun get(): ResultT {
-        return future().get()
-    }
-
-    actual fun getOrNull(): ResultT? {
-        return runCatching { future().get() }.getOrNull()
-    }
-}
+@RequiresOptIn(message = "This function uses runBlocking, make sure to use it in a Background Thread, if a suspended function with same output is available please use it instead")
+@Retention(AnnotationRetention.BINARY)
+@Target(AnnotationTarget.FUNCTION)
+annotation class RunBlocking

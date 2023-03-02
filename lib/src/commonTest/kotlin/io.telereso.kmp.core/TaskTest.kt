@@ -118,7 +118,7 @@ class TaskTestImpl : TaskTest() {
     override fun onSuccessOnly() = runTest {
         var itemsOnSuccess: List<String>? = listOf()
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             listOf("abc", "abcd", "abcde")
         }.onSuccess {
             itemsOnSuccess = it
@@ -132,7 +132,7 @@ class TaskTestImpl : TaskTest() {
     override fun onSuccessUIOnly() = runTest {
         var itemsOnSuccess: List<String>? = listOf()
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             listOf("abc", "abcd", "abcde")
         }.onSuccessUI {
             itemsOnSuccess = it
@@ -146,7 +146,7 @@ class TaskTestImpl : TaskTest() {
     override fun onSuccessDouble() = runTest {
         val itemsOnSuccess = mutableListOf<String>()
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             listOf("abc", "abcd", "abcde")
         }.onSuccess {
             it?.let {
@@ -166,7 +166,7 @@ class TaskTestImpl : TaskTest() {
     override fun onSuccessUIDouble() = runTest {
         val itemsOnSuccess = mutableListOf<String>()
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             listOf("abc", "abcd", "abcde")
         }.onSuccessUI {
             it?.let {
@@ -187,13 +187,13 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess = mutableListOf<String>()
         val itemOnFailure: Throwable? = null
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             listOf("abc", "abcd", "abcde")
         }.onSuccess {
             it?.let {
                 itemsOnSuccess.addAll(it)
             }
-        }.awaitOrNull()?.let {
+        }.await()?.let {
             it.let {
                 itemsOnSuccess.addAll(it)
             }
@@ -210,7 +210,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess = mutableListOf<String>()
         val itemOnFailure: Throwable? = null
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             try {
                 listOf("abc", "abcd", "abcde")
                 throw ClientException(message = "Something Went Crazy")
@@ -234,7 +234,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess = mutableListOf<String>()
         val itemOnFailure: Throwable? = null
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             try {
                 listOf("abc", "abcd", "abcde")
                 throw ClientException(message = "Something Went Crazy")
@@ -262,7 +262,7 @@ class TaskTestImpl : TaskTest() {
         var itemsOnSuccess: List<String>? = listOf()
         var itemOnFailure: Throwable? = null
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             listOf("abc", "abcd", "abcde")
         }.onSuccess {
             itemsOnSuccess = it
@@ -279,7 +279,7 @@ class TaskTestImpl : TaskTest() {
     override fun onSuccessWithSuccessUI() = runTest {
         val itemsOnSuccess = mutableListOf<String>()
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             listOf("abc", "abcd", "abcde")
         }.onSuccess {
             it?.let {
@@ -300,7 +300,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess = mutableListOf<String>()
         var itemOnFailure: Throwable? = null
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             listOf("abc", "abcd", "abcde")
         }.onSuccess {
             it?.let {
@@ -325,7 +325,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess = mutableListOf<String>()
         var itemOnFailure: Throwable? = null
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             listOf("abc", "abcd", "abcde")
         }.onSuccess {
             it?.let {
@@ -351,7 +351,7 @@ class TaskTestImpl : TaskTest() {
     override fun onSuccessDoubleInSuccessUIDouble() = runTest {
         val itemsOnSuccess = mutableListOf<String>()
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             listOf("abc", "abcd", "abcde")
         }.onSuccess {
             it?.let {
@@ -384,7 +384,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess: List<String> = listOf()
         var itemOnFailure: Throwable? = null
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             throw ClientException(message = "Something Went Crazy")
         }.onFailure {
             itemOnFailure = it
@@ -401,7 +401,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess: List<String> = listOf()
         var itemOnFailure: Throwable? = null
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             throw ClientException(message = "Something Went Crazy")
         }.onFailureUI {
             itemOnFailure = it
@@ -417,7 +417,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess = mutableListOf<String>()
         val itemsOnFailure = mutableListOf<Throwable>()
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             throw ClientException(message = "Something Went Crazy")
         }.onFailure {
             itemsOnFailure.add(it)
@@ -437,7 +437,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess = mutableListOf<String>()
         val itemsOnFailure = mutableListOf<Throwable>()
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             throw ClientException(message = "Something Went Crazy")
         }.onFailureUI {
             itemsOnFailure.add(it)
@@ -457,7 +457,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess: List<String> = listOf()
         val itemsOnFailure = mutableListOf<Throwable>()
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             throw ClientException(message = "Something Went Crazy")
         }.onFailure {
             itemsOnFailure.add(it)
@@ -476,7 +476,7 @@ class TaskTestImpl : TaskTest() {
         var itemsOnSuccess: List<String>? = null
         var itemOnFailure: Throwable? = null
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             throw ClientException(message = "Something Went Crazy")
         }.onSuccess {
             itemsOnSuccess = it
@@ -494,7 +494,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess = mutableListOf<String>()
         val itemsOnFailure = mutableListOf<Throwable>()
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             throw ClientException(message = "Something Went Crazy")
         }.onFailure {
             itemsOnFailure.add(it)
@@ -515,7 +515,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess = mutableListOf<String>()
         val itemsOnFailure = mutableListOf<Throwable>()
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             throw ClientException(message = "Something Went Crazy")
         }.onSuccess {
             it?.let {
@@ -541,7 +541,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess = mutableListOf<String>()
         val itemsOnFailure = mutableListOf<Throwable>()
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             throw ClientException(message = "Something Went Crazy")
         }.onSuccess {
             it?.let {
@@ -570,7 +570,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess = mutableListOf<String>()
         val itemsOnFailure = mutableListOf<Throwable>()
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             throw ClientException(message = "Something Went Crazy")
         }.onSuccess {
             it?.let {
@@ -599,7 +599,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess = mutableListOf<String>()
         val itemsOnFailure = mutableListOf<Throwable>()
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             throw ClientException(message = "Something Went Crazy")
         }.onFailure {
             itemsOnFailure.add(it)
@@ -628,7 +628,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnFailure = mutableListOf<Throwable>()
         var isCanceled: Throwable? = null
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             cancel(message = "cancelled")
             delay(100)
             listOf("Zendaya Maree", "Chloë Grace Moretz", "Luna Blaise")
@@ -649,7 +649,7 @@ class TaskTestImpl : TaskTest() {
     @Test
     override fun someFavoriteActressesListTaskShouldInvokeOnSuccessUI() = runTest {
         var itemsOnSuccess: List<String>? = listOf()
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             listOf("abc", "abcd", "abcde")
         }.onSuccessUI {
             itemsOnSuccess = it
@@ -665,7 +665,7 @@ class TaskTestImpl : TaskTest() {
     @Test
     override fun taskShouldInvokeOnFailure() = runTest {
         var itemsFail: ClientException? = null
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             throw ClientException(message = "Something Went Crazy")
         }.onFailure {
             itemsFail = it

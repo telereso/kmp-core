@@ -25,12 +25,11 @@
 package io.telereso.kmp.core.api;
 
 
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-//import io.telereso.kmp.core.TasksExamples;
+import io.telereso.kmp.core.TasksExamples;
 
 
 @Controller
@@ -40,7 +39,6 @@ public class HelloWorldController {
     @RequestMapping("")
     @ResponseBody
     public String hi() {
-        return "hi";
-//        return TasksExamples.hi().get();
+        return TasksExamples.hi().get();
     }
 }

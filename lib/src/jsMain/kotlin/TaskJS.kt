@@ -25,90 +25,28 @@
 package io.telereso.kmp.core
 
 import io.telereso.kmp.core.models.ClientException
-import kotlinx.coroutines.CoroutineScope
 import kotlin.js.Promise
 
+
+internal actual class InternalTask<ResultT> actual constructor(_task: Task<ResultT>) {
+    internal actual val task: Task<ResultT> = _task
+
+    actual fun get(): ResultT {
+        throw ClientException("Use async instead for blocking calls")
+    }
+
+    actual fun getOrNull(): ResultT? {
+        throw ClientException("Use async instead for blocking calls")
+    }
+}
+
 @JsExport
-actual class Task<ResultT> private actual constructor(
-    scope: CoroutineScope,
-    block: suspend CoroutineScope.() -> ResultT
-) {
-
-    actual val task = InternalTask.builder().withScope(scope).execute(block)
-
-    fun cancel(message: String, throwable: ClientException? = null) {
-        task.cancel(message, throwable)
-    }
-
-    fun async(): Promise<ResultT> {
-        return Promise { success: (ResultT) -> Unit, failure: (Throwable) -> Unit ->
-            task.onSuccess {
-                success(it)
-            }
-            onFailure {
-                failure(it)
-            }
+fun <ResultT> Task<ResultT>.async(): Promise<ResultT> {
+    return Promise { success: (ResultT) -> Unit, failure: (Throwable) -> Unit ->
+        onSuccess {
+            success(it)
+        }.onFailure {
+            failure(it)
         }
-    }
-
-    fun onSuccess(action: (ResultT) -> Unit): Task<ResultT> {
-        task.onSuccess(action)
-        return this
-    }
-
-    fun onSuccessUI(action: (ResultT) -> Unit): Task<ResultT> {
-        task.onSuccessUI(action)
-        return this
-    }
-
-    fun onFailure(action: (ClientException) -> Unit): Task<ResultT> {
-        task.onFailure(action)
-        return this
-
-    }
-
-    fun onFailureUI(action: (ClientException) -> Unit): Task<ResultT> {
-        task.onFailureUI(action)
-        return this
-    }
-
-    fun onCancel(action: (ClientException) -> Unit): Task<ResultT> {
-        task.onCancel(action)
-        return this
-    }
-
-    actual class Builder {
-        actual var scope: CoroutineScope? = null
-
-        /**
-         * provide your own scope for the task to run on
-         */
-        actual fun withScope(scope: CoroutineScope): Builder {
-            this.scope = scope
-            return this
-        }
-
-        /**
-         * @param block provide your logic
-         */
-        actual fun <ResultT> execute(block: suspend CoroutineScope.() -> ResultT): Task<ResultT> {
-            return Task(scope ?: ContextScope.get(DispatchersProvider.Default), block)
-        }
-
-    }
-
-    actual companion object {
-        /**
-         * Build that will create a task and it's logic
-         * @param block That task logic
-         */
-        actual inline fun <ResultT> execute(noinline block: suspend CoroutineScope.() -> ResultT): Task<ResultT> {
-            return Builder().withScope().execute(block)
-        }
-
-        internal actual fun builder(): Builder {
-            return Builder()
-        }
-
     }
 }
