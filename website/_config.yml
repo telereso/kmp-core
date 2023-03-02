@@ -1,0 +1,12 @@
+title: KMP
+description: A starter template for KMP
+theme: just-the-docs
+logo: "/assets/images/just-the-docs.png"
+favicon_ico: "/assets/images/favicon.ico"
+mermaid:
+  # Pick an available version from https://cdn.jsdelivr.net/npm/mermaid/
+  version: "9.1.3"
+heading_anchors: true
+#ga_tracking: UA-2709176-10
+
+
