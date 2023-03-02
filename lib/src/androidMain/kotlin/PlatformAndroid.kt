@@ -57,7 +57,8 @@ actual fun httpClient(
     shouldLogHttpRequests: Boolean,
     interceptors: List<Any?>?,
     userAgent: String?,
-    config: HttpClientConfig<*>.() -> Unit) = HttpClient(OkHttp) {
+    config: HttpClientConfig<*>.() -> Unit
+) = HttpClient(OkHttp) {
 
     // https://github.com/square/okhttp/tree/master/okhttp-logging-interceptor
     val logging = HttpLoggingInterceptor().also {
@@ -104,7 +105,7 @@ actual fun httpClient(
                 addInterceptor(it)
         }
         // Here we can add out usual network inteceptors.
-        if(shouldLogHttpRequests) {
+        if (shouldLogHttpRequests) {
             // Here we can add out usual network inteceptors.
             addInterceptor(logging)
         }

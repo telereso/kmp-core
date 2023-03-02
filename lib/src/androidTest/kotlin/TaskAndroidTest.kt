@@ -32,7 +32,6 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.telereso.kmp.core.models.ClientException
 import kotlinx.coroutines.*
-import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -40,85 +39,14 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-abstract class TaskTest {
-    var testDispatcher = UnconfinedTestDispatcher()
-
-    @BeforeTest
-    fun setUp() {
-        // Dispatchers.setMain to override Dispatchers.Main in tests;
-        Dispatchers.setMain(testDispatcher)
-        // Needed to replace Dispatchers used within Coroutines to test based dispatcher.
-        DispatchersProvider.testDispatcher = testDispatcher
-    }
-    abstract fun onSuccessOnly(): TestResult
-
-    abstract fun onSuccessUIOnly(): TestResult
-
-    abstract fun onSuccessDouble(): TestResult
-
-    abstract fun onSuccessUIDouble(): TestResult
-
-    abstract fun onSuccessOnlyWithAwait(): TestResult
-
-    abstract fun onSuccessOnlyAndHandledException(): TestResult
-
-    abstract fun onSuccessOnlyWithAwaitAndHandledException(): TestResult
-
-    abstract fun onSuccessWithFailure(): TestResult
-
-    abstract fun onSuccessWithSuccessUI(): TestResult
-
-    abstract fun onSuccessWithFailureWithSuccessUI(): TestResult
-
-
-    abstract fun onSuccessWithFailureWithFailureUIeWithSuccessUI(): TestResult
-
-    abstract fun onSuccessDoubleInSuccessUIDouble(): TestResult
-
-
-///////////////////////////////////////////////////////////////////////////////////////
-
-    // Test Failure Cases
-    abstract fun onFailureOnly(): TestResult
-
-    abstract fun onFailureUIOnly(): TestResult
-
-    abstract fun onFailureDouble(): TestResult
-
-    abstract fun onFailureUIDouble(): TestResult
-
-    abstract fun onFailureOnlyWithAwait(): TestResult
-
-    abstract fun onFailureWithSuccess(): TestResult
-
-    abstract fun onFailureWithFailureUI(): TestResult
-
-    abstract fun onFailureWithSuccessWithFailureUI(): TestResult
-
-
-    abstract fun onFailureWithSuccessWithSuccessUIWithFailureUI(): TestResult
-
-    abstract fun onFailureWithAwaitWithSuccessWithSuccessUIWithFailureUI(): TestResult
-
-    abstract fun onFailureDoubleOnFailureUIDouble(): TestResult
-
-    abstract fun onCancel(): TestResult
-
-    abstract fun someFavoriteActressesListTaskShouldInvokeOnSuccessUI(): TestResult
-
-
-    abstract fun taskShouldInvokeOnFailure(): TestResult
-}
-
-@OptIn(ExperimentalCoroutinesApi::class)
-class TaskTestImpl : TaskTest() {
+class TaskAndroidTest : TaskTest()  {
 
     // Test Success Cases
     @Test
     override fun onSuccessOnly() = runTest {
         var itemsOnSuccess: List<String>? = listOf()
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             listOf("abc", "abcd", "abcde")
         }.onSuccess {
             itemsOnSuccess = it
@@ -132,7 +60,7 @@ class TaskTestImpl : TaskTest() {
     override fun onSuccessUIOnly() = runTest {
         var itemsOnSuccess: List<String>? = listOf()
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             listOf("abc", "abcd", "abcde")
         }.onSuccessUI {
             itemsOnSuccess = it
@@ -146,7 +74,7 @@ class TaskTestImpl : TaskTest() {
     override fun onSuccessDouble() = runTest {
         val itemsOnSuccess = mutableListOf<String>()
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             listOf("abc", "abcd", "abcde")
         }.onSuccess {
             it?.let {
@@ -166,7 +94,7 @@ class TaskTestImpl : TaskTest() {
     override fun onSuccessUIDouble() = runTest {
         val itemsOnSuccess = mutableListOf<String>()
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             listOf("abc", "abcd", "abcde")
         }.onSuccessUI {
             it?.let {
@@ -187,7 +115,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess = mutableListOf<String>()
         val itemOnFailure: Throwable? = null
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             listOf("abc", "abcd", "abcde")
         }.onSuccess {
             it?.let {
@@ -210,7 +138,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess = mutableListOf<String>()
         val itemOnFailure: Throwable? = null
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             try {
                 listOf("abc", "abcd", "abcde")
                 throw ClientException(message = "Something Went Crazy")
@@ -228,13 +156,12 @@ class TaskTestImpl : TaskTest() {
         itemsOnSuccess.size.shouldBe(3)
         itemsOnSuccess.shouldContain("ClientException")
     }
-
     @Test
     override fun onSuccessOnlyWithAwaitAndHandledException() = runTest {
         val itemsOnSuccess = mutableListOf<String>()
         val itemOnFailure: Throwable? = null
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             try {
                 listOf("abc", "abcd", "abcde")
                 throw ClientException(message = "Something Went Crazy")
@@ -262,7 +189,7 @@ class TaskTestImpl : TaskTest() {
         var itemsOnSuccess: List<String>? = listOf()
         var itemOnFailure: Throwable? = null
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             listOf("abc", "abcd", "abcde")
         }.onSuccess {
             itemsOnSuccess = it
@@ -279,7 +206,7 @@ class TaskTestImpl : TaskTest() {
     override fun onSuccessWithSuccessUI() = runTest {
         val itemsOnSuccess = mutableListOf<String>()
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             listOf("abc", "abcd", "abcde")
         }.onSuccess {
             it?.let {
@@ -300,7 +227,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess = mutableListOf<String>()
         var itemOnFailure: Throwable? = null
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             listOf("abc", "abcd", "abcde")
         }.onSuccess {
             it?.let {
@@ -325,7 +252,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess = mutableListOf<String>()
         var itemOnFailure: Throwable? = null
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             listOf("abc", "abcd", "abcde")
         }.onSuccess {
             it?.let {
@@ -351,7 +278,7 @@ class TaskTestImpl : TaskTest() {
     override fun onSuccessDoubleInSuccessUIDouble() = runTest {
         val itemsOnSuccess = mutableListOf<String>()
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             listOf("abc", "abcd", "abcde")
         }.onSuccess {
             it?.let {
@@ -384,7 +311,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess: List<String> = listOf()
         var itemOnFailure: Throwable? = null
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             throw ClientException(message = "Something Went Crazy")
         }.onFailure {
             itemOnFailure = it
@@ -401,7 +328,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess: List<String> = listOf()
         var itemOnFailure: Throwable? = null
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             throw ClientException(message = "Something Went Crazy")
         }.onFailureUI {
             itemOnFailure = it
@@ -417,7 +344,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess = mutableListOf<String>()
         val itemsOnFailure = mutableListOf<Throwable>()
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             throw ClientException(message = "Something Went Crazy")
         }.onFailure {
             itemsOnFailure.add(it)
@@ -437,7 +364,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess = mutableListOf<String>()
         val itemsOnFailure = mutableListOf<Throwable>()
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             throw ClientException(message = "Something Went Crazy")
         }.onFailureUI {
             itemsOnFailure.add(it)
@@ -457,7 +384,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess: List<String> = listOf()
         val itemsOnFailure = mutableListOf<Throwable>()
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             throw ClientException(message = "Something Went Crazy")
         }.onFailure {
             itemsOnFailure.add(it)
@@ -476,7 +403,7 @@ class TaskTestImpl : TaskTest() {
         var itemsOnSuccess: List<String>? = null
         var itemOnFailure: Throwable? = null
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             throw ClientException(message = "Something Went Crazy")
         }.onSuccess {
             itemsOnSuccess = it
@@ -494,7 +421,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess = mutableListOf<String>()
         val itemsOnFailure = mutableListOf<Throwable>()
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             throw ClientException(message = "Something Went Crazy")
         }.onFailure {
             itemsOnFailure.add(it)
@@ -515,7 +442,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess = mutableListOf<String>()
         val itemsOnFailure = mutableListOf<Throwable>()
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             throw ClientException(message = "Something Went Crazy")
         }.onSuccess {
             it?.let {
@@ -541,7 +468,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess = mutableListOf<String>()
         val itemsOnFailure = mutableListOf<Throwable>()
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             throw ClientException(message = "Something Went Crazy")
         }.onSuccess {
             it?.let {
@@ -570,7 +497,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess = mutableListOf<String>()
         val itemsOnFailure = mutableListOf<Throwable>()
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             throw ClientException(message = "Something Went Crazy")
         }.onSuccess {
             it?.let {
@@ -599,7 +526,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnSuccess = mutableListOf<String>()
         val itemsOnFailure = mutableListOf<Throwable>()
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             throw ClientException(message = "Something Went Crazy")
         }.onFailure {
             itemsOnFailure.add(it)
@@ -628,7 +555,7 @@ class TaskTestImpl : TaskTest() {
         val itemsOnFailure = mutableListOf<Throwable>()
         var isCanceled: Throwable? = null
 
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             cancel(message = "cancelled")
             delay(100)
             listOf("Zendaya Maree", "Chloë Grace Moretz", "Luna Blaise")
@@ -649,7 +576,7 @@ class TaskTestImpl : TaskTest() {
     @Test
     override fun someFavoriteActressesListTaskShouldInvokeOnSuccessUI() = runTest {
         var itemsOnSuccess: List<String>? = listOf()
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             listOf("abc", "abcd", "abcde")
         }.onSuccessUI {
             itemsOnSuccess = it
@@ -665,7 +592,7 @@ class TaskTestImpl : TaskTest() {
     @Test
     override fun taskShouldInvokeOnFailure() = runTest {
         var itemsFail: ClientException? = null
-        InternalTask.execute<List<String>?> {
+        Task.execute<List<String>?> {
             throw ClientException(message = "Something Went Crazy")
         }.onFailure {
             itemsFail = it

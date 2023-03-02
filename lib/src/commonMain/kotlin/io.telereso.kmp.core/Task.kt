@@ -27,21 +27,55 @@ package io.telereso.kmp.core
 import io.telereso.kmp.core.models.ClientException
 import io.telereso.kmp.core.models.asClientException
 import kotlinx.coroutines.*
-import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
+import kotlin.jvm.JvmStatic
+
+
+expect class Task<ResultT> private constructor(
+    scope: CoroutineScope,
+    block: suspend CoroutineScope.() -> ResultT
+) {
+    val task: InternalTask<ResultT>
+
+    class Builder {
+        var scope: CoroutineScope?
+
+        /**
+         * provide your own scope for the task to run on
+         */
+        fun withScope(scope: CoroutineScope = ContextScope.get(DispatchersProvider.Default)): Builder
+
+        /**
+         * @param block provide your logic
+         */
+        fun <ResultT> execute(
+            block: suspend CoroutineScope.() -> ResultT
+        ): Task<ResultT>
+    }
+
+    companion object {
+        /**
+         * Build that will create a task and it's logic
+         * @param block That task logic
+         */
+        inline fun <ResultT> execute(
+            noinline block: suspend CoroutineScope.() -> ResultT
+        ): Task<ResultT>
+
+        @JvmStatic
+        internal fun builder(): Builder
+    }
+}
 
 /**
  * A discriminated union that encapsulates a successful outcome with a value of type [ResultT] or a failure with an arbitrary Throwable [ClientException].
  * @param scope a CoroutineScope defaulted to Default can provide your own scope as well, ensure its testable by injecting the provider.
  */
-@ExperimentalJsExport
-@JsExport
-class Task<ResultT> private constructor(
-    private val scope: CoroutineScope,
+class InternalTask<ResultT> private constructor(
+    val scope: CoroutineScope,
     private val block: suspend CoroutineScope.() -> ResultT
 ) {
 
-    class Builder {
+    internal class Builder {
         private var scope: CoroutineScope? = null
 
         /**
@@ -53,12 +87,12 @@ class Task<ResultT> private constructor(
         }
 
         /**
-         * @param context provide your context
+         * @param block provide your logic
          */
         fun <ResultT> execute(
             block: suspend CoroutineScope.() -> ResultT
-        ): Task<ResultT> {
-            return Task(
+        ): InternalTask<ResultT> {
+            return InternalTask(
                 scope ?: ContextScope.get(
                     DispatchersProvider.Default
                 ), block
@@ -72,10 +106,14 @@ class Task<ResultT> private constructor(
          * @param context Provide your own context with exception handling if needed
          * @param block That task logic
          */
-        inline fun <ResultT> execute(
+        internal inline fun <ResultT> execute(
             noinline block: suspend CoroutineScope.() -> ResultT
-        ): Task<ResultT> {
+        ): InternalTask<ResultT> {
             return Builder().withScope().execute(block)
+        }
+
+        internal fun builder(): Builder {
+            return Builder()
         }
     }
 
@@ -154,7 +192,7 @@ class Task<ResultT> private constructor(
 
     /**
      * using the Task's instance, we can cancel and running coroutines of this Task's scope.
-     * alternatively we can use the Task's cancel fun @see [Task.cancel]
+     * alternatively we can use the Task's cancel fun @see [InternalTask.cancel]
      */
     @OptIn(InternalCoroutinesApi::class)
     private var cancelTask: ((ClientException) -> Unit)? = null
@@ -172,7 +210,7 @@ class Task<ResultT> private constructor(
      * Can be used to assign the task job while doing unit testing,
      * not meant to be exposed or used in actull logic
      */
-    internal val job: Deferred<ResultT> =
+    private val job: Deferred<ResultT> =
         scope.async(block = this.block)
 
     init {
@@ -192,7 +230,7 @@ class Task<ResultT> private constructor(
      *  }
      *  use this scope to  retrieve the success response of a task
      */
-    fun onSuccess(action: (ResultT) -> Unit): Task<ResultT> {
+    fun onSuccess(action: (ResultT) -> Unit): InternalTask<ResultT> {
 
         // Ignore duplicate success & successUI calls and accept the first pair only
         if (success != null && successUI != null) return this
@@ -215,7 +253,7 @@ class Task<ResultT> private constructor(
      *  }
      *  use this scope to retrieve the failure response of a task
      */
-    fun onFailure(action: (ClientException) -> Unit): Task<ResultT> {
+    fun onFailure(action: (ClientException) -> Unit): InternalTask<ResultT> {
 
         // Ignore duplicate failure & failureUI calls and accept the first pair only
         if (failure != null && failureUI != null) return this
@@ -238,7 +276,7 @@ class Task<ResultT> private constructor(
      *  }
      *  use this scope to listen on the cancel response of a task
      */
-    fun onCancel(action: (ClientException) -> Unit): Task<ResultT> {
+    fun onCancel(action: (ClientException) -> Unit): InternalTask<ResultT> {
         cancelTask = { e ->
             action(e)
         }
@@ -257,7 +295,7 @@ class Task<ResultT> private constructor(
      * ```
      * if it did not work , or was miss used we can remove
      */
-    fun onSuccessUI(action: (ResultT) -> Unit): Task<ResultT> {
+    fun onSuccessUI(action: (ResultT) -> Unit): InternalTask<ResultT> {
 
         // ignore duplicate success & successUI calls and accept the first pair only
         if (success != null && successUI != null) return this
@@ -290,7 +328,7 @@ class Task<ResultT> private constructor(
      * example usage in client Manager. ensure to use task.failureUI instead of task.failure else the scope will never succeed
      * if it did not work , or was miss used we can remove
      */
-    fun onFailureUI(action: (ClientException) -> Unit): Task<ResultT> {
+    fun onFailureUI(action: (ClientException) -> Unit): InternalTask<ResultT> {
 
         // ignore duplicate failure & failureUI calls and accept the first pair only
         if (failure != null && failureUI != null) return this
@@ -319,25 +357,24 @@ class Task<ResultT> private constructor(
         cancelTask?.invoke(error)
     }
 
-}
+    /**
+     * Wait for the task to finish
+     * @return [ResultT] if succeeded , or crash if job failed ,if you don't care about resultT check [awaitOrNull]
+     */
+    suspend fun await(): ResultT {
+        return job.await()
+    }
 
-/**
- * Wait for the task to finish
- * @return [ResultT] if succeeded , or crash if job failed ,if you don't care about resultT check [awaitOrNull]
- */
-suspend fun <ResultT> Task<ResultT>.await(): ResultT {
-    return job.await()
-}
-
-/**
- * Wait for the task to finish
- * @return null if task failed or [ResultT] if succeeded
- */
-suspend fun <ResultT> Task<ResultT>.awaitOrNull(): ResultT? {
-    return try {
-        job.await()
-    } catch (t: Throwable) {
-        ClientException.listener.invoke(t)
-        null
+    /**
+     * Wait for the task to finish
+     * @return null if task failed or [ResultT] if succeeded
+     */
+    suspend fun awaitOrNull(): ResultT? {
+        return try {
+            job.await()
+        } catch (t: Throwable) {
+            ClientException.listener.invoke(t)
+            null
+        }
     }
 }
