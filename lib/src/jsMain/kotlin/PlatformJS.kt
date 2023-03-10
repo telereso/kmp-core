@@ -39,7 +39,7 @@ import kotlinx.browser.window
 
 class BrowserPlatform : Platform {
     override val type: Platform.TYPE = Platform.TYPE.BROWSER
-    override val userAgent: String = window.navigator.userAgent
+    override val userAgent: String = runCatching { window.navigator.userAgent }.getOrNull() ?: "kmpBrowserPlatform"
 }
 
 /**
