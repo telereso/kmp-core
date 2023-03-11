@@ -77,6 +77,16 @@ object Utils {
     }
 
     /**
+     * Check if provided epoch seconds are already expired
+     * @param exp epoch seconds to be checked if already passed or still in the future
+     */
+    fun isExpired(exp:Long): Boolean{
+        if (exp <= 0L) return true
+        val currentDate = (unitTestInstance ?: Clock.System.now()).toEpochMilliseconds() / 1000
+        return currentDate >= exp
+    }
+
+    /**
      * getExpiryTime - a function that takes a String response and returns a Long expiry time
      *
      * @param response: String - a String response

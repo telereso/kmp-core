@@ -24,6 +24,10 @@
 
 package io.telereso.kmp.core
 
+import io.telereso.kmp.core.models.ExpirableValue
+import io.telereso.kmp.core.models.fromJson
+import io.telereso.kmp.core.models.toJson
+
 /**
  * A collection of storage-backed key-value data
  *
@@ -118,6 +122,24 @@ class MapSettings constructor(private val delegate: MutableMap<String, Any> = mu
         delegate[key] as? Boolean ?: defaultValue
 
     override fun getBooleanOrNull(key: String): Boolean? = delegate[key] as? Boolean
+
+    override fun putExpirableString(key: String, value: String, exp: Long) {
+        putString(key, ExpirableValue(value, exp).toJson())
+    }
+
+    override fun getExpirableString(key: String, default: String?): String? {
+        val v = getStringOrNull(key) ?: return default
+        val ev = ExpirableValue.fromJson(v)
+        if (Utils.isExpired(ev.exp)) {
+            remove(key)
+            return default
+        }
+        return ev.value
+    }
+
+    override fun getExpirableString(key: String): String? {
+        return getExpirableString(key, null)
+    }
 
     override fun addIntListener(
         key: String,

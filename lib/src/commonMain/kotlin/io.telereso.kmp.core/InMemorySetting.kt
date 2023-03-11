@@ -24,6 +24,10 @@
 
 package io.telereso.kmp.core
 
+import io.telereso.kmp.core.models.ExpirableValue
+import io.telereso.kmp.core.models.fromJson
+import io.telereso.kmp.core.models.toJson
+
 /**
  * class provides an in memory version of the settings, mostly useful during unit tests.
  */
@@ -123,5 +127,23 @@ class InMemorySetting : Settings {
 
     override fun getBooleanOrNull(key: String): Boolean? {
         return settings.getBooleanOrNull(key)
+    }
+
+    override fun putExpirableString(key: String, value: String, exp: Long) {
+        putString(key, ExpirableValue(value, exp).toJson())
+    }
+
+    override fun getExpirableString(key: String, default: String?): String? {
+        val v = getStringOrNull(key) ?: return default
+        val ev = ExpirableValue.fromJson(v)
+        if (Utils.isExpired(ev.exp)) {
+            remove(key)
+            return default
+        }
+        return ev.value
+    }
+
+    override fun getExpirableString(key: String): String? {
+        return getExpirableString(key, null)
     }
 }
