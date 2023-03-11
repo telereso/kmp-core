@@ -28,7 +28,9 @@ import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import kotlinx.datetime.Instant
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -148,5 +150,36 @@ class SettingsTest {
     fun shouldListenGivenInt() {
         settings.putBoolean("BAKABOOL", true)
         settings.hasKey("BAKABOOL").shouldBeTrue()
+    }
+
+    @Test
+    fun expirableString() {
+        val now = 1671086104L
+        Utils.unitTestInstance = Instant.fromEpochSeconds(now)
+        // Expired
+        settings.putExpirableString("TEST","test",now - 1)
+        settings.getStringOrNull("TEST").shouldNotBeNull()
+        settings.getExpirableString("TEST").shouldBeNull()
+        // make sure it's cleaned too
+        settings.getStringOrNull("TEST").shouldBeNull()
+
+        // Expired with default
+        settings.putExpirableString("TEST","test",now - 1)
+        settings.getStringOrNull("TEST").shouldNotBeNull()
+        settings.getExpirableString("TEST","test2").shouldBe("test2")
+        // make sure it's cleaned too
+        settings.getStringOrNull("TEST").shouldBeNull()
+
+        // valid
+        settings.putExpirableString("TEST","test",now + 1000)
+        settings.getStringOrNull("TEST").shouldNotBeNull()
+        settings.getExpirableString("TEST").shouldBe("test")
+        settings.getStringOrNull("TEST").shouldNotBeNull()
+
+        // valid with default
+        settings.putExpirableString("TEST","test",now + 1000)
+        settings.getStringOrNull("TEST").shouldNotBeNull()
+        settings.getExpirableString("TEST","test2").shouldBe("test")
+        settings.getStringOrNull("TEST").shouldNotBeNull()
     }
 }

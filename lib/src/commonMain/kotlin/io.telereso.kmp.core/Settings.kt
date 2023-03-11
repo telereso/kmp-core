@@ -24,6 +24,10 @@
 
 package io.telereso.kmp.core
 
+import io.telereso.kmp.core.models.ExpirableValue
+import io.telereso.kmp.core.models.fromJson
+import io.telereso.kmp.core.models.toJson
+
 /**
  * A Wrapper for saving simple key-value data.
  * Currently it only supports saving of primitive data types.
@@ -164,6 +168,12 @@ interface Settings {
      * stored at `key`, the behavior is not defined.
      */
     fun getBooleanOrNull(key: String): Boolean?
+
+    fun putExpirableString(key: String, value: String, exp: Long)
+
+    fun getExpirableString(key: String, default: String?): String?
+
+    fun getExpirableString(key: String): String?
 }
 
 /**
@@ -181,7 +191,8 @@ interface SettingsListener {
 /**
  * https://github.com/russhwolf/multiplatform-settings
  */
-internal class SettingsImpl(val settings : com.russhwolf.settings.Settings = com.russhwolf.settings.Settings()) : Settings {
+internal class SettingsImpl(val settings: com.russhwolf.settings.Settings = com.russhwolf.settings.Settings()) :
+    Settings {
 
     override val keys: Set<String>
         get() = settings.keys
@@ -190,7 +201,7 @@ internal class SettingsImpl(val settings : com.russhwolf.settings.Settings = com
 
     override fun clear() {
         /**
-         * Note that for the NSUserDefaultsSettings implementation, some entries are unremovable and therefore may still be present after a clear() call.
+         * Note that for the NSUserDefaultsSettings implementation, some entries are un-removable and therefore may still be present after a clear() call.
          * Thus, size is not generally guaranteed to be zero after a clear().
          * here lets try on iOS or we should always set all values to null before we clear them?
          */
@@ -275,5 +286,23 @@ internal class SettingsImpl(val settings : com.russhwolf.settings.Settings = com
 
     override fun getBooleanOrNull(key: String): Boolean? {
         return settings.getBooleanOrNull(key)
+    }
+
+    override fun putExpirableString(key: String, value: String, exp: Long) {
+        putString(key, ExpirableValue(value, exp).toJson())
+    }
+
+    override fun getExpirableString(key: String, default: String?): String? {
+        val v = getStringOrNull(key) ?: return default
+        val ev = ExpirableValue.fromJson(v)
+        if (Utils.isExpired(ev.exp)) {
+            remove(key)
+            return default
+        }
+        return ev.value
+    }
+
+    override fun getExpirableString(key: String): String? {
+        return getExpirableString(key, null)
     }
 }
