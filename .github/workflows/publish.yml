@@ -61,21 +61,21 @@ jobs:
         dry_run: "${{ github.ref != 'refs/heads/main' }}"
 
     - name: Setup Pages
-#      if: github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/main'
       uses: actions/configure-pages@v3
 
     - name: 'Authenticate to Google Cloud'
-#      if: github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/main'
       uses: 'google-github-actions/auth@v1'
       with:
         credentials_json: '${{ secrets.GCP_SA_TELERESO }}'
+
       # Setup gcloud CLI
     - name: Set up Cloud SDK
-#      if: github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/main'
       uses: google-github-actions/setup-gcloud@v1
-      # Setup gcloud CLI
     - name: Restore public docs
-#      if: github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/main'
       run: |-
         bucket="gs://telereso-docs/docs"
         projectDocs="$bucket/projects/${{ github.repository_id }}/public/docs"
@@ -116,7 +116,7 @@ jobs:
         retention-days: 1
 
   website:
-    #    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     needs:
       - build
@@ -162,7 +162,7 @@ jobs:
           path: 'public'
 
   pages:
-#    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
