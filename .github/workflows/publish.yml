@@ -142,9 +142,8 @@ jobs:
       - name: Upload docs to bucket
         run: |-
           bucket="gs://telereso-docs/docs"
-          projectDocs="$bucket/projects/${{ github.repository_id }}/public/docs"
-          gsutil -m -o "GSUtil:parallel_process_count=1" rsync -r public/docs "$projectDocs"
-
+          projectDocs="$bucket/projects/${{ github.repository_id }}/public"
+          gsutil -m -o "GSUtil:parallel_process_count=1" rsync -r public "$projectDocs"
 
       - name: Build website
         uses: actions/jekyll-build-pages@v1
