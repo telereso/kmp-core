@@ -82,17 +82,17 @@ jobs:
         mkdir -p public/docs
         gsutil -m -o "GSUtil:parallel_process_count=1" rsync -d -r "$projectDocs" public/docs
 
-#    - name: Build Artifacts
-#      run: |
-#        echo ${{ secrets.SIGNING_SECRET_KEY_RING_FILE }} | base64 -d > secret_key
-#        bash scripts/publish.sh ${{ steps.tag_version.outputs.new_version }} "${{ github.ref == 'refs/heads/main' && '--sonatype' || '--local' }}"
-#      env:
-#        OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-#        OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-#        SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
-#        SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
-#        SIGNING_SECRET_KEY_RING_FILE: "/Users/runner/work/kmp-core/kmp-core/secret_key"
-#        SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
+    - name: Build Artifacts
+      run: |
+        echo ${{ secrets.SIGNING_SECRET_KEY_RING_FILE }} | base64 -d > secret_key
+        bash scripts/publish.sh ${{ steps.tag_version.outputs.new_version }} "${{ github.ref == 'refs/heads/main' && '--sonatype' || '--local' }}"
+      env:
+        OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+        OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+        SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
+        SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+        SIGNING_SECRET_KEY_RING_FILE: "/Users/runner/work/kmp-core/kmp-core/secret_key"
+        SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
 
     - name: Archive artifacts
       uses: actions/upload-artifact@v2
@@ -100,7 +100,7 @@ jobs:
         name: build-artifacts
         path: |
           build/.m2/
-          public
+          public/docs
           website
         retention-days: 2
 
@@ -130,7 +130,7 @@ jobs:
         run: |-
           bucket="gs://telereso-docs/docs"
           projectDocs="$bucket/projects/${{ github.repository_id }}/public/docs"
-          gsutil -m -o "GSUtil:parallel_process_count=1" rsync -r public/docs "$projectDocs"
+          gsutil -m -o "GSUtil:parallel_process_count=1" rsync -r public/docs/ "$projectDocs"
 
 
   pages:
