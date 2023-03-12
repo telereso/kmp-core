@@ -126,7 +126,7 @@ jobs:
           name: build-docs
 
       - name: Move docs
-        run: mv -v build-docs/* public/
+        run: ls && mv -v build-docs/* public/
 
       - name: Upload pages artifact
         #      if: github.ref == 'refs/heads/main'
