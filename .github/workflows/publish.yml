@@ -121,17 +121,19 @@ jobs:
     needs:
       - build
     steps:
+      - uses: actions/checkout@v3
+      - name: Build website
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./website
+          destination: ./public/
+
       - uses: actions/download-artifact@v2
         with:
           name: build-docs
       - uses: actions/download-artifact@v2
         with:
           name: build-website
-      - name: Build website
-        uses: actions/jekyll-build-pages@v1
-        with:
-          source: ./build-website
-          destination: ./public/
 
       - name: Upload pages artifact
         #      if: github.ref == 'refs/heads/main'
