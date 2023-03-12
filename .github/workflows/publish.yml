@@ -77,7 +77,7 @@ jobs:
     - name: Restore public docs
 #      if: github.ref == 'refs/heads/main'
       run: |-
-        bucket="gs://${{ secrets.CI_DOCS_BUCKET }}/docs"
+        bucket="gs://telereso-docs/docs"
         projectDocs="$bucket/project/${{ github.repository_id }}/public/docs"
         gsutil -m -o "GSUtil:parallel_process_count=1" rsync -d -r "$projectDocs" public/docs
 
@@ -118,7 +118,7 @@ jobs:
     - name: Upload docs to bucket
 #      if: github.ref == 'refs/heads/main'
       run: |-
-        bucket="gs://${{ secrets.CI_DOCS_BUCKET }}/docs"
+        bucket="gs://telereso-docs/docs"
         projectDocs="$bucket/project/${{ github.repository_id }}/public/docs"
         gsutil -m -o "GSUtil:parallel_process_count=1" rsync -r public/docs "$projectDocs"
 
