@@ -94,19 +94,6 @@ jobs:
         SIGNING_SECRET_KEY_RING_FILE: "/Users/runner/work/kmp-core/kmp-core/secret_key"
         SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
 
-    - name: Build website
-#      if: github.ref == 'refs/heads/main'
-      uses: actions/jekyll-build-pages@v1
-      with:
-        source: ./website
-        destination: ./public/
-
-    - name: Upload pages artifact
-#      if: github.ref == 'refs/heads/main'
-      uses: actions/upload-pages-artifact@v1
-      with:
-        path: 'public'
-
     - name: Archive artifacts
       uses: actions/upload-artifact@v2 
       with:
@@ -116,12 +103,31 @@ jobs:
           public
         retention-days: 2
 
-    - name: Upload docs to bucket
-#      if: github.ref == 'refs/heads/main'
-      run: |-
-        bucket="gs://telereso-docs/docs"
-        projectDocs="$bucket/projects/${{ github.repository_id }}/public/docs"
-        gsutil -m -o "GSUtil:parallel_process_count=1" rsync -r public/docs "$projectDocs"
+  website:
+    #    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    steps:
+      - name: Build website
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./website
+          destination: ./public/
+
+      - name: Upload pages artifact
+        #      if: github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: 'public'
+
+      - name: Upload docs to bucket
+        #      if: github.ref == 'refs/heads/main'
+        run: |-
+          bucket="gs://telereso-docs/docs"
+          projectDocs="$bucket/projects/${{ github.repository_id }}/public/docs"
+          gsutil -m -o "GSUtil:parallel_process_count=1" rsync -r public/docs "$projectDocs"
+
 
   pages:
 #    if: github.ref == 'refs/heads/main'
@@ -129,7 +135,9 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: build
+    needs:
+      - build
+      - website
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
