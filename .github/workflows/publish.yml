@@ -58,7 +58,7 @@ jobs:
       uses: mathieudutour/github-tag-action@v6.1
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        dry_run: "${{ github.ref != 'refs/heads/main' }}"
+        dry_run: "${{ github.ref != 'refs/heads/main' || startsWith(github.event.head_commit.message, '[DOCS]') || startsWith(github.event.head_commit.message, '[docs]') }}"
 
     - name: Setup Pages
       if: github.ref == 'refs/heads/main'
@@ -155,6 +155,7 @@ jobs:
         run: |-
           cp -R build-docs public
           cp -a _website/. public/
+          echo "kmp.telereso.io" > public/CNAME
 
       - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v1
