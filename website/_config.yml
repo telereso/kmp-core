@@ -1,6 +1,6 @@
 title: KMP
 description: A starter template for KMP
-theme: just-the-docs
+remote_theme: just-the-docs/just-the-docs
 logo: "/assets/images/just-the-docs.png"
 favicon_ico: "/assets/images/favicon.ico"
 mermaid:
