@@ -130,7 +130,7 @@ jobs:
         run: |-
           bucket="gs://telereso-docs/docs"
           projectDocs="$bucket/projects/${{ github.repository_id }}/public/docs"
-          gsutil -m -o "GSUtil:parallel_process_count=1" rsync -r public/docs/ "$projectDocs"
+#          gsutil -m -o "GSUtil:parallel_process_count=1" rsync -r public/docs "$projectDocs"
 
 
   pages:
