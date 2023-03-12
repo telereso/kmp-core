@@ -111,7 +111,7 @@ jobs:
     - name: Archive website
       uses: actions/upload-artifact@v2
       with:
-        name: build-website
+        name: website
         path: website
         retention-days: 1
 
