@@ -154,7 +154,7 @@ jobs:
       - name: Move website and docs into public
         run: |-
           cp -R build-docs public
-          mv -v _website/* public/
+          cp -a _website/. public/
 
       - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v1
