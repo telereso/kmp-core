@@ -142,14 +142,17 @@ jobs:
       - name: Upload docs to bucket
         run: |-
           bucket="gs://telereso-docs/docs"
-          projectDocs="$bucket/projects/${{ github.repository_id }}/public"
-          gsutil -m -o "GSUtil:parallel_process_count=1" rsync -r public "$projectDocs"
+          projectDocs="$bucket/projects/${{ github.repository_id }}/public/docs"
+          gsutil -m -o "GSUtil:parallel_process_count=1" rsync -r public/docs "$projectDocs"
 
       - name: Build website
         uses: actions/jekyll-build-pages@v1
         with:
           source: ./website
-          destination: ./public/
+          destination: ./_website/
+
+      - name: Move website to public
+        run: mv -v _website/* public/
 
       - name: Upload pages artifact
         #      if: github.ref == 'refs/heads/main'
