@@ -98,11 +98,22 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: build-artifacts
-        path: |
-          build/.m2/
-          public/docs
-          website
+        path: build/.m2/
         retention-days: 2
+
+    - name: Archive Docs
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-docs
+        path: public
+        retention-days: 1
+
+    - name: Archive website
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-website
+        path: website
+        retention-days: 1
 
   website:
     #    if: github.ref == 'refs/heads/main'
@@ -112,7 +123,10 @@ jobs:
     steps:
       - uses: actions/download-artifact@v2
         with:
-          name: build-artifacts
+          name: build-docs
+      - uses: actions/download-artifact@v2
+        with:
+          name: build-website
       - name: Build website
         uses: actions/jekyll-build-pages@v1
         with:
