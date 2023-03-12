@@ -30,78 +30,78 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    runs-on: macos-latest
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 11
-      uses: actions/setup-java@v3
-      with:
-        java-version: '11'
-        distribution: 'temurin'
-
-    - name: Cache Gradle
-      id: cache-gradle
-      uses: actions/cache@v2
-      with:
-        path: |
-         ~/.gradle/caches
-         ~/.gradle/wrapper
-        key: "gradle-cache"
-
-    - name: Bump version and push tag
-      id: tag_version
-      uses: mathieudutour/github-tag-action@v6.1
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        dry_run: "${{ github.ref != 'refs/heads/main' }}"
-
-    - name: Setup Pages
-#      if: github.ref == 'refs/heads/main'
-      uses: actions/configure-pages@v3
-
-    - name: 'Authenticate to Google Cloud'
-#      if: github.ref == 'refs/heads/main'
-      uses: 'google-github-actions/auth@v1'
-      with:
-        credentials_json: '${{ secrets.GCP_SA_TELERESO }}'
-      # Setup gcloud CLI
-    - name: Set up Cloud SDK
-#      if: github.ref == 'refs/heads/main'
-      uses: google-github-actions/setup-gcloud@v1
-      # Setup gcloud CLI
-    - name: Restore public docs
-#      if: github.ref == 'refs/heads/main'
-      run: |-
-        bucket="gs://telereso-docs/docs"
-        projectDocs="$bucket/projects/${{ github.repository_id }}/public/docs"
-        mkdir -p public/docs
-        gsutil -m -o "GSUtil:parallel_process_count=1" rsync -d -r "$projectDocs" public/docs
-
-    - name: Build Artifacts
-      run: |
-        echo ${{ secrets.SIGNING_SECRET_KEY_RING_FILE }} | base64 -d > secret_key
-        bash scripts/publish.sh ${{ steps.tag_version.outputs.new_version }} "${{ github.ref == 'refs/heads/main' && '--sonatype' || '--local' }}"
-      env:
-        OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-        OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-        SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
-        SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
-        SIGNING_SECRET_KEY_RING_FILE: "/Users/runner/work/kmp-core/kmp-core/secret_key"
-        SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
-
-    - name: Archive artifacts
-      uses: actions/upload-artifact@v2 
-      with:
-        name: build-artifacts
-        path: |
-          build/.m2/
-          public
-        retention-days: 2
+#  build:
+#    runs-on: macos-latest
+#    permissions:
+#      contents: read
+#      packages: write
+#
+#    steps:
+#    - uses: actions/checkout@v3
+#    - name: Set up JDK 11
+#      uses: actions/setup-java@v3
+#      with:
+#        java-version: '11'
+#        distribution: 'temurin'
+#
+#    - name: Cache Gradle
+#      id: cache-gradle
+#      uses: actions/cache@v2
+#      with:
+#        path: |
+#         ~/.gradle/caches
+#         ~/.gradle/wrapper
+#        key: "gradle-cache"
+#
+#    - name: Bump version and push tag
+#      id: tag_version
+#      uses: mathieudutour/github-tag-action@v6.1
+#      with:
+#        github_token: ${{ secrets.GITHUB_TOKEN }}
+#        dry_run: "${{ github.ref != 'refs/heads/main' }}"
+#
+#    - name: Setup Pages
+##      if: github.ref == 'refs/heads/main'
+#      uses: actions/configure-pages@v3
+#
+#    - name: 'Authenticate to Google Cloud'
+##      if: github.ref == 'refs/heads/main'
+#      uses: 'google-github-actions/auth@v1'
+#      with:
+#        credentials_json: '${{ secrets.GCP_SA_TELERESO }}'
+#      # Setup gcloud CLI
+#    - name: Set up Cloud SDK
+##      if: github.ref == 'refs/heads/main'
+#      uses: google-github-actions/setup-gcloud@v1
+#      # Setup gcloud CLI
+#    - name: Restore public docs
+##      if: github.ref == 'refs/heads/main'
+#      run: |-
+#        bucket="gs://telereso-docs/docs"
+#        projectDocs="$bucket/projects/${{ github.repository_id }}/public/docs"
+#        mkdir -p public/docs
+#        gsutil -m -o "GSUtil:parallel_process_count=1" rsync -d -r "$projectDocs" public/docs
+#
+#    - name: Build Artifacts
+#      run: |
+#        echo ${{ secrets.SIGNING_SECRET_KEY_RING_FILE }} | base64 -d > secret_key
+#        bash scripts/publish.sh ${{ steps.tag_version.outputs.new_version }} "${{ github.ref == 'refs/heads/main' && '--sonatype' || '--local' }}"
+#      env:
+#        OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+#        OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+#        SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
+#        SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+#        SIGNING_SECRET_KEY_RING_FILE: "/Users/runner/work/kmp-core/kmp-core/secret_key"
+#        SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
+#
+#    - name: Archive artifacts
+#      uses: actions/upload-artifact@v2
+#      with:
+#        name: build-artifacts
+#        path: |
+#          build/.m2/
+#          public
+#        retention-days: 2
 
   website:
     #    if: github.ref == 'refs/heads/main'
