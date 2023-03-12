@@ -111,7 +111,7 @@ jobs:
     - name: Archive website
       uses: actions/upload-artifact@v2
       with:
-        name: website
+        name: build-website
         path: website
         retention-days: 1
 
@@ -126,11 +126,11 @@ jobs:
           name: build-docs
       - uses: actions/download-artifact@v2
         with:
-          name: website
+          name: build-website
       - name: Build website
         uses: actions/jekyll-build-pages@v1
         with:
-          source: ./website
+          source: ./build-website
           destination: ./public/
 
       - name: Upload pages artifact
