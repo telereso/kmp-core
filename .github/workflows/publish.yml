@@ -64,6 +64,24 @@ jobs:
       if: github.ref == 'refs/heads/main'
       uses: actions/configure-pages@v3
 
+    - name: 'Authenticate to Google Cloud'
+      if: github.ref == 'refs/heads/main'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        credentials_json: '${{ secrets.GCP_SA_TELERESO }}'
+
+      # Setup gcloud CLI
+    - name: Set up Cloud SDK
+      if: github.ref == 'refs/heads/main'
+      uses: google-github-actions/setup-gcloud@v1
+    - name: Restore public docs
+      if: github.ref == 'refs/heads/main'
+      run: |-
+        bucket="gs://telereso-docs/docs"
+        projectDocs="$bucket/projects/${{ github.repository_id }}/public/docs"
+        mkdir -p public/docs
+        gsutil -m -o "GSUtil:parallel_process_count=1" rsync -d -r "$projectDocs" public/docs
+
     - name: Build Artifacts
       run: |
         echo ${{ secrets.SIGNING_SECRET_KEY_RING_FILE }} | base64 -d > secret_key
@@ -76,20 +94,72 @@ jobs:
         SIGNING_SECRET_KEY_RING_FILE: "/Users/runner/work/kmp-core/kmp-core/secret_key"
         SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
 
-    - name: Upload pages artifact
-      if: github.ref == 'refs/heads/main'
-      uses: actions/upload-pages-artifact@v1
-      with:
-        path: 'public'
-
     - name: Archive artifacts
-      uses: actions/upload-artifact@v2 
+      uses: actions/upload-artifact@v2
       with:
         name: build-artifacts
-        path: |
-          build/.m2/
-          public
+        path: build/.m2/
         retention-days: 2
+
+    - name: Archive Docs
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-docs
+        path: public
+        retention-days: 1
+
+    - name: Archive website
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-website
+        path: website
+        retention-days: 1
+
+  website:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: build-docs
+          path: build-docs
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: build-website
+          path: website
+
+      - name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          credentials_json: '${{ secrets.GCP_SA_TELERESO }}'
+        # Setup gcloud CLI
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+
+      - name: Upload docs to bucket
+        run: |-
+          bucket="gs://telereso-docs/docs"
+          projectDocs="$bucket/projects/${{ github.repository_id }}/public/docs"
+          gsutil -m -o "GSUtil:parallel_process_count=1" rsync -r build-docs/docs "$projectDocs"
+
+      - name: Build website
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./website
+          destination: ./_website/
+
+      - name: Move website and docs into public
+        run: |-
+          cp -R build-docs public
+          cp -a _website/. public/
+
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: 'public'
 
   pages:
     if: github.ref == 'refs/heads/main'
@@ -97,7 +167,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: build
+    needs: website
     steps:
       - name: Deploy to GitHub Pages
         id: deployment

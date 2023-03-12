@@ -82,11 +82,7 @@ tasks.dokkaHtml.configure {
     moduleName.set(rootProject.name.split("-").joinToString(" ") { it.capitalized() })
 
     outputDirectory.set(
-        rootDir.resolve(
-            "public/docs/${project.name}/${
-                project.findProperty("publishVersion")?.let { "/$it" } ?: ""
-            }"
-        )
+        rootDir.resolve("public/docs/${project.name}/${rootProject.version}")
     )
 
     dokkaSourceSets {
@@ -156,6 +152,24 @@ tasks.dokkaHtml.configure {
         }
     }
 }
+
+tasks.register("copyLatestVersionDocs") {
+    val docs = rootDir.resolve("public").resolve("docs").resolve("core")
+    doFirst {
+        delete {
+            delete(docs.resolve("latest"))
+        }
+    }
+
+    doLast {
+        copy {
+            from(docs.resolve(rootProject.version.toString()))
+            into(docs.resolve("latest"))
+        }
+    }
+}
+
+tasks.getByName("dokkaHtml").finalizedBy("copyLatestVersionDocs")
 
 kotlin {
     android {

@@ -73,3 +73,10 @@ then open `react-native-core-client` in intellij Idea or VSCode and check `READM
 ```
 
 For more details about contributing check [CONTRIBUTING page](https://github.com/telereso/kmp-core/blob/main/CONTRIBUTING.md)
+
+## Website
+
+Serve 
+```shell
+cd website && bundle exec jekyll serve website && cd ..
+```
