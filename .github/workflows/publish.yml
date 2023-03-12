@@ -61,8 +61,25 @@ jobs:
         dry_run: "${{ github.ref != 'refs/heads/main' }}"
 
     - name: Setup Pages
-      if: github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/add_website'
       uses: actions/configure-pages@v3
+
+    - name: 'Authenticate to Google Cloud'
+      if: github.ref == 'refs/heads/add_website'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        credentials_json: '${{ secrets.GCP_SA_TELERESO }}'
+      # Setup gcloud CLI
+    - name: Set up Cloud SDK
+      if: github.ref == 'refs/heads/add_website'
+      uses: google-github-actions/setup-gcloud@v1
+      # Setup gcloud CLI
+    - name: Restore public docs
+      if: github.ref == 'refs/heads/add_website'
+      run: |-
+        bucket="gs://${{ secrets.CI_DOCS_BUCKET }}/docs"
+        projectDocs="$bucket/project/${{ github.repository_id }}/public/docs"
+        gsutil -m -o "GSUtil:parallel_process_count=1" rsync -d -r "$projectDocs" public/docs
 
     - name: Build Artifacts
       run: |
@@ -76,8 +93,15 @@ jobs:
         SIGNING_SECRET_KEY_RING_FILE: "/Users/runner/work/kmp-core/kmp-core/secret_key"
         SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
 
+    - name: Build website
+      if: github.ref == 'refs/heads/add_website'
+      uses: actions/jekyll-build-pages@v1
+      with:
+        source: ./website
+        destination: ./public/
+
     - name: Upload pages artifact
-      if: github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/add_website'
       uses: actions/upload-pages-artifact@v1
       with:
         path: 'public'
@@ -91,8 +115,15 @@ jobs:
           public
         retention-days: 2
 
+    - name: Upload docs to bucket
+      if: github.ref == 'refs/heads/add_website'
+      run: |-
+        bucket="gs://${{ secrets.CI_DOCS_BUCKET }}/docs"
+        projectDocs="$bucket/project/${{ github.repository_id }}/public/docs"
+        gsutil -m -o "GSUtil:parallel_process_count=1" rsync -r public/docs "$projectDocs"
+
   pages:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/add_website'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

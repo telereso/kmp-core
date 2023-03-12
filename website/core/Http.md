@@ -9,6 +9,8 @@ nav_order: 2
 
 Helper Class to setup some networking operations 
 
+---
+
 ### ktorConfigJson 
 
 ```kotlin
@@ -16,6 +18,8 @@ Http.ktorConfigJson
 ```
 
 Use this configuration to convert `Serializable` classes from/into json while ignoring Unknown Keys
+
+---
 
 ### Http Response Validator
 
@@ -38,6 +42,8 @@ val client = HttpClient() {
     }
 }
 ```
+
+---
 
 ### User Agent
 

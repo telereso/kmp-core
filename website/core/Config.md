@@ -14,6 +14,8 @@ You can add this class as part of your sdk manager builder
 
 There are two type to create the config objects
 
+---
+
 ### Builder
 
 ```kotlin
@@ -26,6 +28,8 @@ Config.Builder(appName = "test", appVersion = "1.0.0")
     .withInterceptors(listOf()) // set okHttp Interceptors
     .build()
 ```
+
+---
 
 ### DSL
 

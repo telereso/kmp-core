@@ -78,5 +78,5 @@ For more details about contributing check [CONTRIBUTING page](https://github.com
 
 Serve 
 ```shell
-cd website && bundle exec jekyll serve website
+cd website && bundle exec jekyll serve website && cd ..
 ```
