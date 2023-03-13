@@ -7,7 +7,11 @@ nav_order: 2
 
 ## Http
 
-Helper Class to setup some networking operations 
+The Http helper class provides functionality to streamline networking operations. 
+
+It includes methods for setting up connections, handling errors, and performing HTTP requests. 
+
+With this class, you can simplify the process of making API calls and improve the reliability of your networking code
 
 ---
 
@@ -17,7 +21,7 @@ Helper Class to setup some networking operations
 Http.ktorConfigJson
 ```
 
-Use this configuration to convert `Serializable` classes from/into json while ignoring Unknown Keys
+Use this configuration to convert `Serializable` classes from/into json while ignoring Unknown Keys.
 
 ---
 
@@ -27,9 +31,9 @@ Use this configuration to convert `Serializable` classes from/into json while ig
 Http.getHttpResponseValidator()
 ```
 
-Helper function to convert http errors into `ClientException`
+A helper function to convert http errors into a `ClientException` object.
 
-you can added this when creating your ktor http client 
+you can add this when creating your ktor http client 
 
 ```kotlin
 val client = HttpClient() {
@@ -47,7 +51,7 @@ val client = HttpClient() {
 
 ### User Agent
 
-To make sure all your network requests have a user agent (even mobile)
+The `UserAgent` helper ensures that all your network requests have a user agent, including those made from mobile devices.
 
 ```kotlin
 val platform = AndroidPlatform()

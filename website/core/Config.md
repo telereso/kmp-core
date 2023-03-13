@@ -7,16 +7,15 @@ nav_order: 4
 
 ## Config
 
-When using a builder for your sdk manger there are some reusable fields and attributes
-that are common between all sdks , this helper will encapsulate them
+When using a builder for your SDK manager, there are some reusable fields and attributes that are common between all SDKs. The `Config` helper class encapsulates these common attributes and can be added as part of your SDK manager builder
 
-You can add this class as part of your sdk manager builder
-
-There are two type to create the config objects
+There are two ways to create `Config` objects:
 
 ---
 
-### Builder
+#### Builder
+
+Using the standard constructor-based approach, which is supported on all platforms.
 
 ```kotlin
 Config.Builder(appName = "test", appVersion = "1.0.0")
@@ -31,7 +30,9 @@ Config.Builder(appName = "test", appVersion = "1.0.0")
 
 ---
 
-### DSL
+#### DSL
+
+Using the DSL (domain-specific language) builder, which is available for Android.
 
 ```kotlin
 Config.builder(appName = "test", appVersion = "1.0.0") {
