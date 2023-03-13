@@ -26,6 +26,7 @@ package io.telereso.kmp.core
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlin.coroutines.CoroutineContext
 
 class ContextScope(
@@ -42,6 +43,14 @@ class ContextScope(
             ContextScope(
                 if (context[Job] != null) context
                 else context + Job()
+            )
+
+        fun getSupervisor(
+            context: CoroutineContext
+        ): ContextScope =
+            ContextScope(
+                if (context[Job] != null) context
+                else context + SupervisorJob()
             )
     }
 }
