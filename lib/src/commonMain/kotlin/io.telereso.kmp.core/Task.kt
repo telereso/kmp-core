@@ -309,7 +309,7 @@ class Task<ResultT> private constructor(
         /**
          * provide your own scope for the task to run on
          */
-        fun withScope(scope: CoroutineScope = ContextScope.get(DispatchersProvider.Default)): Builder {
+        fun withScope(scope: CoroutineScope = ContextScope.getSupervisor(DispatchersProvider.Default)): Builder {
             this.scope = scope
             return this
         }
@@ -321,7 +321,7 @@ class Task<ResultT> private constructor(
             block: suspend CoroutineScope.() -> ResultT
         ): Task<ResultT> {
             return Task(
-                scope ?: ContextScope.get(
+                scope ?: ContextScope.getSupervisor(
                     DispatchersProvider.Default
                 ), block
             )

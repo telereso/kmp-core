@@ -3,15 +3,18 @@ import './App.css';
 import React, { useState ,useEffect} from 'react';
 const CoreClient =  require("core-client").io.telereso.kmp.core
 
-const manger = new CoreClientManager.Builder().build()
-window.manger = manger
-
+CoreClient.initLogger()
 
 function App() {
     const [text, setText] = useState("Loading....");
 
-    useEffect(() => {
-        manger.fetchLaunchRockets(true)
+    useEffect(async () => {
+//           CoreClient.async(CoreClient.TasksExamples.hi()).then((data)=>{
+//             console.log("onSuccess",data)
+//            }).catch((e)=>{
+//             console.log("catch",e)
+//           })
+        CoreClient.TasksExamples.exception()
             .onSuccess((e) => {
                 console.log("onSuccess",e)
             })

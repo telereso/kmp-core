@@ -24,12 +24,32 @@
 
 package io.telereso.kmp.core
 
+import io.telereso.kmp.core.models.ClientException
+import kotlinx.coroutines.delay
+import kotlin.js.JsExport
 import kotlin.jvm.JvmStatic
 
+@JsExport
 object TasksExamples {
     @JvmStatic
     fun hi(): Task<String> {
         return Task.execute {
+            "hi from task!!"
+        }
+    }
+
+    @JvmStatic
+    fun exception(): Task<String> {
+        return Task.execute {
+            throw ClientException("test")
+            "hi from task!!"
+        }
+    }
+
+    @JvmStatic
+    fun hiDelayed(): Task<String> {
+        return Task.execute {
+            delay(5000)
             "hi from task!!"
         }
     }
