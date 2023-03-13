@@ -10,14 +10,14 @@ nav_order: 3
 To store key/value settings and configurations,
 
 This settings helper is a wrapper
-of [multiplatform-settings](https://github.com/russhwolf/multiplatform-settings)
+of [multiplatform-settings](https://github.com/russhwolf/multiplatform-settings) by Russhwolf.
 
 The reason a wrapper is used just in case we needed to change the settings library we can do that
-with no changes on consuming sdks
+with no changes on consuming sdks.
 
 ### Usage 
 
-There are two type of settings 
+There are two type of settings: 
 
 #### Long Term 
 

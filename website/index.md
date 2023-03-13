@@ -7,14 +7,13 @@ nav_order: 1
 
 # About
 
-KMP stands fo kotlin multiplatfom ,
+KMP stands for Kotlin Multiplatform.
 
-This project provide a structure that will allow you to create sdks in scalable way to use in all
-your platforms (backend , frontend)
+KMP is a feature of Kotlin that allows developers to write code that can be shared across multiple platforms, such as Android, iOS, and the web. With Kotlin Multiplatform, developers can use a single codebase to create apps for different platforms, which can save time and effort.
 
-This will be useful for you in case you already have your own stand alone projects for each platform
-and you want to share common code between them without starting from scratch
-Or you wanna build universal sdks for the supported platforms
+This project provides a structure that will allow you to create SDKs in a scalable way to use on all your platforms (backend, frontend). 
+
+This will be useful for you if you already have your standalone projects for each platform and you want to share common code between them without starting from scratch, or if you want to build universal SDKs for the supported platforms.
 
 ---
 
@@ -23,7 +22,7 @@ Or you wanna build universal sdks for the supported platforms
 * Android
 * iOS
 * ReactNative
-* Flutter (soon)
+* Flutter (coming soon)
 * Jvm
 * NodeJs
 
@@ -31,9 +30,10 @@ Or you wanna build universal sdks for the supported platforms
 
 ## Contributing
 
-Please help use grow this project 😃 ,
+Please help us grow this project 😃 ,
 
-If you have an idea or wanna fix a a bug , feel free to open an issue
+If you have an idea or wanna fix a bug , feel free to open an issue.
+
 
 ### Thank you for the contributors!
 
@@ -46,4 +46,4 @@ If you have an idea or wanna fix a a bug , feel free to open an issue
 </ul>
 
 For more details about contributing
-check [CONTRIBUTING page](https://github.com/telereso/kmp-core/blob/main/CONTRIBUTING.md)
+check the [CONTRIBUTING](https://github.com/telereso/kmp-core/blob/main/CONTRIBUTING.md) page.
