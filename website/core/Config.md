@@ -13,7 +13,7 @@ There are two ways to create `Config` objects:
 
 ---
 
-#### Builder
+### Builder
 
 Using the standard constructor-based approach, which is supported on all platforms.
 
@@ -30,7 +30,7 @@ Config.Builder(appName = "test", appVersion = "1.0.0")
 
 ---
 
-#### DSL
+### DSL
 
 Using the DSL (domain-specific language) builder, which is available for Android.
 

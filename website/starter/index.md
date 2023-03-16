@@ -50,7 +50,7 @@ which can be used as a wrapper for one or multiple backend services, or as commo
 
 The module is packaged as follows:
 
-#### Cache
+### Cache
 
 Includes your `Dao` and your `Settings` logic
 
@@ -60,20 +60,20 @@ The Dao uses `SqlDelight` by Cashapp.
 
 The Settings uses `multiplatform-settings` by Russhwolf.
 
-#### Remote
+### Remote
 
 Includes your api services and handles the http networking.
 
 The services will be using `ktor` by JetBrains team.
 
-#### Repositories
+### Repositories
 
 The Repositories module contains the main logic for your client.
 
 You can add your other repositories here, and ensure that both `dao` and `apiService`
 are injected so that you can fetch and save data, and provide reactive flows."
 
-#### ClientManager
+### ClientManager
 
 The `ClientManager` module serves as the entry point to the SDK and is used by consumers.
 
