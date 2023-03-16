@@ -116,12 +116,12 @@ jobs:
         retention-days: 1
 
   website:
-    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     needs:
       - build
     steps:
       - uses: actions/download-artifact@v2
+        if: github.ref == 'refs/heads/main'
         with:
           name: build-docs
           path: build-docs
@@ -132,14 +132,17 @@ jobs:
           path: website
 
       - name: 'Authenticate to Google Cloud'
+        if: github.ref == 'refs/heads/main'
         uses: 'google-github-actions/auth@v1'
         with:
           credentials_json: '${{ secrets.GCP_SA_TELERESO }}'
         # Setup gcloud CLI
       - name: Set up Cloud SDK
+        if: github.ref == 'refs/heads/main'
         uses: google-github-actions/setup-gcloud@v1
 
       - name: Upload docs to bucket
+        if: github.ref == 'refs/heads/main'
         run: |-
           bucket="gs://telereso-docs/docs"
           projectDocs="$bucket/projects/${{ github.repository_id }}/public/docs"
@@ -151,13 +154,23 @@ jobs:
           source: ./website
           destination: ./_website/
 
+      - name: Archive built website
+        if: startsWith(github.event.pull_request.title, '[DOCS]') || startsWith(github.event.pull_request.title, '[docs]')
+        uses: actions/upload-artifact@v2
+        with:
+          name: built website
+          path: _website
+          retention-days: 1
+
       - name: Move website and docs into public
+        if: github.ref == 'refs/heads/main'
         run: |-
           cp -R build-docs public
           cp -a _website/. public/
           echo "kmp.telereso.io" > public/CNAME
 
       - name: Upload pages artifact
+        if: github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v1
         with:
           path: 'public'
