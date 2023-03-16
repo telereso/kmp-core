@@ -96,6 +96,7 @@ jobs:
         SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
 
     - name: Archive artifacts
+      if: startsWith(github.event.pull_request.title, '[DOCS]') != true
       uses: actions/upload-artifact@v2
       with:
         name: build-artifacts
@@ -103,6 +104,7 @@ jobs:
         retention-days: 2
 
     - name: Archive Docs
+      if: startsWith(github.event.pull_request.title, '[DOCS]') != true
       uses: actions/upload-artifact@v2
       with:
         name: build-docs
