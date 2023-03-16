@@ -9,7 +9,7 @@ nav_order: 1
 
 This class should be used by the sdk manger to expose a functionally and handle multithreading as well,
 
-Usually we expose the repository methods
+Usually we expose the repository methods.
 
 Create a Task
 

@@ -7,9 +7,9 @@ has_children: true
 
 # Core
 
-While building multiple kmp sdks there some reusable logic that can encapsulated and reused in each
+While building multiple KMP SDKs, there some reusable logic that can be encapsulated and reused in each
 new project
-This project will provide that
+This project aims to provide that.
 
 ---
 

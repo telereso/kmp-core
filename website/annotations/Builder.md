@@ -7,9 +7,7 @@ nav_order: 2
 
 # Builder
 
-It might be redundant to have a builder along side kotlin constructors, but when using models in
-java
-and especially backend it might be needed , there for this annotation was added
+While having a builder alongside Kotlin constructors might seem redundant, it can be useful when using models in Java and especially in backend development. Therefore, the `Builder` annotation was added.
 
 ---
 
