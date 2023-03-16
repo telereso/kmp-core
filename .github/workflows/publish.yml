@@ -83,7 +83,7 @@ jobs:
         gsutil -m -o "GSUtil:parallel_process_count=1" rsync -d -r "$projectDocs" public/docs
 
     - name: Build Artifacts
-      if: !startsWith(github.event.pull_request.title, '[DOCS]') && !startsWith(github.event.pull_request.title, '[docs]')
+      if: startsWith(github.event.pull_request.title, '[DOCS]') || startsWith(github.event.pull_request.title, '[docs]')
       run: |
         echo ${{ secrets.SIGNING_SECRET_KEY_RING_FILE }} | base64 -d > secret_key
         bash scripts/publish.sh ${{ steps.tag_version.outputs.new_version }} "${{ github.ref == 'refs/heads/main' && '--sonatype' || '--local' }}"
@@ -96,7 +96,6 @@ jobs:
         SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
 
     - name: Archive artifacts
-      if: !startsWith(github.event.pull_request.title, '[DOCS]') && !startsWith(github.event.pull_request.title, '[docs]')
       uses: actions/upload-artifact@v2
       with:
         name: build-artifacts
@@ -104,7 +103,6 @@ jobs:
         retention-days: 2
 
     - name: Archive Docs
-      if: !startsWith(github.event.pull_request.title, '[DOCS]') && !startsWith(github.event.pull_request.title, '[docs]')
       uses: actions/upload-artifact@v2
       with:
         name: build-docs
