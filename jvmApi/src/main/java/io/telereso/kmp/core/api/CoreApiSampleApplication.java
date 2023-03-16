@@ -27,11 +27,14 @@ package io.telereso.kmp.core.api;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import io.telereso.kmp.core.CoreClient;
+
 
 @SpringBootApplication
 public class CoreApiSampleApplication {
 
 	public static void main(String[] args) {
+		CoreClient.debugLogger();
 		SpringApplication.run(CoreApiSampleApplication.class, args);
 	}
 

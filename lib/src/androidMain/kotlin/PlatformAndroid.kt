@@ -104,9 +104,9 @@ actual fun httpClient(
             if (it is Interceptor)
                 addInterceptor(it)
         }
-        // Here we can add out usual network inteceptors.
+        // Here we can add out usual network interceptors.
         if (shouldLogHttpRequests) {
-            // Here we can add out usual network inteceptors.
+            // Here we can add out usual network interceptors.
             addInterceptor(logging)
         }
         //addInterceptor(ChuckerInterceptor(context))
@@ -120,6 +120,19 @@ actual fun httpClient(
 /**
  * Called from the client to initialize Napier logger
  */
+@Deprecated(
+    "Due to ios naming conflict moving this to an object",
+    ReplaceWith("CoreClient.debugLogger()")
+)
 fun initLogger() {
     Napier.base(DebugAntilog())
+}
+
+object CoreClient {
+    /**
+     * Called from the client to initialize Napier logger
+     */
+    fun debugLogger() {
+        Napier.base(DebugAntilog())
+    }
 }

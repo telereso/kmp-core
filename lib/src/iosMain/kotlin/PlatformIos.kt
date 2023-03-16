@@ -96,6 +96,19 @@ actual fun httpClient(
 /**
  * Called from the client to initialize Napier logger
  */
+@Deprecated(
+    "Due to ios naming conflict moving this to an object",
+    ReplaceWith("CoreClient.debugLogger()")
+)
 fun initLogger() {
     Napier.base(DebugAntilog())
+}
+
+object CoreClient {
+    /**
+     * Called from the client to initialize Napier logger
+     */
+    fun debugLogger() {
+        Napier.base(DebugAntilog())
+    }
 }

@@ -24,6 +24,8 @@
 
 package io.telereso.kmp.core
 
+import io.github.aakira.napier.DebugAntilog
+import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.okhttp.OkHttp
@@ -98,5 +100,15 @@ actual fun httpClient(
             retryOnConnectionFailure(true)
             connectTimeout(0, TimeUnit.SECONDS)
         }
+    }
+}
+
+object CoreClient {
+    /**
+     * Called from the client to initialize Napier logger
+     */
+    @JvmStatic
+    fun debugLogger() {
+        Napier.base(DebugAntilog())
     }
 }

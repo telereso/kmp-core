@@ -80,3 +80,20 @@ Serve
 ```shell
 cd website && bundle exec jekyll serve website && cd ..
 ```
+
+# Publish
+The pipeline will take care of publishing the library when merging to `main`
+
+## Locally
+to publish to local maven run this command 
+```shell
+bash scripts/publish.sh 0.0.13
+```
+
+The output version will be `0.0.13-local` and you can use it like this 
+
+```kotlin
+dependencies {
+    api("io.telereso.kmp:core:0.0.13-local")
+}
+```

@@ -65,6 +65,6 @@ actual fun httpClient(
  * Called from the client to initialize Napier logger
  */
 @JsExport
-fun initLogger() {
+fun debugLogger() {
     Napier.base(DebugAntilog("CoreClient"))
 }
