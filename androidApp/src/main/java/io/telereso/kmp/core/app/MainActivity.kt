@@ -8,9 +8,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import io.telereso.kmp.core.*
 import io.telereso.kmp.core.Log.logDebug
+import io.telereso.kmp.core.Utils.launchPeriodicAsync
 import io.telereso.kmp.core.app.databinding.ActivityMainBinding
 import io.telereso.kmp.core.models.JwtPayload
 import kotlinx.coroutines.*
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -36,9 +39,14 @@ class MainActivity : AppCompatActivity() {
 //            throw Throwable("test 2")
 //        }
 
-        val settings = Settings.get()
-        settings.putExpirableString("test", "eeee", 1)
-        settings.getExpirableString("test")
+//        val settings = Settings.get(4.toDuration(DurationUnit.SECONDS))
+//        settings.putExpirableString(
+//            "test", "eeee", (System.currentTimeMillis() / 1000) + 10
+//        )
+//
+//        lifecycleScope.launchPeriodicAsync(3.toDuration(DurationUnit.SECONDS)){
+//            logDebug(settings.getExpirableString("test") ?: "NA")
+//        }
 
         testCancel()
     }

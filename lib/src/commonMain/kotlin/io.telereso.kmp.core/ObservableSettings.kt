@@ -39,7 +39,7 @@ interface ObservableSettings : Settings {
         key: String,
         defaultValue: Int,
         callback: (Int) -> Unit
-    ): SettingsListener
+    ): Settings.Listener
 
     /**
      * Adds a listener which will call the supplied [callback] anytime the value at [key] changes. A [ISettings]
@@ -51,7 +51,7 @@ interface ObservableSettings : Settings {
         key: String,
         defaultValue: Long,
         callback: (Long) -> Unit
-    ): SettingsListener
+    ): Settings.Listener
 
     /**
      * Adds a listener which will call the supplied [callback] anytime the value at [key] changes. A [ISettings]
@@ -63,7 +63,7 @@ interface ObservableSettings : Settings {
         key: String,
         defaultValue: String,
         callback: (String) -> Unit
-    ): SettingsListener
+    ): Settings.Listener
 
     /**
      * Adds a listener which will call the supplied [callback] anytime the value at [key] changes. A [ISettings]
@@ -75,7 +75,7 @@ interface ObservableSettings : Settings {
         key: String,
         defaultValue: Float,
         callback: (Float) -> Unit
-    ): SettingsListener
+    ): Settings.Listener
 
     /**
      * Adds a listener which will call the supplied [callback] anytime the value at [key] changes. A [ISettings]
@@ -87,7 +87,7 @@ interface ObservableSettings : Settings {
         key: String,
         defaultValue: Double,
         callback: (Double) -> Unit
-    ): SettingsListener
+    ): Settings.Listener
 
     /**
      * Adds a listener which will call the supplied [callback] anytime the value at [key] changes. A [ISettings]
@@ -99,7 +99,7 @@ interface ObservableSettings : Settings {
         key: String,
         defaultValue: Boolean,
         callback: (Boolean) -> Unit
-    ): SettingsListener
+    ): Settings.Listener
 
     /**
      * Adds a listener which will call the supplied [callback] anytime the value at [key] changes. A [ISettings]
@@ -110,7 +110,7 @@ interface ObservableSettings : Settings {
     fun addIntOrNullListener(
         key: String,
         callback: (Int?) -> Unit
-    ): SettingsListener
+    ): Settings.Listener
 
     /**
      * Adds a listener which will call the supplied [callback] anytime the value at [key] changes. A [ISettings]
@@ -121,7 +121,7 @@ interface ObservableSettings : Settings {
     fun addLongOrNullListener(
         key: String,
         callback: (Long?) -> Unit
-    ): SettingsListener
+    ): Settings.Listener
 
     /**
      * Adds a listener which will call the supplied [callback] anytime the value at [key] changes. A [ISettings]
@@ -132,7 +132,7 @@ interface ObservableSettings : Settings {
     fun addStringOrNullListener(
         key: String,
         callback: (String?) -> Unit
-    ): SettingsListener
+    ): Settings.Listener
 
     /**
      * Adds a listener which will call the supplied [callback] anytime the value at [key] changes. A [ISettings]
@@ -143,7 +143,7 @@ interface ObservableSettings : Settings {
     fun addFloatOrNullListener(
         key: String,
         callback: (Float?) -> Unit
-    ): SettingsListener
+    ): Settings.Listener
 
     /**
      * Adds a listener which will call the supplied [callback] anytime the value at [key] changes. A [ISettings]
@@ -154,7 +154,7 @@ interface ObservableSettings : Settings {
     fun addDoubleOrNullListener(
         key: String,
         callback: (Double?) -> Unit
-    ): SettingsListener
+    ): Settings.Listener
 
     /**
      * Adds a listener which will call the supplied [callback] anytime the value at [key] changes. A [ISettings]
@@ -165,5 +165,5 @@ interface ObservableSettings : Settings {
     fun addBooleanOrNullListener(
         key: String,
         callback: (Boolean?) -> Unit
-    ): SettingsListener
+    ): Settings.Listener
 }
