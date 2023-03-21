@@ -24,16 +24,34 @@
 
 package io.telereso.kmp.core
 
+import io.telereso.kmp.core.Log.logDebug
+import io.telereso.kmp.core.Utils.launchPeriodicAsync
 import io.telereso.kmp.core.models.ExpirableValue
 import io.telereso.kmp.core.models.fromJson
 import io.telereso.kmp.core.models.toJson
+import kotlinx.coroutines.Deferred
+import kotlin.time.Duration
 
 /**
  * class provides an in memory version of the settings, mostly useful during unit tests.
  */
-class InMemorySetting : Settings {
+class InMemorySetting(
+    clearExpiredKeysDuration: Duration? = null
+) : Settings {
 
     private val settings = MapSettings()
+
+    override var listener: Settings.Listener? = null
+    private var removeExpiredJob: Deferred<Unit>? = null
+
+    init {
+        clearExpiredKeysDuration?.let {
+            removeExpiredJob = ContextScope.get(DispatchersProvider.Default)
+                .launchPeriodicAsync(it) {
+                    removeExpiredKeys()
+                }
+        }
+    }
 
     override val keys: Set<String>
         get() = settings.keys
@@ -47,6 +65,19 @@ class InMemorySetting : Settings {
          * here lets try on iOS or we should always set all values to null before we clear them?
          */
         settings.clear()
+    }
+
+    override fun removeExpiredKeys() {
+        logDebug("RemoveExpiredKeys - size: ${settings.size}")
+        settings.keys.forEach {
+            getExpirableString(it)
+        }
+        listener?.onRemoveExpiredKeys()
+    }
+
+    override fun cancelRemovingExpiredKeys() {
+        removeExpiredJob?.cancel()
+        removeExpiredJob = null
     }
 
     override fun remove(key: String) {
@@ -137,6 +168,7 @@ class InMemorySetting : Settings {
         val v = getStringOrNull(key) ?: return default
         val ev = ExpirableValue.fromJson(v)
         if (Utils.isExpired(ev.exp)) {
+            logDebug("Removing expired - $key")
             remove(key)
             return default
         }

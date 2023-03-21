@@ -24,9 +24,13 @@
 
 package io.telereso.kmp.core
 
+import io.telereso.kmp.core.Log.logDebug
+import io.telereso.kmp.core.Utils.launchPeriodicAsync
 import io.telereso.kmp.core.models.ExpirableValue
 import io.telereso.kmp.core.models.fromJson
 import io.telereso.kmp.core.models.toJson
+import kotlinx.coroutines.Deferred
+import kotlin.time.Duration
 
 /**
  * A Wrapper for saving simple key-value data.
@@ -38,9 +42,14 @@ import io.telereso.kmp.core.models.toJson
 interface Settings {
 
     companion object {
-        fun get(): Settings = SettingsImpl()
-        fun getInMemory(): Settings = InMemorySetting()
+        fun get(clearExpiredKeysDuration: Duration? = null): Settings =
+            SettingsImpl(clearExpiredKeysDuration = clearExpiredKeysDuration)
+
+        fun getInMemory(clearExpiredKeysDuration: Duration? = null): Settings =
+            InMemorySetting(clearExpiredKeysDuration = clearExpiredKeysDuration)
     }
+
+    var listener : Settings.Listener?
 
     /**
      * Returns a `Set` containing all the keys present in this [Settings].
@@ -56,6 +65,16 @@ interface Settings {
      * Clears all values stored in this [Settings] instance.
      */
     fun clear()
+
+    /**
+     * Will loop all keys and remove the expired ones
+     */
+    fun removeExpiredKeys()
+
+    /**
+     * In case you need to stop removing expired keys
+     */
+    fun cancelRemovingExpiredKeys()
 
     /**
      * Removes the value stored at [key].
@@ -174,25 +193,42 @@ interface Settings {
     fun getExpirableString(key: String, default: String?): String?
 
     fun getExpirableString(key: String): String?
+
+    interface Listener {
+        /**
+         * Unsubscribes this [Listener] from receiving updates to the value at the key it monitors. After calling
+         * this method you should no longer hold a reference to the listener.
+         */
+        fun deactivate()
+        fun onRemoveExpiredKeys()
+    }
 }
 
 /**
  * A handle to a listener instance returned by one of the addListener methods of [ObservableSettings], so it can be
  * deactivated as needed.
  */
-interface SettingsListener {
-    /**
-     * Unsubscribes this [SettingsListener] from receiving updates to the value at the key it monitors. After calling
-     * this method you should no longer hold a reference to the listener.
-     */
-    fun deactivate()
-}
+
 
 /**
  * https://github.com/russhwolf/multiplatform-settings
  */
-internal class SettingsImpl(val settings: com.russhwolf.settings.Settings = com.russhwolf.settings.Settings()) :
+internal class SettingsImpl(
+    private val settings: com.russhwolf.settings.Settings = com.russhwolf.settings.Settings(),
+    clearExpiredKeysDuration: Duration? = null
+) :
     Settings {
+
+    override var listener: Settings.Listener? = null
+    private var removeExpiredJob : Deferred<Unit>? = null
+    init {
+        clearExpiredKeysDuration?.let {
+            removeExpiredJob = ContextScope.get(DispatchersProvider.Default)
+                .launchPeriodicAsync(it) {
+                    removeExpiredKeys()
+                }
+        }
+    }
 
     override val keys: Set<String>
         get() = settings.keys
@@ -206,6 +242,19 @@ internal class SettingsImpl(val settings: com.russhwolf.settings.Settings = com.
          * here lets try on iOS or we should always set all values to null before we clear them?
          */
         settings.clear()
+    }
+
+    override fun removeExpiredKeys() {
+        logDebug("RemoveExpiredKeys - size: ${settings.size}")
+        settings.keys.forEach {
+            getExpirableString(it)
+        }
+        listener?.onRemoveExpiredKeys()
+    }
+
+    override fun cancelRemovingExpiredKeys() {
+        removeExpiredJob?.cancel()
+        removeExpiredJob = null
     }
 
     override fun remove(key: String) {
@@ -296,6 +345,7 @@ internal class SettingsImpl(val settings: com.russhwolf.settings.Settings = com.
         val v = getStringOrNull(key) ?: return default
         val ev = ExpirableValue.fromJson(v)
         if (Utils.isExpired(ev.exp)) {
+            logDebug("Removing expired - $key")
             remove(key)
             return default
         }

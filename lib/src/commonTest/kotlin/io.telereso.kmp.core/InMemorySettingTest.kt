@@ -31,11 +31,23 @@ import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.datetime.Instant
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class InMemorySettingTest {
+    var testDispatcher = UnconfinedTestDispatcher()
 
     private lateinit var settings: InMemorySetting
 
@@ -176,5 +188,69 @@ class InMemorySettingTest {
         settings.getStringOrNull("TEST").shouldNotBeNull()
         settings.getExpirableString("TEST","test2").shouldBe("test")
         settings.getStringOrNull("TEST").shouldNotBeNull()
+    }
+
+    @Test
+    fun testClearExpiredKeys() = runTest(testDispatcher) {
+        val now = 1671086104L
+        Utils.unitTestInstance = Instant.fromEpochSeconds(now)
+
+        settings = Settings.getInMemory(1.toDuration(DurationUnit.SECONDS)) as InMemorySetting
+
+        val onRemoveExpiredKeysFlow = MutableSharedFlow<Int?>(replay = 0)
+        val afterRemoveExpired = async {
+            onRemoveExpiredKeysFlow.first()
+        }
+
+        settings.listener = object :Settings.Listener{
+            override fun deactivate() {
+
+            }
+
+            override fun onRemoveExpiredKeys() {
+                launch {
+                    onRemoveExpiredKeysFlow.emit(settings.size)
+                }
+            }
+        }
+
+        settings.putExpirableString("TEST", "test", now - 1)
+        settings.size.shouldBe(1)
+
+        afterRemoveExpired.await().shouldBe(0)
+
+        settings.cancelRemovingExpiredKeys()
+    }
+
+    @Test
+    fun testNotClearExpiredKeys() = runTest(testDispatcher) {
+        val now = 1671086104L
+        Utils.unitTestInstance = Instant.fromEpochSeconds(now)
+
+        val onRemoveExpiredKeysFlow = MutableSharedFlow<Int?>(replay = 0)
+        val afterRemoveExpired = async {
+            withTimeoutOrNull(2000){
+                onRemoveExpiredKeysFlow.first()
+            }
+        }
+
+        settings.listener = object :Settings.Listener{
+            override fun deactivate() {
+
+            }
+
+            override fun onRemoveExpiredKeys() {
+                launch {
+                    onRemoveExpiredKeysFlow.emit(settings.size)
+                }
+            }
+        }
+
+        settings.putExpirableString("TEST", "test", now - 1)
+        settings.size.shouldBe(1)
+
+        afterRemoveExpired.await().shouldBe(null)
+
+        settings.cancelRemovingExpiredKeys()
     }
 }

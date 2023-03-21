@@ -28,10 +28,15 @@ import io.ktor.util.*
 import io.telereso.kmp.core.models.ClientException
 import io.telereso.kmp.core.models.JwtPayload
 import io.telereso.kmp.core.models.asClientException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import kotlin.time.Duration
 
 /**
  * @suppress
@@ -133,6 +138,20 @@ object Utils {
             ClientException.listener(e.asClientException())
             //re-throw the exception
             throw e
+        }
+    }
+
+    fun CoroutineScope.launchPeriodicAsync(
+        interval: Duration,
+        action: () -> Unit
+    ) = this.async {
+        if (interval.inWholeMilliseconds > 0) {
+            while (isActive) {
+                action()
+                delay(interval)
+            }
+        } else {
+            action()
         }
     }
 }

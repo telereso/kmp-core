@@ -287,6 +287,7 @@ kotlin {
                 implementation("io.ktor:ktor-client-mock:$ktorVersion")
 
                 implementation("com.russhwolf:multiplatform-settings-test:1.0.0-RC")
+                implementation("app.cash.turbine:turbine:0.12.1")
             }
         }
         val jvmMain by getting {

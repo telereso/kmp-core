@@ -24,9 +24,13 @@
 
 package io.telereso.kmp.core
 
+import io.telereso.kmp.core.Log.logDebug
+import io.telereso.kmp.core.Utils.launchPeriodicAsync
 import io.telereso.kmp.core.models.ExpirableValue
 import io.telereso.kmp.core.models.fromJson
 import io.telereso.kmp.core.models.toJson
+import kotlinx.coroutines.Deferred
+import kotlin.time.Duration
 
 /**
  * A collection of storage-backed key-value data
@@ -42,12 +46,27 @@ import io.telereso.kmp.core.models.toJson
  * This implementation is verified against the same test suite as the real platform-specific implementations to ensure
  * it shares the same behavior, assuming the default [mutableMapOf] delegate is used.
  */
-class MapSettings constructor(private val delegate: MutableMap<String, Any> = mutableMapOf()) :
+class MapSettings constructor(
+    private val delegate: MutableMap<String, Any> = mutableMapOf(),
+    clearExpiredKeysDuration: Duration? = null
+) :
     ObservableSettings {
     private val listeners = mutableListOf<() -> Any>()
     private fun invokeListeners() = listeners.forEach { it() }
 
     constructor(vararg items: Pair<String, Any>) : this(mutableMapOf(*items))
+
+    override var listener: Settings.Listener? = null
+    private var removeExpiredJob : Deferred<Unit>? = null
+    
+    init {
+        clearExpiredKeysDuration?.let {
+            removeExpiredJob = ContextScope.get(DispatchersProvider.Default)
+                .launchPeriodicAsync(it) {
+                    removeExpiredKeys()
+                }
+        }
+    }
 
     override val keys: Set<String> get() = delegate.keys
     override val size: Int get() = delegate.size
@@ -55,6 +74,19 @@ class MapSettings constructor(private val delegate: MutableMap<String, Any> = mu
     override fun clear() {
         delegate.clear()
         invokeListeners()
+    }
+
+    override fun removeExpiredKeys() {
+        logDebug("RemoveExpiredKeys - size: ${delegate.size}")
+        delegate.keys.forEach {
+            getExpirableString(it)
+        }
+        listener?.onRemoveExpiredKeys()
+    }
+
+    override fun cancelRemovingExpiredKeys() {
+        removeExpiredJob?.cancel()
+        removeExpiredJob = null
     }
 
     override fun remove(key: String) {
@@ -131,6 +163,7 @@ class MapSettings constructor(private val delegate: MutableMap<String, Any> = mu
         val v = getStringOrNull(key) ?: return default
         val ev = ExpirableValue.fromJson(v)
         if (Utils.isExpired(ev.exp)) {
+            logDebug("Removing expired - $key")
             remove(key)
             return default
         }
@@ -145,81 +178,81 @@ class MapSettings constructor(private val delegate: MutableMap<String, Any> = mu
         key: String,
         defaultValue: Int,
         callback: (Int) -> Unit
-    ): SettingsListener =
+    ): Settings.Listener =
         addListener(key) { callback(getInt(key, defaultValue)) }
 
     override fun addLongListener(
         key: String,
         defaultValue: Long,
         callback: (Long) -> Unit
-    ): SettingsListener =
+    ): Settings.Listener =
         addListener(key) { callback(getLong(key, defaultValue)) }
 
     override fun addStringListener(
         key: String,
         defaultValue: String,
         callback: (String) -> Unit
-    ): SettingsListener =
+    ): Settings.Listener =
         addListener(key) { callback(getString(key, defaultValue)) }
 
     override fun addFloatListener(
         key: String,
         defaultValue: Float,
         callback: (Float) -> Unit
-    ): SettingsListener =
+    ): Settings.Listener =
         addListener(key) { callback(getFloat(key, defaultValue)) }
 
     override fun addDoubleListener(
         key: String,
         defaultValue: Double,
         callback: (Double) -> Unit
-    ): SettingsListener =
+    ): Settings.Listener =
         addListener(key) { callback(getDouble(key, defaultValue)) }
 
     override fun addBooleanListener(
         key: String,
         defaultValue: Boolean,
         callback: (Boolean) -> Unit
-    ): SettingsListener =
+    ): Settings.Listener =
         addListener(key) { callback(getBoolean(key, defaultValue)) }
 
     override fun addIntOrNullListener(
         key: String,
         callback: (Int?) -> Unit
-    ): SettingsListener =
+    ): Settings.Listener =
         addListener(key) { callback(getIntOrNull(key)) }
 
     override fun addLongOrNullListener(
         key: String,
         callback: (Long?) -> Unit
-    ): SettingsListener =
+    ): Settings.Listener =
         addListener(key) { callback(getLongOrNull(key)) }
 
     override fun addStringOrNullListener(
         key: String,
         callback: (String?) -> Unit
-    ): SettingsListener =
+    ): Settings.Listener =
         addListener(key) { callback(getStringOrNull(key)) }
 
     override fun addFloatOrNullListener(
         key: String,
         callback: (Float?) -> Unit
-    ): SettingsListener =
+    ): Settings.Listener =
         addListener(key) { callback(getFloatOrNull(key)) }
 
     override fun addDoubleOrNullListener(
         key: String,
         callback: (Double?) -> Unit
-    ): SettingsListener =
+    ): Settings.Listener =
         addListener(key) { callback(getDoubleOrNull(key)) }
 
     override fun addBooleanOrNullListener(
         key: String,
         callback: (Boolean?) -> Unit
-    ): SettingsListener =
+    ): Settings.Listener =
         addListener(key) { callback(getBooleanOrNull(key)) }
 
-    private fun addListener(key: String, callback: () -> Unit): SettingsListener {
+    private fun addListener(key: String, callback: () -> Unit): Settings.Listener {
         var prev = delegate[key]
 
         val listener = {
@@ -244,9 +277,13 @@ class MapSettings constructor(private val delegate: MutableMap<String, Any> = mu
     class Listener internal constructor(
         private val listeners: MutableList<() -> Any>,
         private val listener: () -> Unit
-    ) : SettingsListener {
+    ) : Settings.Listener {
         override fun deactivate() {
             listeners -= listener
+        }
+
+        override fun onRemoveExpiredKeys() {
+
         }
     }
 }
