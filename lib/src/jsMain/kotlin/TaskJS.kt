@@ -41,12 +41,14 @@ internal actual class InternalTask<ResultT> actual constructor(_task: Task<Resul
 }
 
 @JsExport
-fun <ResultT> Task<ResultT>.async(): Promise<ResultT> {
-    return Promise { success: (ResultT) -> Unit, failure: (Throwable) -> Unit ->
-        onSuccess {
-            success(it)
-        }.onFailure {
-            failure(it)
+object Tasks {
+    fun <ResultT> Task<ResultT>.async(): Promise<ResultT> {
+        return Promise { success: (ResultT) -> Unit, failure: (Throwable) -> Unit ->
+            onSuccess {
+                success(it)
+            }.onFailure {
+                failure(it)
+            }
         }
     }
 }

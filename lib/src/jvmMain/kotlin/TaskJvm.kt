@@ -44,3 +44,10 @@ internal actual class InternalTask<ResultT> actual constructor(_task: Task<Resul
         return runCatching { future().get() }.getOrNull()
     }
 }
+
+object Tasks {
+    @JvmStatic
+    fun <ResultT> Task<ResultT>.future(): CompletableFuture<ResultT> {
+        return return GlobalScope.future { await() }
+    }
+}

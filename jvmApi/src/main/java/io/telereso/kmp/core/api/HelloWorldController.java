@@ -29,6 +29,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import io.telereso.kmp.core.Tasks;
 import io.telereso.kmp.core.TasksExamples;
 
 
@@ -39,6 +40,12 @@ public class HelloWorldController {
     @RequestMapping("")
     @ResponseBody
     public String hi() {
-        return TasksExamples.hi().get();
+
+        try {
+//            TasksExamples.hi().get();
+            return Tasks.future(TasksExamples.exception()).get();
+        } catch (Exception e ) {
+            return new RuntimeException(e).getMessage();
+        }
     }
 }
