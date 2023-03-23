@@ -289,6 +289,7 @@ class Task<ResultT> private constructor(
      * @return [ResultT] if succeeded , or crash if job failed, if you don't care about resultT check [getOrNull]
      */
     @RunBlocking
+    @Throws(Exception::class)
     fun get(): ResultT {
         return _task.get()
     }
@@ -299,6 +300,7 @@ class Task<ResultT> private constructor(
      * @return [ResultT] if succeeded or null if failed
      */
     @RunBlocking
+    @Throws(Exception::class)
     fun getOrNull(): ResultT? {
         return _task.getOrNull()
     }
