@@ -282,14 +282,12 @@ You can use [get](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp
 
 ---
 
-### future
+### [future](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core/[jvm]-tasks/future.html){:target="_blank"}
 
 Convert a [Task](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core/-task/index.html){:target="_blank"} into a [CompletableFuture](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html){:target="_blank"}, only available in `Java`
 
-Also check getOrNull
-
 ---
 
-### async
+### [async]https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core/[js]-tasks/async.html{:target="_blank"}
 
 Convert a [Task](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core/-task/index.html){:target="_blank"} into [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise){:target="_blank"}, only available in `JS` 

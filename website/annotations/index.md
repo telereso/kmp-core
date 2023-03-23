@@ -7,7 +7,7 @@ has_children: true
 
 # Annotations
 
-Telereso plugin offers some useful annotations to support the [kmp structure](../starter/#structure)
+Telereso plugin offers some useful annotations to support the [kmp structure](html){:target="_blank"}starter/#structure)
 ,
 
 Some of this annotations can be used in other project structures too like [@builder]()

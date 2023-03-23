@@ -19,12 +19,13 @@ This will be useful for you if you already have your standalone projects for eac
 
 # Platforms
 
-* Android
-* iOS
-* ReactNative
+* [Android](../platforms/android)
+* [iOS](../platforms/ios)
+* [ReactNative](../platforms/react_native)
+* [Jvm](../platforms/jvm)
+* [Browser](../platforms/browser)
+* [NodeJs](../platforms/nodejs)
 * Flutter (coming soon)
-* Jvm
-* NodeJs
 
 ---
 
