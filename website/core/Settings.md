@@ -5,7 +5,7 @@ parent: Core
 nav_order: 3
 ---
 
-## Settings
+## [Settings](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core/-settings/index.html){:target="_blank"}
 
 To store key/value settings and configurations,
 

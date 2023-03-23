@@ -5,9 +5,9 @@ parent: Core
 nav_order: 2
 ---
 
-## Http
+## [Http](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core/-http/index.html){:target="_blank"}
 
-The Http helper class provides functionality to streamline networking operations. 
+This helper class provides functionality to streamline networking operations. 
 
 It includes methods for setting up connections, handling errors, and performing HTTP requests. 
 

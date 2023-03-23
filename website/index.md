@@ -28,6 +28,15 @@ This will be useful for you if you already have your standalone projects for eac
 
 ---
 
+# Under the hood ⚙️🪛
+
+* [Kotlin Multiplatform ❤️](https://kotlinlang.org/docs/multiplatform.html){:target="_blank"}
+* [Ktor](https://ktor.io 🚀){:target="_blank"} 
+* [Napier](https://github.com/AAkira/Napier ⭐){:target="_blank"}
+* [Multiplatform Settings 💡](https://github.com/russhwolf/multiplatform-settings){:target="_blank"}
+
+---
+
 ## Contributing
 
 Please help us grow this project 😃 ,
