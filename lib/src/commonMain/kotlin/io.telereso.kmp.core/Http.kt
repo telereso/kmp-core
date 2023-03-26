@@ -216,6 +216,10 @@ object Http {
      */
     fun HttpResponse.hasStatus(status: HttpStatusCode) = (this.status == status)
 
+    /**
+     * Returns a [Boolean] indicating whether the [HttpResponse] is successful.
+     * @return True if the [HttpResponse] has [HttpStatusCode] value in the range of 200-299 , false otherwise.
+     */
     fun HttpResponse.successful() = (this.status.value in 200..299)
 
 }
