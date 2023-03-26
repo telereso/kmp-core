@@ -23,6 +23,7 @@
     "serve": "yarn build:serve",
     "watch": "yarn build && watch-run -d 500 -p src/**/* yarn build:serve",
     "refresh": "yarn build:package && yarn add file:../lib/build/productionLibrary",
+    "rs": "yarn refresh && yarn serve",
     "preinstall": "yarn build:package"
   },
   "eslintConfig": {

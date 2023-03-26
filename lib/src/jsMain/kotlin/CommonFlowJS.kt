@@ -24,47 +24,30 @@
 
 package io.telereso.kmp.core
 
-import io.telereso.kmp.core.Log.logDebug
 import io.telereso.kmp.core.models.ClientException
-import io.telereso.kmp.core.models.JwtPayload
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flowOf
-import kotlin.js.JsExport
-import kotlin.jvm.JvmStatic
+import io.telereso.kmp.core.models.asClientException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.promise
 
+
+/**
+ * Another way to consume common flows for JS ,
+ * @param stream the flow data
+ * @param error in case an issue happen while collecting data this call back will be invoked
+ */
 @JsExport
-object TasksExamples {
-    @JvmStatic
-    fun hi(): Task<String> {
-        return Task.execute {
-            logDebug("log hi")
-            "hi from task!!"
+fun <T> CommonFlow<T>.watch(
+    stream: (T) -> Unit,
+    error: (ClientException) -> Unit,
+    scope: CoroutineScope = ContextScope.get(DispatchersProvider.Default)
+) {
+    scope.promise {
+        try {
+            collect {
+                stream(it)
+            }
+        } catch (exception: Throwable) {
+            error(exception.asClientException())
         }
-    }
-
-    @JvmStatic
-    fun exception(): Task<String> {
-        return Task.execute {
-            throw ClientException("test")
-            "hi from task!!"
-        }
-    }
-
-    @JvmStatic
-    fun hiDelayed(): Task<String> {
-        return Task.execute {
-            delay(5000)
-            "hi from task!!"
-        }
-    }
-
-    @JvmStatic
-    fun getFlow(): CommonFlow<String> {
-        return flowOf("a", "b", "c").asCommonFlow()
-    }
-
-    @JvmStatic
-    fun getFlowPayload(): CommonFlow<JwtPayload> {
-        return flowOf(JwtPayload(), JwtPayload(), JwtPayload()).asCommonFlow()
     }
 }
