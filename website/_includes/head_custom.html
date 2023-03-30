@@ -1,0 +1,15 @@
+<link rel="stylesheet" href="{{ '../assets/css/style.css?v=' | append: site.build_revision }}">
+<link href="https://fonts.googleapis.com/css?family=Slabo+27px" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+
+function openTab(evt, tabName) {
+
+  $("div.code-block." + tabName + " .tablinks").removeClass("active");
+  $("div.code-block." + tabName + " .tabcontent").removeClass("active");
+
+  $("div.code-block." + tabName + " button.tablinks." + tabName).addClass("active");
+  $("div.code-block." + tabName + " div.tabcontent." + tabName).addClass("active");
+}
+
+</script>

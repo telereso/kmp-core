@@ -1,0 +1,68 @@
+
+
+/* Style the tab */
+.tab {
+  overflow: hidden;
+  border:solid 1px #dce6f0;
+  background-color: #fff;
+  border-top-right-radius: 0.3rem;
+  border-top-left-radius: 0.3rem;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  color: #1a73e8
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  border: none;
+}
+
+div.active {
+  display: block;
+}
+
+.tabcontent .highlight {
+  margin: 0px
+}
+
+.tabcontent figure {
+  border: none;
+  background-color: transparent;
+}
+
+.tabcontent figure .highlight {
+  border: none;
+}
+
+.main-content .tabcontent figure pre {
+  border-top: none;
+  border-top-right-radius: 0px;
+  border-top-left-radius: 0px;
+}
+
+.main-content .tabcontent figure pre code span.err:first-child,span.err:last-child {
+  display: none;
+}
+.main-content .tabcontent figure pre code span.n:nth-child(2) {
+  display: none;
+}
