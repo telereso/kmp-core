@@ -36,6 +36,7 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.serialization.kotlinx.json.json
+import io.telereso.kmp.core.models.ClientException
 import platform.UIKit.UIDevice
 
 
@@ -110,5 +111,12 @@ object CoreClient {
      */
     fun debugLogger() {
         Napier.base(DebugAntilog())
+    }
+
+    fun ClientException.toNSError(): NSError {
+        val userInfo = mutableMapOf<String, Any>()
+        httpURl?.let { userInfo[NSURLErrorFailingURLErrorKey] = it }
+        cause?.let { userInfo[NSUnderlyingErrorKey] = it }
+        return NSError(domain = "com.yourcompany.yourapp", code = httpStatusCode ?: 0, userInfo = userInfo)
     }
 }
