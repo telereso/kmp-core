@@ -36,8 +36,15 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.serialization.kotlinx.json.json
+import io.telereso.kmp.core.models.ClientException
+import kotlinx.cinterop.convert
+import platform.Foundation.NSError
+import platform.Foundation.NSLocalizedDescriptionKey
+import platform.Foundation.NSLocalizedFailureReasonErrorKey
+import platform.Foundation.NSURLErrorFailingURLErrorKey
+import platform.Foundation.NSUnderlyingErrorKey
 import platform.UIKit.UIDevice
-
+import platform.darwin.NSInteger
 
 /**
  * Since the rest of the Darwin targets depend on iOSMain during its creation,
@@ -51,7 +58,8 @@ class IOSPlatform : Platform {
     /**
      * example : MyApp/1 iPhone5,2 iOS/10_1 CFNetwork/808.3 Darwin/16.3.0
      */
-    override val userAgent: String = "${UIDevice.currentDevice.systemName()}/${UIDevice.currentDevice.systemVersion} ${UIDevice.currentDevice.name}"
+    override val userAgent: String =
+        "${UIDevice.currentDevice.systemName()}/${UIDevice.currentDevice.systemVersion} ${UIDevice.currentDevice.name}"
 }
 
 /**
@@ -71,7 +79,7 @@ actual fun httpClient(
 ) = HttpClient(Darwin) {
     config(this)
 
-    if(shouldLogHttpRequests) {
+    if (shouldLogHttpRequests) {
         install(Logging) {
             logger = Logger.SIMPLE
             level = LogLevel.HEADERS
@@ -111,4 +119,45 @@ object CoreClient {
     fun debugLogger() {
         Napier.base(DebugAntilog())
     }
+}
+
+/**
+ * Converts a [ClientException] into an [NSError] object for better interop with Objective-C, Swift projects.
+ * @return The [NSError] object created from the [ClientException].
+ */
+fun ClientException.toNSError(): NSError {
+    // Create a mutable map to hold the error information.
+    val userInfo = mutableMapOf<String?, Any>()
+
+    // Add the URL that caused the error (if available).
+    httpURl?.let { userInfo[NSURLErrorFailingURLErrorKey] = it }
+
+    // Add the cause of the error (if available).
+    cause?.let { userInfo["cause"] = it }
+
+    // Add a localized description of the error.
+    userInfo[NSLocalizedDescriptionKey] = "Something went wrong!"
+
+    // Add a localized explanation of the reason for the error (if available).
+    message?.let { userInfo[NSLocalizedFailureReasonErrorKey] = it }
+
+    // Add the HTTP status code (if available).
+    httpStatusCode?.let { userInfo["httpStatusCode"] = it }
+
+    // Add the error body (if available).
+    errorBody?.let { userInfo["errorBody"] = it }
+
+    code?.let { userInfo["code"] = it }
+
+    // Add the error type (if available).
+    errorType?.let { userInfo["errorType"] = it }
+
+    // Add the error string (if available).
+    errorString?.let { userInfo["errorString"] = it }
+
+    // Create a new map from the existing userInfo map.
+    val userInfoMap: Map<Any?, *> = userInfo.toMap()
+
+    // Create and return the NSError object with the appropriate information.
+    return NSError(domain = httpURl, code = (httpStatusCode ?: 0).convert(), userInfo = userInfoMap)
 }

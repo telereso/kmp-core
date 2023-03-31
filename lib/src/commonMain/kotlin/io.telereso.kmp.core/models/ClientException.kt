@@ -53,6 +53,7 @@ open class ClientException(
     val errorString: String? = null,
     val errorType: String? = null,
     val httpURl: String? = null,
+    val code: String? = null
 ) : Throwable() {
     @JsName("ClientExceptionConstructor")
     constructor(cause: Throwable? = null) : this(null, cause = cause)
