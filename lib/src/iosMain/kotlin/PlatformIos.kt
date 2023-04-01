@@ -159,5 +159,5 @@ fun ClientException.toNSError(): NSError {
     val userInfoMap: Map<Any?, *> = userInfo.toMap()
 
     // Create and return the NSError object with the appropriate information.
-    return NSError(domain = httpURl, code = (httpStatusCode ?: 0).convert(), userInfo = userInfoMap)
+    return NSError(domain = ClientException::class.simpleName, code = (httpStatusCode ?: 0).convert(), userInfo = userInfoMap)
 }
