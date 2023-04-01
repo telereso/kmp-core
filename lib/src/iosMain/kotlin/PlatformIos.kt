@@ -117,6 +117,6 @@ object CoreClient {
         val userInfo = mutableMapOf<String, Any>()
         httpURl?.let { userInfo[NSURLErrorFailingURLErrorKey] = it }
         cause?.let { userInfo[NSUnderlyingErrorKey] = it }
-        return NSError(domain = "com.yourcompany.yourapp", code = httpStatusCode ?: 0, userInfo = userInfo)
+        return NSError(domain = ClientException::class.simpleName, code = httpStatusCode ?: 0, userInfo = userInfo)
     }
 }
