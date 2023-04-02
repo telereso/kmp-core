@@ -189,6 +189,7 @@ object Http {
                 httpStatusCode = this.response.status.value, // setting the http status code
                 errorBody = errorBody, // setting the error body
                 message = errorMessage, // setting the error message
+                code = errorBody.code, // setting the error code
                 errorType = "HTTP", // setting the error type
                 cause = cause?:this, // setting the cause of the error
                 errorString = body, // setting the error string,
