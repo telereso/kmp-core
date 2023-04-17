@@ -41,8 +41,8 @@ import java.util.concurrent.TimeUnit
  * A AndroidPlatform class that defines the Android platform type and name.
  * References the names from the Android platform specific [Build] class
  */
-class AndroidPlatform : Platform {
-    override val type: Platform.TYPE = Platform.TYPE.ANDROID
+class AndroidPlatform : Platform() {
+    override val type: Type = Type.ANDROID
 
     /**
      * example <AppName>/<version> Dalvik/<version> (Linux; U; Android <android version>; <device ID> Build/<buildtag>)
@@ -126,13 +126,4 @@ actual fun httpClient(
 )
 fun initLogger() {
     Napier.base(DebugAntilog())
-}
-
-object CoreClient {
-    /**
-     * Called from the client to initialize Napier logger
-     */
-    fun debugLogger() {
-        Napier.base(DebugAntilog())
-    }
 }

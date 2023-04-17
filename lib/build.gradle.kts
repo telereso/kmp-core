@@ -175,9 +175,16 @@ kotlin {
     android {
         publishLibraryVariants("release")
     }
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
+
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach {
+        it.binaries.framework {
+            baseName = "core"
+        }
+    }
 
     jvm {
         compilations.all {
@@ -244,7 +251,7 @@ kotlin {
         }
 
         val commonMain by getting {
-            kotlin.srcDir("build/generated/ksp/metadata/commonMain/resources/kotlin")
+            kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
             dependencies {
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")

@@ -42,9 +42,7 @@ import platform.Foundation.NSError
 import platform.Foundation.NSLocalizedDescriptionKey
 import platform.Foundation.NSLocalizedFailureReasonErrorKey
 import platform.Foundation.NSURLErrorFailingURLErrorKey
-import platform.Foundation.NSUnderlyingErrorKey
 import platform.UIKit.UIDevice
-import platform.darwin.NSInteger
 
 /**
  * Since the rest of the Darwin targets depend on iOSMain during its creation,
@@ -52,8 +50,8 @@ import platform.darwin.NSInteger
  * On in special occasions when we need custom implementation on like MacOS or WatchOS we
  * can use the specific target module.
  */
-class IOSPlatform : Platform {
-    override val type: Platform.TYPE = Platform.TYPE.IOS
+class IOSPlatform : Platform() {
+    override val type: Type = Type.IOS
 
     /**
      * example : MyApp/1 iPhone5,2 iOS/10_1 CFNetwork/808.3 Darwin/16.3.0
@@ -110,15 +108,6 @@ actual fun httpClient(
 )
 fun initLogger() {
     Napier.base(DebugAntilog())
-}
-
-object CoreClient {
-    /**
-     * Called from the client to initialize Napier logger
-     */
-    fun debugLogger() {
-        Napier.base(DebugAntilog())
-    }
 }
 
 /**

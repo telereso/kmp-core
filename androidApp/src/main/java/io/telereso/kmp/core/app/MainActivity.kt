@@ -32,6 +32,8 @@ class MainActivity : AppCompatActivity() {
             e.printStackTrace()
             println(e.message)
         }
+
+        TasksExamples.testVerify(CoreClient(application))
 //        lifecycleScope.launch(handler) {
 //
 //            runTest()
