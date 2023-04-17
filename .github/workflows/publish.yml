@@ -85,8 +85,8 @@ jobs:
     - name: Build Artifacts
       if: startsWith(github.event.pull_request.title, '[DOCS]') != true
       run: |
-        echo ${{ secrets.SIGNING_SECRET_KEY_RING_FILE }} | base64 -d > secret_key
-        bash scripts/publish.sh ${{ steps.tag_version.outputs.new_version }} "${{ github.ref == 'refs/heads/main' && '--sonatype' || '--local' }}"
+        echo ${{ secrets.SIGNING_SECRET_KEY_RING_FILE }} | base64 -d > secret_key 
+        bash scripts/publish.sh ${{ steps.tag_version.outputs.new_version }}"${{ github.ref == 'refs/heads/main' && '' || '.' }}${{ github.ref == 'refs/heads/main' && '' || env.GITHUB_RUN_NUMBER }}" '--sonatype'
       env:
         OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
         OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
