@@ -90,7 +90,7 @@ object Http {
      * on core level read platform level and append. if the value userAgent is null then we pass platform as default.
      * sample output
      * android core-client/0.0.19/ app-version/11.40.0
-     * @param platform where the sdk is being used [Platform.TYPE.ANDROID] or [Platform.TYPE.IOS] or [Platform.TYPE.JVM] or [Platform.TYPE.BROWSER]
+     * @param platform where the sdk is being used [Platform.Type.ANDROID] or [Platform.Type.IOS] or [Platform.Type.JVM] or [Platform.Type.BROWSER]
      * @param clientSDKName the sdk making api calls name
      * @param clientSDKVersion the sdk making api version
      * @param appVersion version of application where the sdk is being used

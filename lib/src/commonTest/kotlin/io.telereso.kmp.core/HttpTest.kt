@@ -282,9 +282,9 @@ class HttpTest {
 
     @Test
     fun testGetUserAgentAndroid() = runTest {
-        val androidPlatform = object : Platform {
-            override val type: Platform.TYPE
-                get() = Platform.TYPE.ANDROID
+        val androidPlatform = object : Platform() {
+            override val type: Platform.Type
+                get() = Platform.Type.ANDROID
             override val userAgent: String
                 get() = "sdk/test device/test"
 
@@ -309,9 +309,9 @@ class HttpTest {
 
     @Test
     fun testGetUserAgentIos() = runTest {
-        val iosPlatform = object : Platform {
-            override val type: Platform.TYPE
-                get() = Platform.TYPE.IOS
+        val iosPlatform = object : Platform() {
+            override val type: Platform.Type
+                get() = Platform.Type.IOS
             override val userAgent: String
                 get() = "sdk/test device/test"
 
@@ -336,9 +336,9 @@ class HttpTest {
 
     @Test
     fun testGetUserAgentJvm() = runTest {
-        val jvmPlatform = object : Platform {
-            override val type: Platform.TYPE
-                get() = Platform.TYPE.JVM
+        val jvmPlatform = object : Platform() {
+            override val type: Platform.Type
+                get() = Platform.Type.JVM
             override val userAgent: String
                 get() = "sdk/test device/test"
 
@@ -363,9 +363,9 @@ class HttpTest {
 
     @Test
     fun testGetUserAgentJs() = runTest {
-        val jsPlatform = object : Platform {
-            override val type: Platform.TYPE
-                get() = Platform.TYPE.BROWSER
+        val jsPlatform = object : Platform() {
+            override val type: Platform.Type
+                get() = Platform.Type.BROWSER
             override val userAgent: String
                 get() = "sdk/test device/test"
 

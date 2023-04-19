@@ -24,6 +24,9 @@
 
 package io.telereso.kmp.core
 
+import io.telereso.kmp.core.Consumer.Companion.android
+import io.telereso.kmp.core.Consumer.Companion.ios
+import io.telereso.kmp.core.Consumer.Companion.website
 import io.telereso.kmp.core.Log.logDebug
 import io.telereso.kmp.core.models.ClientException
 import io.telereso.kmp.core.models.JwtPayload
@@ -66,5 +69,19 @@ object TasksExamples {
     @JvmStatic
     fun getFlowPayload(): CommonFlow<JwtPayload> {
         return flowOf(JwtPayload(), JwtPayload(), JwtPayload()).asCommonFlow()
+    }
+
+    fun testVerify(coreClient: CoreClient) {
+
+        coreClient.verifyConsumer(mutableListOf<Consumer>().apply {
+            add(
+                android(
+                    "io.telereso.kmp.core.app",
+                    "85:2F:51:3C:AA:FD:E2:14:EB:2D:C0:A7:1E:D2:F3:E2:95:5A:BE:7F:BB:CE:D7:8A:F9:CB:BB:C0:5F:0C:12:98"
+                )
+            )
+            add(ios("orgIdentifier.iosApp"))
+            add(website("localhost:*"))
+        })
     }
 }

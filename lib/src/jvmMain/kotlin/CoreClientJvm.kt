@@ -26,50 +26,41 @@ package io.telereso.kmp.core
 
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
-import io.ktor.client.HttpClient
-import io.ktor.client.HttpClientConfig
-import io.ktor.client.engine.js.Js
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.serialization.kotlinx.json.json
-import kotlinx.browser.window
+import io.telereso.kmp.core.models.ClientException
 
-/**
- * A class we define platform specific  or actual implmentations for JS Target
- */
-
-class BrowserPlatform : Platform() {
-    override val type: Type = Type.BROWSER
-    override val userAgent: String = runCatching { window.navigator.userAgent }.getOrNull() ?: "kmpBrowserPlatform"
-}
-
-/**
- * expected Platform imlmentation for JS platform
- * @return the platform .
- */
-actual fun getPlatform(): Platform = BrowserPlatform()
-
-val jsonClient = HttpClient(Js) {
-    install(ContentNegotiation) {
-        json(Http.ktorConfigJson)
+actual class CoreClient {
+    actual companion object {
+        /**
+         * Called from the client to initialize Napier logger
+         */
+        @JvmStatic
+        actual fun debugLogger() {
+            Napier.base(DebugAntilog())
+        }
     }
-}
 
-actual fun httpClient(
-    shouldLogHttpRequests: Boolean,
-    interceptors: List<Any?>?,
-    userAgent: String?,
-    config: HttpClientConfig<*>.() -> Unit
-) = jsonClient
+    @JvmOverloads
+    actual fun isAppInstalled(
+        packageName: String,
+        fingerprint: String?,
+        alg: String
+    ): Boolean {
+        return false
+    }
 
+    /**
+     * This is to be used by a sdk only,
+     * In Jvm currently we can't verify
+     */
+    actual fun verifyConsumer(allowed: List<Consumer>) {
+        // in Jvm currently we can't verify
+    }
 
-internal fun debugLoggerInternal(){
-    Napier.base(DebugAntilog("CoreClient"))
-}
-
-/**
- * Called from the client to initialize Napier logger
- */
-@JsExport
-fun debugLogger() {
-    debugLoggerInternal()
+    /**
+     * This is to be used by a sdk only,
+     * In Jvm currently we can't verify
+     */
+    actual fun verifyConsumer(vararg allowed: Consumer) {
+        // in Jvm currently we can't verify
+    }
 }

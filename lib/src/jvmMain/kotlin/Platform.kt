@@ -24,8 +24,6 @@
 
 package io.telereso.kmp.core
 
-import io.github.aakira.napier.DebugAntilog
-import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.okhttp.OkHttp
@@ -35,8 +33,8 @@ import io.ktor.serialization.kotlinx.json.json
 import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
 
-class JvmPlatform : Platform {
-    override val type: Platform.TYPE = Platform.TYPE.JVM
+class JvmPlatform : Platform() {
+    override val type: Type = Type.JVM
     override val userAgent: String = System.getProperty("http.agent","kmpJvmPlatform")
 }
 
@@ -100,15 +98,5 @@ actual fun httpClient(
             retryOnConnectionFailure(true)
             connectTimeout(0, TimeUnit.SECONDS)
         }
-    }
-}
-
-object CoreClient {
-    /**
-     * Called from the client to initialize Napier logger
-     */
-    @JvmStatic
-    fun debugLogger() {
-        Napier.base(DebugAntilog())
     }
 }

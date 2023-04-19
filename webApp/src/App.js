@@ -15,6 +15,8 @@ function App(block) {
           //   console.log("catch",e)
           // })
 
+        CoreClient.TasksExamples.testVerify(new CoreClient.CoreClient())
+
         // #1 watching flow in JS
         CoreClient.watch(CoreClient.TasksExamples.getFlowPayload(), (data) => {
             console.log(data);

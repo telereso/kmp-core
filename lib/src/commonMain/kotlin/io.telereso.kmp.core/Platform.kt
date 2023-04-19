@@ -26,40 +26,42 @@ package io.telereso.kmp.core
 
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
+import kotlin.js.JsExport
 
 /**
  * Defines the supported platforms by the sdks
  */
-interface Platform {
+@JsExport
+abstract class Platform {
 
     /**
      * @suppress
      */
-    enum class TYPE {
+    enum class Type {
         ANDROID, IOS, BROWSER, JVM
     }
 
     /**
-     * type of the platforms based on the [TYPE] enum.
+     * type of the platforms based on the [Type] enum.
      */
-    val type: TYPE
+    abstract val type: Type
 
     /**
      * User agent for http requests
      */
-    val userAgent: String
+    abstract val userAgent: String
 }
 
 /**
- * expects inplmentation on all supported platforms
+ * expects implementation on all supported platforms
  * @return the platform .
  */
 expect fun getPlatform(): Platform
 
 /**
- * To  configure Ktor engine-specific options in our multiplatform SDK we declare expect/actual dependecies
+ * To  configure Ktor engine-specific options in our multiplatform SDK we declare expect/actual dependencies
  * Notice by default we set it to Unit
- * we can also define this expect within the network package so not accessable to client.
+ * we can also define this expect within the network package so not accessible to client.
  * We have to write some actual and expected functions that will resolve all platform’s conflicts in iOS and Android and JS.
  * It calls different HTTP functions in different platforms which you can define platform-specific.
  *
