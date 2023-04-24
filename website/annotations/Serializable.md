@@ -8,7 +8,7 @@ nav_order: 1
 # Serializable
 
 This is an [official annotation](https://kotlinlang.org/docs/serialization.html) in kotlin , but
-when adding the [kmp plugin] it will add extended functionality to it, mainly json converters
+when adding the [kmp plugin](https://plugins.gradle.org/plugin/io.telereso.kmp){:target="_blank"} it will add extended functionality to it, mainly json converters
 
 ## Json converters
 
@@ -22,19 +22,12 @@ extended functions for the annotated data class that do just that !
 * `fromJsonArray()` Converts string json array into array of data class object
 
 The plugin is aware
-of [@JsExport](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.js/-js-export/) annotation and
+of [@JsExport](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.js/-js-export/){:target="_blank"} annotation and
 it will create the js function name accordingly
 
 ## Usage
 
-in your module `build.gradle.kts` extend your source set dirs by adding the following line inside `commonMain`
-
-```kotlin
-val commonMain by getting {
-    kotlin.srcDir("build/generated/ksp/metadata/commonMain/resources/kotlin") // <----- add this line
-    dependencies {}
-}
-```
+Make sure you've setup the [plugin first](../annotations/#setup)
 
 Then use the annotation on your data class
 
@@ -80,3 +73,27 @@ val user = User.fromJson("{\"id\":\"1\",\"name\":\"foo\",\"age\":20}")
 val users = User.fromJsonArray("[{\"id\":\"1\",\"name\":\"foo\",\"age\":20},{\"id\":\"1\",\"name\":\"foo\",\"age\":20}]")
 ```
 
+## Disable Json converters
+
+### Module Level
+
+if you don't want the json converters to be added to the entire module, add the following in the module's `build.gradle.kts`
+
+```kotlin
+teleresoKmp {
+    disableJsonConverters = true
+}
+```
+
+### Class Level
+
+If you want to disable for just one class 
+
+```kotlin
+import io.telereso.kmp.annotations.SkipJsonConverters
+
+@Serializable
+@JsExport
+@SkipJsonConverters
+data class User(val id: String, val name: String, val age: Int)
+```

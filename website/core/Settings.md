@@ -5,7 +5,7 @@ parent: Core
 nav_order: 3
 ---
 
-## [Settings](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core/-settings/index.html){:target="_blank"}
+# [Settings](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core/-settings/index.html){:target="_blank"}
 
 To store key/value settings and configurations,
 
@@ -15,11 +15,11 @@ of [multiplatform-settings](https://github.com/russhwolf/multiplatform-settings)
 The reason a wrapper is used just in case we needed to change the settings library we can do that
 with no changes on consuming sdks.
 
-### Usage 
+## Usage 
 
 There are two type of settings: 
 
-#### Long Term 
+### Long Term 
 
 
 Settings will be saved in file and will be available the next session
@@ -28,7 +28,7 @@ Settings will be saved in file and will be available the next session
 val settings = Settings.get()
 ```
 
-#### InMemory 
+### InMemory 
 
 
 Can be used to store key value settings for the current session only , useful for backend
@@ -37,7 +37,7 @@ Can be used to store key value settings for the current session only , useful fo
 val settings = Settings.getInMemory
 ```
 
-### API
+## API
 
 It has all same api interfaces
 

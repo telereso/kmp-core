@@ -7,9 +7,9 @@ nav_order: 4
 
 ## Config
 
-When using a builder for your SDK manager, there are some reusable fields and attributes that are common between all SDKs. The [Config](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core/-config/index.html) helper class encapsulates these common attributes and can be added as part of your SDK manager builder
+When using a builder for your SDK manager, there are some reusable fields and attributes that are common between all SDKs. The [Config](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core/-config/index.html){:target="_blank"} helper class encapsulates these common attributes and can be added as part of your SDK manager builder
 
-There are two ways to create [Config](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core/-config/index.html) objects:
+There are two ways to create [Config](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core/-config/index.html){:target="_blank"} objects:
 
 ---
 
