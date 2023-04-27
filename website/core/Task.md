@@ -12,17 +12,18 @@ well,
 
 Usually we expose the repository methods.
 
+---
+
 ## Why?
 
-As of now due to some limitations in some platform like JS and Java we can not use `suspend`, there
-for exposing suspended functions directly form the sdk's client manger will not work
+As of now due to some limitations in some platform like JS and Java we can not use `suspend`, therefor exposing suspended functions directly form the sdk's client manger will not work
 
-Using a Wrapper class such as [Task](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core/-task/index.html){:target="_blank"} will provide a unified approach for multithreading by providing
-interfaces like `await()` and [get()](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core/-task/get.html){:target="_blank"} and other callbacks
+Using a wrapper class such as [Task](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core/-task/index.html){:target="_blank"} will provide a unified approach for multithreading by providing
+interfaces like [await()](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core/await.html){:target="_blank"} and [get()](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core/-task/get.html){:target="_blank"} and other callbacks
 
 ## Create a Task
 
-To create a task we can we just need to invoke [Task.execute](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core/-task/-companion/execute.html){:target="_blank"} provide return type and our logic goes
+To create a task we just need to invoke [Task.execute](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core/-task/-companion/execute.html){:target="_blank"} , provide a return type and our logic goes
 inside the body block
 
 ```kotlin
@@ -288,6 +289,6 @@ Convert a [Task](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.
 
 ---
 
-### [async]https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core/[js]-tasks/async.html{:target="_blank"}
+### [async](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core/[js]-tasks/async.html){:target="_blank"}
 
 Convert a [Task](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core/-task/index.html){:target="_blank"} into [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise){:target="_blank"}, only available in `JS` 

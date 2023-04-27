@@ -2,6 +2,7 @@
 layout: default
 title: Starter
 nav_order: 2
+has_children: true
 ---
 
 # Starter
@@ -19,18 +20,25 @@ nav_order: 2
 
 ---
 
-The first step is always the hardest. And in any project that is expected to run on 6 platforms, that can be scary 😬 !
+The first step is always the hardest,<br>
+And in a project that is expected to run on 6 platforms, that can be scary 😬!
 
 But scary no more with this KMP project starter!
 
-You can visit the starter [here](https://kmp-starter.telereso.io/)
+[Create New Project](https://kmp-starter.telereso.io/){: target="_blank" .btn .btn-green }
+
+# Prerequisite
+
+* Mac OS (to support iOS) 
+* Install [NodeJs](https://nodejs.org/en/download){:target="_blank"}
+* Install [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/){:target="_blank"}
 
 # Project
 
 The starter will provide a project that can build libraries,
 <br>
 You can read more
-on [multiplatform-libraries here](https://kotlinlang.org/docs/multiplatform.html#multiplatform-libraries)
+on [multiplatform-libraries here](https://kotlinlang.org/docs/multiplatform.html#multiplatform-libraries){:target="_blank"}
 
 Each project will output 2 main SDKs
 
@@ -41,7 +49,7 @@ Each project will output 2 main SDKs
 
 The project uses the Gradle build system and is composed of multiple modules. <br>
 The source code is organized into two main directories `lib` and `models`. <br>
-Additionally, the rest of all the modules are samples and other platform wrappers (eg: ReactNative)
+Additionally, there are sample modules and other platform wrappers (eg: ReactNative)
 
 ## Lib
 
@@ -58,13 +66,13 @@ Responsible for handling all database and long-term persistence caching.
 
 The Dao uses `SqlDelight` by Cashapp.
 
-The Settings uses `multiplatform-settings` by Russhwolf.
+The Settings uses [multiplatform-settings](https://github.com/russhwolf/multiplatform-settings) by Russhwolf.
 
 ### Remote
 
 Includes your api services and handles the http networking.
 
-The services will be using `ktor` by JetBrains team.
+The services will be using [Ktor](https://ktor.io){:target="_blank"} .
 
 ### Repositories
 
@@ -85,7 +93,8 @@ Additionally, the manager handles multithreading by wrapping any suspended calls
 
 ## Models
 
-The Models module contains any classes that need to be exposed to all platforms. These classes must be `Serializable` and exported to Js. Additionally, it is recommended that they be implemented as data classes.
+This module contains any classes that need to be exposed to all platforms. These classes must be `Serializable` and exported to JS. <br>
+Additionally, it is recommended that they be implemented as data classes.
 
 example
 
@@ -109,7 +118,8 @@ data class User @JvmOverloads constructor(
 
 ## ReactNative
 
-The `ReactNative` module provides support for bridging Kotlin Multiplatform code into native libraries for both Android and iOS platforms. You can learn how to enable this feature [here]()
+The `ReactNative` module provides support for bridging Kotlin Multiplatform code into native libraries for both Android and iOS platforms. <br>
+You can learn how to enable this feature [here](../annotations/ReactNativeExport.html)
 
 The module contains a folder for React Native, which includes the React Native library, as well as examples for both Android and iOS platforms.
 
@@ -121,33 +131,7 @@ _Will be available by end of this year (2023)_
 
 ---
 
-## Android App
-
-The `Android App` module is a sample Android project that demonstrates how to import the client library and provides usage samples for calling APIs and listening to reactive flows.
-
----
-
-## iOS App
-
-The `iOS App` module is a sample iOS project that demonstrates how to import the client library and provides usage samples for calling APIs and listening to reactive flows. 
-
-Before running the sample, ensure that you run `./gradlew initAll` in the root project.
-
----
-
-## Web App
-
-The `Web App` module is a sample React project that demonstrates how to import the client library and provides usage samples for calling APIs and listening to reactive flows. 
-
-Before running the sample, ensure that you run `./gradlew initAll` in the root project.
-
----
-
-## Jvm Api
-
-The `Jvm Api` module is a sample Java Spring Boot project that demonstrates how to import the `Models` library.
-
----
+## [Samples](samples)
 
 # Issues
 

@@ -7,21 +7,13 @@ nav_order: 2
 
 # Builder
 
-While having a builder alongside Kotlin constructors might seem redundant, it can be useful when using models in Java and especially in backend development. Therefore, the `Builder` annotation was added.
+While having a builder alongside Kotlin constructors might seem redundant, it can be useful when using models in Java and especially with backend development. Therefore, the `Builder` annotation was added.
 
 ---
 
 ## Usage
 
-In your module `build.gradle.kts` extend your source set dirs by adding the following line
-inside `commonMain`
-
-```kotlin
-val commonMain by getting {
-    kotlin.srcDir("build/generated/ksp/metadata/commonMain/resources/kotlin") // <----- add this line
-    dependencies {}
-}
-```
+Make sure you've setup the [plugin first](../annotations/#setup)
 
 Then use the annotation on your data class and add companion object as the following
 

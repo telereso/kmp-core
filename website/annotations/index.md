@@ -7,16 +7,16 @@ has_children: true
 
 # Annotations
 
-Telereso plugin offers some useful annotations to support the [kmp structure](html){:target="_blank"}starter/#structure)
+Telereso plugin offers some useful annotations to support the [kmp structure](../starter/#structure){:target="_blank"}
 ,
 
-Some of this annotations can be used in other project structures too like [@builder]()
+Some of this annotations can be used in other project structures too like [@Builder](Builder.html)
 
 ---
 
 # Repo
 
-For any issues or ideas you can check the repo [kmp-annotations](https://github.com/telereso/kmp-annotations)
+For any issues or ideas you can check the repo [kmp-annotations](https://github.com/telereso/kmp-annotations){:target="_blank"}
 
 ---
 
@@ -25,12 +25,26 @@ For any issues or ideas you can check the repo [kmp-annotations](https://github.
 To be able to use Telereso annotations you need to add
 the [kmp plugin](https://plugins.gradle.org/plugin/io.telereso.kmp)
 
+#### Latest version
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/telereso/kmp-annotations)](https://github.com/telereso/kmp-annotations/releases){:target="_blank"}
+
+**gradle.properties**
+in your root project properties file , add
+```properties
+#Telereso
+teleresoKmpVersion=<latest-version>
+```
+
 **settings.gradle.kts**
 
 Make sure you have this in your root project `settings.gradle.kts` file
 
 ```kotlin
 pluginManagement {
+    val teleresoKmpVersion: String by settings
+    plugins {
+        id("io.telereso.kmp") version teleresoKmpVersion apply false
+    }
     repositories {
         google()
         gradlePluginPortal()
@@ -39,25 +53,8 @@ pluginManagement {
 }
 ```
 
-**build.gradle.kts**
-
-Add the kmp plugin in the plugin section in your root project `build.gradle.kts` file
-
-```kotlin
-plugins {
-//trick: for the same plugin versions in all sub-modules
-
-    id("org.jetbrains.kotlin.android").version("1.7.21").apply(false)
-    id("org.jetbrains.kotlin.plugin.parcelize").version("1.7.20").apply(false)
-    kotlin("multiplatform").version("1.7.21").apply(false)
-    id("org.jetbrains.kotlin.native.cocoapods").version("1.7.22").apply(false)
-    id("com.squareup.sqldelight").version("1.5.3").apply(false)
-
-    id("io.telereso.kmp").version("0.0.14").apply(false) // <------- add the latest version
-}
-```
-
-**module/build.gradle.kts**
+**module/build.gradle.kts** <br>
+**lib/build.gradle.kts**
 
 Now you can use the plugin in your module's `build.gradle.kts`
 
@@ -95,5 +92,5 @@ teleresoKmp {
 > Kmp modules
 >
 > The plugin is aware of [kmp structure](../starter/#structure) so some configurations might be
-> disabled/enabled accordingly so use above flags to override default configs or if you using in
+> disabled/enabled accordingly so use above flags to override default configs or if you using it in
 > your own structure.

@@ -32,7 +32,7 @@ dependencies {
 }
 ```
 
-the models will exposed from the client it self , if case you need the models only, you can do the follwoing 
+the models will exposed from the client it self , in case you needed the models only, you can do the follwoing 
 
 ```groovy
 dependencies {

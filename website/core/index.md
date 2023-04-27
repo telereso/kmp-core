@@ -28,9 +28,9 @@ In your kotlin-multiplatfom project inside your module `build.gradle.kts` add de
 commonMain dependencies
 
 ```kotlin
-val coreVersion = "0.0.10"
+val coreVersion = "<latest-version>"
 val commonMain by getting {
-    kotlin.srcDir("build/generated/ksp/metadata/commonMain/resources/kotlin")
+    kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
     dependencies {
         api("io.telereso.kmp:core:$coreVersion")
     }
@@ -39,7 +39,7 @@ val commonMain by getting {
 
 use `api` to expose some logic to other platform,
 
-if you're support ios too and using cocoapods add the follwoing
+if you're supporting ios too and using cocoapods add the following
 
 ```kotlin
 cocoapods {
