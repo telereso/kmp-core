@@ -24,8 +24,6 @@
 
 package io.telereso.kmp.core
 
-import io.telereso.kmp.core.models.ClientException
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 
 
@@ -38,5 +36,13 @@ internal actual class InternalTask<ResultT> actual constructor(_task: Task<Resul
 
     actual fun getOrNull(): ResultT? {
         return runBlocking { task.awaitOrNull() }
+    }
+}
+
+object Tasks {
+    fun <ResultT> create(action: () -> ResultT): Task<ResultT> {
+        return Task.execute {
+            action()
+        }
     }
 }

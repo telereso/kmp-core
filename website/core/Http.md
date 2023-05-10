@@ -2,7 +2,7 @@
 layout: default
 title: Http
 parent: Core
-nav_order: 2
+nav_order: 3
 ---
 
 ## [Http](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core/-http/index.html){:target="_blank"}

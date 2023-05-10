@@ -26,6 +26,7 @@ package io.telereso.kmp.core
 
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.future.future
+import java.util.concurrent.Callable
 import java.util.concurrent.CompletableFuture
 
 
@@ -48,6 +49,13 @@ internal actual class InternalTask<ResultT> actual constructor(_task: Task<Resul
 object Tasks {
     @JvmStatic
     fun <ResultT> Task<ResultT>.future(): CompletableFuture<ResultT> {
-        return return GlobalScope.future { await() }
+        return GlobalScope.future { await() }
+    }
+
+    @JvmStatic
+    fun <ResultT> create(callable: Callable<ResultT>): Task<ResultT> {
+        return Task.execute {
+            callable.call()
+        }
     }
 }

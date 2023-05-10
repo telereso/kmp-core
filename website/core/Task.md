@@ -26,13 +26,54 @@ interfaces like [await()](https://kmp.telereso.io/docs/core/latest/-core/io.tele
 To create a task we just need to invoke [Task.execute](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core/-task/-companion/execute.html){:target="_blank"} , provide a return type and our logic goes
 inside the body block
 
+<div class="code-block kotlin swift java">
+<div class="tab">
+  <button class="tablinks kotlin active" onclick="openTab(event, 'kotlin')">Kotlin</button>
+  <button class="tablinks swift" onclick="openTab(event, 'swift')">Swift</button>
+  <button class="tablinks java" onclick="openTab(event, 'java')">Java</button>
+</div>
+
+<div class="tabcontent kotlin active">
+
+{% highlight kotlin %}
+
 ```kotlin
-Task.excute<String> {
+Task.execute<String> {
     val response = repo.makeApiCall<String>()
     repo.saveDB(response)
     return response
 }
 ```
+
+{% endhighlight kotlin %}
+
+</div>
+
+<div class="tabcontent swift">
+{% highlight swift %}
+
+```swift
+Tasks.shared.create {
+   makeApiCall()
+} as! Task<JwtPayload> // make sure to cast the retured type
+```
+
+{% endhighlight swift %}
+
+</div>
+
+<div class="tabcontent java">
+{% highlight java %}
+
+```java
+Tasks.create((Callable<String>) () -> "")
+```
+
+{% endhighlight java %}
+
+</div>
+
+</div>
 
 ---
 

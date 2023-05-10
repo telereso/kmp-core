@@ -43,6 +43,7 @@ public class HelloWorldController {
 
         try {
 //            TasksExamples.hi().get();
+//            Tasks.create((Callable<String>) () -> "").get();
             return Tasks.future(TasksExamples.exception()).get();
         } catch (Exception e ) {
             return new RuntimeException(e).getMessage();
