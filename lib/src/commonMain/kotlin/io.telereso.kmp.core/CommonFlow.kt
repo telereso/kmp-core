@@ -29,10 +29,12 @@ import io.telereso.kmp.core.models.asClientException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlin.js.JsExport
+import kotlin.jvm.JvmStatic
 
 /**
  * A wrapper class for Kotlin Coroutine Flows for iOS.
@@ -78,3 +80,16 @@ class CommonFlow<T>(private val origin: Flow<T>) : Flow<T> by origin {
 }
 
 fun <T> Flow<T>.asCommonFlow(): CommonFlow<T> = CommonFlow(this)
+
+
+object Flows {
+    @JvmStatic
+    fun <T> from(list:List<T>): CommonFlow<T> {
+        return list.asFlow().asCommonFlow()
+    }
+
+    @JvmStatic
+    fun <T> fromArray(array:Array<T>): CommonFlow<T> {
+        return array.asFlow().asCommonFlow()
+    }
+}
