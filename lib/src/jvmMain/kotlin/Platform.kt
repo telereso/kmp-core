@@ -30,6 +30,7 @@ import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
+import okhttp3.Interceptor
 import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
 
@@ -92,8 +93,14 @@ actual fun httpClient(
     }
 
     engine {
-        // Here we can add out usual network interceptors.
-        addInterceptor(logging)
+        // Here we can add usual network interceptors.
+        interceptors?.forEach {
+            if (it is Interceptor)
+                addInterceptor(it)
+        }
+        if (shouldLogHttpRequests) {
+            addInterceptor(logging)
+        }
         config {
             retryOnConnectionFailure(true)
             connectTimeout(0, TimeUnit.SECONDS)
