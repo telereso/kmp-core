@@ -24,6 +24,7 @@
 
 package io.telereso.kmp.core
 
+import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldNotBeEmpty
@@ -48,9 +49,32 @@ class TaskJvmTest : TaskTest()  {
         }.onSuccess {
             itemsOnSuccess = it
         }
+
         itemsOnSuccess.shouldNotBeEmpty()
         itemsOnSuccess?.size.shouldBe(3)
         itemsOnSuccess?.shouldContain("abc")
+    }
+
+    @Test
+    override fun onSuccessAndOnComplete() = runTest {
+        var itemsOnSuccess: List<String>? = listOf()
+        var itemsOnComplete: List<String>? = listOf()
+
+        Task.execute<List<String>?> {
+            listOf("abc", "abcd", "abcde")
+        }.onSuccess {
+            itemsOnSuccess = it
+        }.onComplete { res, e ->
+            e.shouldBeNull()
+            itemsOnComplete = res
+        }
+        itemsOnSuccess.shouldNotBeEmpty()
+        itemsOnSuccess?.size.shouldBe(3)
+        itemsOnSuccess?.shouldContain("abc")
+
+        itemsOnComplete.shouldNotBeEmpty()
+        itemsOnComplete?.size.shouldBe(3)
+        itemsOnComplete?.shouldContain("abc")
     }
 
     @Test
@@ -65,6 +89,28 @@ class TaskJvmTest : TaskTest()  {
         itemsOnSuccess.shouldNotBeEmpty()
         itemsOnSuccess?.size.shouldBe(3)
         itemsOnSuccess?.shouldContain("abc")
+    }
+
+    @Test
+    override fun onSuccessUIAndOnCompleteUI() = runTest {
+        var itemsOnSuccess: List<String>? = listOf()
+        var itemsOnComplete: List<String>? = listOf()
+
+        Task.execute<List<String>?> {
+            listOf("abc", "abcd", "abcde")
+        }.onSuccessUI {
+            itemsOnSuccess = it
+        }.onCompleteUI { res, e ->
+            e.shouldBeNull()
+            itemsOnComplete = res
+        }
+        itemsOnSuccess.shouldNotBeEmpty()
+        itemsOnSuccess?.size.shouldBe(3)
+        itemsOnSuccess?.shouldContain("abc")
+
+        itemsOnComplete.shouldNotBeEmpty()
+        itemsOnComplete?.size.shouldBe(3)
+        itemsOnComplete?.shouldContain("abc")
     }
 
     @Test
@@ -88,6 +134,41 @@ class TaskJvmTest : TaskTest()  {
     }
 
     @Test
+    override fun onSuccessAndOnCompleteDouble() = runTest {
+        val itemsOnSuccess = mutableListOf<String>()
+        val itemsOnComplete = mutableListOf<String>()
+
+        Task.execute<List<String>?> {
+            listOf("abc", "abcd", "abcde")
+        }.onSuccess {
+            it?.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }.onSuccess {
+            it?.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }.onComplete { res, e ->
+            e.shouldBeNull()
+            res?.let {
+                itemsOnComplete.addAll(it)
+            }
+        }.onComplete { res, e ->
+            e.shouldBeNull()
+            res?.let {
+                itemsOnComplete.addAll(it)
+            }
+        }
+        itemsOnSuccess.shouldNotBeEmpty()
+        itemsOnSuccess.size.shouldBe(3)
+        itemsOnSuccess.shouldContain("abc")
+
+        itemsOnComplete.shouldNotBeEmpty()
+        itemsOnComplete.size.shouldBe(3)
+        itemsOnComplete.shouldContain("abc")
+    }
+
+    @Test
     override fun onSuccessUIDouble() = runTest {
         val itemsOnSuccess = mutableListOf<String>()
 
@@ -107,7 +188,42 @@ class TaskJvmTest : TaskTest()  {
         itemsOnSuccess.shouldContain("abc")
     }
 
-    @OptIn(RunBlocking::class)
+    @Test
+    override fun onSuccessUIAndOnCompleteDouble() = runTest {
+        val itemsOnSuccess = mutableListOf<String>()
+        val itemsOnComplete = mutableListOf<String>()
+
+        Task.execute<List<String>?> {
+            listOf("abc", "abcd", "abcde")
+        }.onSuccessUI {
+            it?.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }.onSuccessUI {
+            it?.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }.onCompleteUI { res, e ->
+            e.shouldBeNull()
+            res?.let {
+                itemsOnComplete.addAll(it)
+            }
+        }.onCompleteUI { res, e ->
+            e.shouldBeNull()
+            res?.let {
+                itemsOnComplete.addAll(it)
+            }
+        }
+
+        itemsOnSuccess.shouldNotBeEmpty()
+        itemsOnSuccess.size.shouldBe(3)
+        itemsOnSuccess.shouldContain("abc")
+
+        itemsOnComplete.shouldNotBeEmpty()
+        itemsOnComplete.size.shouldBe(3)
+        itemsOnComplete.shouldContain("abc")
+    }
+
     @Test
     override fun onSuccessOnlyWithAwait() = runTest {
         val itemsOnSuccess = mutableListOf<String>()
@@ -119,7 +235,7 @@ class TaskJvmTest : TaskTest()  {
             it?.let {
                 itemsOnSuccess.addAll(it)
             }
-        }.get()?.let {
+        }.await()?.let {
             it.let {
                 itemsOnSuccess.addAll(it)
             }
@@ -128,6 +244,34 @@ class TaskJvmTest : TaskTest()  {
         itemOnFailure.shouldBeNull()
         itemsOnSuccess.shouldNotBeEmpty()
         itemsOnSuccess.size.shouldBe(6)
+        itemsOnSuccess.shouldContain("abc")
+    }
+
+    @Test
+    override fun onSuccessAndOnCompleteWithAwait() = runTest {
+        val itemsOnSuccess = mutableListOf<String>()
+        val itemOnFailure: Throwable? = null
+
+        Task.execute<List<String>?> {
+            listOf("abc", "abcd", "abcde")
+        }.onSuccess {
+            it?.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }.onComplete { res, e ->
+            e.shouldBeNull()
+            res?.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }.await()?.let {
+            it.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }
+
+        itemOnFailure.shouldBeNull()
+        itemsOnSuccess.shouldNotBeEmpty()
+        itemsOnSuccess.size.shouldBe(9)
         itemsOnSuccess.shouldContain("abc")
     }
 
@@ -154,7 +298,36 @@ class TaskJvmTest : TaskTest()  {
         itemsOnSuccess.size.shouldBe(3)
         itemsOnSuccess.shouldContain("ClientException")
     }
-    @OptIn(RunBlocking::class)
+
+    @Test
+    override fun onSuccessAndOnCompleteAndHandledException() = runTest {
+        val itemsOnSuccess = mutableListOf<String>()
+        val itemOnFailure: Throwable? = null
+
+        Task.execute<List<String>?> {
+            try {
+                listOf("abc", "abcd", "abcde")
+                throw ClientException(message = "Something Went Crazy")
+            } catch (t: Throwable) {
+                listOf("ClientException", "abcd", "abcde")
+            }
+        }.onSuccess {
+            it?.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }.onComplete { res, e ->
+            e.shouldBeNull()
+            res?.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }
+
+        itemOnFailure.shouldBeNull()
+        itemsOnSuccess.shouldNotBeEmpty()
+        itemsOnSuccess.size.shouldBe(6)
+        itemsOnSuccess.shouldContain("ClientException")
+    }
+
     @Test
     override fun onSuccessOnlyWithAwaitAndHandledException() = runTest {
         val itemsOnSuccess = mutableListOf<String>()
@@ -171,7 +344,7 @@ class TaskJvmTest : TaskTest()  {
             it?.let {
                 itemsOnSuccess.addAll(it)
             }
-        }.get()?.let {
+        }.awaitOrNull()?.let {
             it.let {
                 itemsOnSuccess.addAll(it)
             }
@@ -180,6 +353,39 @@ class TaskJvmTest : TaskTest()  {
         itemOnFailure.shouldBeNull()
         itemsOnSuccess.shouldNotBeEmpty()
         itemsOnSuccess.size.shouldBe(6)
+        itemsOnSuccess.shouldContain("ClientException")
+    }
+
+    @Test
+    override fun onSuccessAndOnCompleteWithAwaitAndHandledException() = runTest {
+        val itemsOnSuccess = mutableListOf<String>()
+        val itemOnFailure: Throwable? = null
+
+        Task.execute<List<String>?> {
+            try {
+                listOf("abc", "abcd", "abcde")
+                throw ClientException(message = "Something Went Crazy")
+            } catch (t: Throwable) {
+                listOf("ClientException", "abcd", "abcde")
+            }
+        }.onSuccess {
+            it?.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }.onComplete { res, e ->
+            e.shouldBeNull()
+            res?.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }.awaitOrNull()?.let {
+            it.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }
+
+        itemOnFailure.shouldBeNull()
+        itemsOnSuccess.shouldNotBeEmpty()
+        itemsOnSuccess.size.shouldBe(9)
         itemsOnSuccess.shouldContain("ClientException")
     }
 
@@ -202,6 +408,32 @@ class TaskJvmTest : TaskTest()  {
     }
 
     @Test
+    override fun onSuccessWithFailureAndOnComplete() = runTest {
+        var itemsOnSuccess: List<String>? = listOf()
+        var itemOnFailure: Throwable? = null
+        var itemOnComplete: List<String>? = listOf()
+
+        Task.execute<List<String>?> {
+            listOf("abc", "abcd", "abcde")
+        }.onSuccess {
+            itemsOnSuccess = it
+        }.onFailure {
+            itemOnFailure = it
+        }.onComplete { res, e ->
+            e.shouldBeNull()
+            itemOnComplete = res
+        }
+        itemOnFailure.shouldBeNull()
+        itemsOnSuccess.shouldNotBeEmpty()
+        itemsOnSuccess?.size.shouldBe(3)
+        itemsOnSuccess?.shouldContain("abc")
+
+        itemOnComplete.shouldNotBeEmpty()
+        itemOnComplete?.size.shouldBe(3)
+        itemOnComplete?.shouldContain("abc")
+    }
+
+    @Test
     override fun onSuccessWithSuccessUI() = runTest {
         val itemsOnSuccess = mutableListOf<String>()
 
@@ -218,6 +450,31 @@ class TaskJvmTest : TaskTest()  {
         }
         itemsOnSuccess.shouldNotBeEmpty()
         itemsOnSuccess.size.shouldBe(6)
+        itemsOnSuccess.shouldContain("abc")
+    }
+
+    @Test
+    override fun onSuccessWithSuccessUIAndOnCompleteUI() = runTest {
+        val itemsOnSuccess = mutableListOf<String>()
+
+        Task.execute<List<String>?> {
+            listOf("abc", "abcd", "abcde")
+        }.onSuccess {
+            it?.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }.onSuccessUI {
+            it?.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }.onCompleteUI { res, e ->
+            e.shouldBeNull()
+            res?.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }
+        itemsOnSuccess.shouldNotBeEmpty()
+        itemsOnSuccess.size.shouldBe(9)
         itemsOnSuccess.shouldContain("abc")
     }
 
@@ -242,6 +499,34 @@ class TaskJvmTest : TaskTest()  {
         itemOnFailure.shouldBeNull()
         itemsOnSuccess.shouldNotBeEmpty()
         itemsOnSuccess.size.shouldBe(6)
+        itemsOnSuccess.shouldContain("abc")
+    }
+
+    override fun onSuccessWithFailureWithSuccessUIAndOnComplete() = runTest {
+        val itemsOnSuccess = mutableListOf<String>()
+        var itemOnFailure: Throwable? = null
+
+        Task.execute<List<String>?> {
+            listOf("abc", "abcd", "abcde")
+        }.onSuccess {
+            it?.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }.onSuccessUI {
+            it?.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }.onFailure {
+            itemOnFailure = it
+        }.onCompleteUI { res, e ->
+            e.shouldBeNull()
+            res?.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }
+        itemOnFailure.shouldBeNull()
+        itemsOnSuccess.shouldNotBeEmpty()
+        itemsOnSuccess.size.shouldBe(9)
         itemsOnSuccess.shouldContain("abc")
     }
 
@@ -274,6 +559,38 @@ class TaskJvmTest : TaskTest()  {
     }
 
     @Test
+    override fun onSuccessWithFailureWithFailureUIeWithSuccessUIAndOnCompleteUI() = runTest {
+        val itemsOnSuccess = mutableListOf<String>()
+        var itemOnFailure: Throwable? = null
+
+        Task.execute<List<String>?> {
+            listOf("abc", "abcd", "abcde")
+        }.onSuccess {
+            it?.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }.onSuccessUI {
+            it?.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }.onFailure {
+            itemOnFailure = it
+        }.onFailureUI {
+            itemOnFailure = it
+        }.onCompleteUI { res, e ->
+            e.shouldBeNull()
+            res?.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }
+
+        itemOnFailure.shouldBeNull()
+        itemsOnSuccess.shouldNotBeEmpty()
+        itemsOnSuccess.size.shouldBe(9)
+        itemsOnSuccess.shouldContain("abc")
+    }
+
+    @Test
     override fun onSuccessDoubleInSuccessUIDouble() = runTest {
         val itemsOnSuccess = mutableListOf<String>()
 
@@ -301,6 +618,43 @@ class TaskJvmTest : TaskTest()  {
         itemsOnSuccess.shouldContain("abc")
     }
 
+    @Test
+    override fun onSuccessDoubleInSuccessUIAndOnCompleteUIDouble() = runTest {
+        val itemsOnSuccess = mutableListOf<String>()
+
+        Task.execute<List<String>?> {
+            listOf("abc", "abcd", "abcde")
+        }.onSuccess {
+            it?.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }.onSuccess {
+            it?.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }.onSuccessUI {
+            it?.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }.onSuccessUI {
+            it?.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }.onCompleteUI { res, e ->
+            e.shouldBeNull()
+            res?.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }.onCompleteUI { res, e ->
+            e.shouldBeNull()
+            res?.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }
+        itemsOnSuccess.shouldNotBeEmpty()
+        itemsOnSuccess.size.shouldBe(9)
+        itemsOnSuccess.shouldContain("abc")
+    }
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -323,6 +677,27 @@ class TaskJvmTest : TaskTest()  {
     }
 
     @Test
+    override fun onFailureAndOnComplete() = runTest {
+        val itemsOnSuccess: List<String> = listOf()
+        var itemOnFailure: Throwable? = null
+
+        Task.execute<List<String>?> {
+            throw ClientException(message = "Something Went Crazy")
+        }.onFailure {
+            itemOnFailure = it
+        }.onComplete { res, e ->
+            res.shouldBeNull()
+            e.shouldNotBeNull()
+            e.message.shouldBe("Something Went Crazy")
+        }
+
+        itemsOnSuccess.shouldBeEmpty()
+        itemOnFailure.shouldNotBeNull()
+        itemOnFailure?.message.shouldBe("Something Went Crazy")
+
+    }
+
+    @Test
     override fun onFailureUIOnly() = runTest {
         val itemsOnSuccess: List<String> = listOf()
         var itemOnFailure: Throwable? = null
@@ -331,6 +706,26 @@ class TaskJvmTest : TaskTest()  {
             throw ClientException(message = "Something Went Crazy")
         }.onFailureUI {
             itemOnFailure = it
+        }
+
+        itemsOnSuccess.shouldBeEmpty()
+        itemOnFailure.shouldNotBeNull()
+        itemOnFailure?.message.shouldBe("Something Went Crazy")
+    }
+
+    @Test
+    override fun onFailureUIAndOnCompleteUI() = runTest {
+        val itemsOnSuccess: List<String> = listOf()
+        var itemOnFailure: Throwable? = null
+
+        Task.execute<List<String>?> {
+            throw ClientException(message = "Something Went Crazy")
+        }.onFailureUI {
+            itemOnFailure = it
+        }.onCompleteUI { res, e ->
+            res.shouldBeNull()
+            e.shouldNotBeNull()
+            e.message.shouldBe("Something Went Crazy")
         }
 
         itemsOnSuccess.shouldBeEmpty()
@@ -359,6 +754,32 @@ class TaskJvmTest : TaskTest()  {
     }
 
     @Test
+    override fun onFailureAndOnCompleteDouble() = runTest {
+        val itemsOnSuccess = mutableListOf<String>()
+        val itemsOnFailure = mutableListOf<Throwable>()
+
+        Task.execute<List<String>?> {
+            throw ClientException(message = "Something Went Crazy")
+        }.onFailure {
+            itemsOnFailure.add(it)
+        }.onFailure {
+            itemsOnFailure.add(it)
+        }.onCompleteUI { res, e ->
+            res.shouldBeNull()
+            itemsOnFailure.add(e!!)
+        }.onCompleteUI { res, e ->
+            res.shouldBeNull()
+            itemsOnFailure.add(e!!)
+        }
+
+        itemsOnSuccess.shouldBeEmpty()
+        itemsOnFailure.size.shouldBe(2)
+        itemsOnFailure.forEach {
+            it.message.shouldBe("Something Went Crazy")
+        }
+    }
+
+    @Test
     override fun onFailureUIDouble() = runTest {
         val itemsOnSuccess = mutableListOf<String>()
         val itemsOnFailure = mutableListOf<Throwable>()
@@ -378,7 +799,32 @@ class TaskJvmTest : TaskTest()  {
         }
     }
 
-    @OptIn(RunBlocking::class)
+    @Test
+    override fun onFailureUIAndOnCompleteUIDouble() = runTest {
+        val itemsOnSuccess = mutableListOf<String>()
+        val itemsOnFailure = mutableListOf<Throwable>()
+
+        Task.execute<List<String>?> {
+            throw ClientException(message = "Something Went Crazy")
+        }.onFailureUI {
+            itemsOnFailure.add(it)
+        }.onFailureUI {
+            itemsOnFailure.add(it)
+        }.onCompleteUI { res, e ->
+            res.shouldBeNull()
+            itemsOnFailure.add(e!!)
+        }.onCompleteUI { res, e ->
+            res.shouldBeNull()
+            itemsOnFailure.add(e!!)
+        }
+
+        itemsOnSuccess.shouldBeEmpty()
+        itemsOnFailure.size.shouldBe(2)
+        itemsOnFailure.forEach {
+            it.message.shouldBe("Something Went Crazy")
+        }
+    }
+
     @Test
     override fun onFailureOnlyWithAwait() = runTest {
         val itemsOnSuccess: List<String> = listOf()
@@ -388,11 +834,33 @@ class TaskJvmTest : TaskTest()  {
             throw ClientException(message = "Something Went Crazy")
         }.onFailure {
             itemsOnFailure.add(it)
-        }.getOrNull()
+        }.awaitOrNull()
 
         itemsOnSuccess.shouldBeEmpty()
         itemsOnFailure.shouldNotBeEmpty()
         itemsOnFailure.size.shouldBe(1)
+        itemsOnFailure.forEach {
+            it.message.shouldBe("Something Went Crazy")
+        }
+    }
+
+    @Test
+    override fun onFailureAndOnCompleteWithAwait() = runTest {
+        val itemsOnSuccess: List<String> = listOf()
+        val itemsOnFailure = mutableListOf<Throwable>()
+
+        Task.execute<List<String>?> {
+            throw ClientException(message = "Something Went Crazy")
+        }.onFailure {
+            itemsOnFailure.add(it)
+        }.onComplete { res, e ->
+            res.shouldBeNull()
+            itemsOnFailure.add(e!!)
+        }.awaitOrNull()
+
+        itemsOnSuccess.shouldBeEmpty()
+        itemsOnFailure.shouldNotBeEmpty()
+        itemsOnFailure.size.shouldBe(2)
         itemsOnFailure.forEach {
             it.message.shouldBe("Something Went Crazy")
         }
@@ -417,6 +885,32 @@ class TaskJvmTest : TaskTest()  {
     }
 
     @Test
+    override fun onFailureWithSuccessAndOnComplete() = runTest {
+        var itemsOnSuccess: List<String>? = null
+        var itemOnFailure: Throwable? = null
+        var itemOnComplete: Throwable? = null
+
+        Task.execute<List<String>?> {
+            throw ClientException(message = "Something Went Crazy")
+        }.onSuccess {
+            itemsOnSuccess = it
+        }.onFailure {
+            itemOnFailure = it
+        }.onComplete { res, e ->
+            res.shouldBeNull()
+            itemOnComplete = e
+
+        }
+
+        itemsOnSuccess.shouldBeNull()
+        itemOnFailure.shouldNotBeNull()
+        itemOnFailure?.message.shouldBe("Something Went Crazy")
+
+        itemOnComplete.shouldNotBeNull()
+        itemOnComplete?.message.shouldBe("Something Went Crazy")
+    }
+
+    @Test
     override fun onFailureWithFailureUI() = runTest {
         val itemsOnSuccess = mutableListOf<String>()
         val itemsOnFailure = mutableListOf<Throwable>()
@@ -432,6 +926,30 @@ class TaskJvmTest : TaskTest()  {
         itemsOnSuccess.shouldBeEmpty()
         itemsOnFailure.shouldNotBeEmpty()
         itemsOnFailure.size.shouldBe(2)
+        itemsOnFailure.forEach {
+            it.message.shouldBe("Something Went Crazy")
+        }
+    }
+
+    @Test
+    override fun onFailureWithFailureUIAndOnCompleteUI() = runTest {
+        val itemsOnSuccess = mutableListOf<String>()
+        val itemsOnFailure = mutableListOf<Throwable>()
+
+        Task.execute<List<String>?> {
+            throw ClientException(message = "Something Went Crazy")
+        }.onFailure {
+            itemsOnFailure.add(it)
+        }.onFailureUI {
+            itemsOnFailure.add(it)
+        }.onCompleteUI { res, e ->
+            res.shouldBeNull()
+            itemsOnFailure.add(e!!)
+        }
+
+        itemsOnSuccess.shouldBeEmpty()
+        itemsOnFailure.shouldNotBeEmpty()
+        itemsOnFailure.size.shouldBe(3)
         itemsOnFailure.forEach {
             it.message.shouldBe("Something Went Crazy")
         }
@@ -457,6 +975,34 @@ class TaskJvmTest : TaskTest()  {
         itemsOnSuccess.shouldBeEmpty()
         itemsOnFailure.shouldNotBeNull()
         itemsOnFailure.size.shouldBe(2)
+        itemsOnFailure.forEach {
+            it.message.shouldBe("Something Went Crazy")
+        }
+    }
+
+    @Test
+    override fun onFailureWithSuccessWithFailureUIAndOnCompleteUI() = runTest {
+        val itemsOnSuccess = mutableListOf<String>()
+        val itemsOnFailure = mutableListOf<Throwable>()
+
+        Task.execute<List<String>?> {
+            throw ClientException(message = "Something Went Crazy")
+        }.onSuccess {
+            it?.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }.onFailure {
+            itemsOnFailure.add(it)
+        }.onFailureUI {
+            itemsOnFailure.add(it)
+        }.onCompleteUI { res, e ->
+            res.shouldBeNull()
+            itemsOnFailure.add(e!!)
+        }
+
+        itemsOnSuccess.shouldBeEmpty()
+        itemsOnFailure.shouldNotBeNull()
+        itemsOnFailure.size.shouldBe(3)
         itemsOnFailure.forEach {
             it.message.shouldBe("Something Went Crazy")
         }
@@ -492,7 +1038,38 @@ class TaskJvmTest : TaskTest()  {
         }
     }
 
-    @OptIn(RunBlocking::class)
+    @Test
+    override fun onFailureWithSuccessWithSuccessUIWithFailureUIAndOnComplete() = runTest {
+        val itemsOnSuccess = mutableListOf<String>()
+        val itemsOnFailure = mutableListOf<Throwable>()
+
+        Task.execute<List<String>?> {
+            throw ClientException(message = "Something Went Crazy")
+        }.onSuccess {
+            it?.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }.onSuccessUI {
+            it?.let {
+                itemsOnSuccess.addAll(it)
+            }
+        }.onFailure {
+            itemsOnFailure.add(it)
+        }.onFailureUI {
+            itemsOnFailure.add(it)
+        }.onCompleteUI { res, e ->
+            res.shouldBeNull()
+            itemsOnFailure.add(e!!)
+        }
+
+        itemsOnSuccess.shouldBeEmpty()
+        itemsOnFailure.shouldNotBeEmpty()
+        itemsOnFailure.size.shouldBe(3)
+        itemsOnFailure.forEach {
+            it.message.shouldBe("Something Went Crazy")
+        }
+    }
+
     @Test
     override fun onFailureWithAwaitWithSuccessWithSuccessUIWithFailureUI() = runTest {
         val itemsOnSuccess = mutableListOf<String>()
@@ -512,7 +1089,7 @@ class TaskJvmTest : TaskTest()  {
             itemsOnFailure.add(it)
         }.onFailureUI {
             itemsOnFailure.add(it)
-        }.getOrNull()
+        }.awaitOrNull()
 
         itemsOnSuccess.shouldBeEmpty()
         itemsOnFailure.shouldNotBeEmpty()
@@ -521,6 +1098,39 @@ class TaskJvmTest : TaskTest()  {
             it.message.shouldBe("Something Went Crazy")
         }
     }
+
+    @Test
+    override fun onFailureWithAwaitWithSuccessWithSuccessUIWithFailureUIAndOnCompleteUI() =
+        runTest {
+            val itemsOnSuccess = mutableListOf<String>()
+            val itemsOnFailure = mutableListOf<Throwable>()
+
+            Task.execute<List<String>?> {
+                throw ClientException(message = "Something Went Crazy")
+            }.onSuccess {
+                it?.let {
+                    itemsOnSuccess.addAll(it)
+                }
+            }.onSuccessUI {
+                it?.let {
+                    itemsOnSuccess.addAll(it)
+                }
+            }.onFailure {
+                itemsOnFailure.add(it)
+            }.onFailureUI {
+                itemsOnFailure.add(it)
+            }.onCompleteUI { res, e ->
+                res.shouldBeNull()
+                itemsOnFailure.add(e!!)
+            }.awaitOrNull()
+
+            itemsOnSuccess.shouldBeEmpty()
+            itemsOnFailure.shouldNotBeEmpty()
+            itemsOnFailure.size.shouldBe(3)
+            itemsOnFailure.forEach {
+                it.message.shouldBe("Something Went Crazy")
+            }
+        }
 
     @Test
     override fun onFailureDoubleOnFailureUIDouble() = runTest {
@@ -549,6 +1159,38 @@ class TaskJvmTest : TaskTest()  {
         }
     }
 
+    @Test
+    override fun onFailureDoubleOnFailureUIAndOnCompleteUIDouble() = runTest {
+        val itemsOnSuccess = mutableListOf<String>()
+        val itemsOnFailure = mutableListOf<Throwable>()
+
+        Task.execute<List<String>?> {
+            throw ClientException(message = "Something Went Crazy")
+        }.onFailure {
+            itemsOnFailure.add(it)
+        }.onFailure {
+            itemsOnFailure.add(it)
+        }.onFailure {
+            itemsOnFailure.add(it)
+
+        }.onFailure {
+            itemsOnFailure.add(it)
+
+        }.onComplete { res, e ->
+            res.shouldBeNull()
+            itemsOnFailure.add(e!!)
+        }.onComplete { res, e ->
+            res.shouldBeNull()
+            itemsOnFailure.add(e!!)
+        }
+
+        itemsOnSuccess.shouldBeEmpty()
+        itemsOnFailure.shouldNotBeEmpty()
+        itemsOnFailure.size.shouldBe(2)
+        itemsOnFailure.forEach {
+            it.message.shouldBe("Something Went Crazy")
+        }
+    }
 
     @Test
     override fun onCancel() = runTest {
@@ -575,6 +1217,38 @@ class TaskJvmTest : TaskTest()  {
     }
 
     @Test
+    override fun onCancelAndOnComplete() = runTest {
+        var itemsOnSuccess: List<String>? = listOf()
+        val itemsOnFailure = mutableListOf<Throwable>()
+        var isCanceled: Throwable? = null
+
+        Task.execute<List<String>?> {
+            cancel(message = "cancelled")
+            delay(100)
+            listOf("Zendaya Maree", "Chloë Grace Moretz", "Luna Blaise")
+        }.onFailure {
+            itemsOnFailure.add(it)
+        }.onFailureUI {
+            itemsOnFailure.add(it)
+        }.onSuccessUI {
+            itemsOnSuccess = it
+        }.onCancel {
+            isCanceled = it
+        }.onComplete { res, e ->
+            res.shouldBeNull()
+            e!!.isCancellationException().shouldBeTrue()
+            itemsOnFailure.add(e)
+        }.awaitOrNull()
+
+        itemsOnSuccess.shouldBeEmpty()
+        isCanceled.shouldNotBeNull()
+        itemsOnFailure.size.shouldBe(1)
+        itemsOnFailure.forEach {
+            it.message.shouldBe("cancelled")
+        }
+    }
+
+    @Test
     override fun someFavoriteActressesListTaskShouldInvokeOnSuccessUI() = runTest {
         var itemsOnSuccess: List<String>? = listOf()
         Task.execute<List<String>?> {
@@ -589,6 +1263,29 @@ class TaskJvmTest : TaskTest()  {
         itemsOnSuccess?.shouldContain("abcde")
     }
 
+    @Test
+    override fun someFavoriteActressesListTaskShouldInvokeOnSuccessUIAndOnCompleteUI() = runTest {
+        var itemsOnSuccess: List<String>? = listOf()
+        var itemsOnComplete: List<String>? = listOf()
+
+        Task.execute<List<String>?> {
+            listOf("abc", "abcd", "abcde")
+        }.onSuccessUI {
+            itemsOnSuccess = it
+        }.onFailureUI {
+        }.onCompleteUI { res, e ->
+            e.shouldBeNull()
+            itemsOnComplete = res
+        }
+
+        itemsOnSuccess.shouldNotBeEmpty()
+        itemsOnSuccess?.size.shouldBe(3)
+        itemsOnSuccess?.shouldContain("abcde")
+
+        itemsOnComplete?.size.shouldBe(3)
+        itemsOnComplete?.shouldContain("abcde")
+    }
+
 
     @Test
     override fun taskShouldInvokeOnFailure() = runTest {
@@ -599,5 +1296,22 @@ class TaskJvmTest : TaskTest()  {
             itemsFail = it
         }
         itemsFail?.message.shouldBe("Something Went Crazy")
+    }
+
+    @Test
+    override fun taskShouldInvokeOnFailureAndOnComplete() = runTest {
+        var itemsFail: ClientException? = null
+        var itemsComplete: ClientException? = null
+        Task.execute<List<String>?> {
+            throw ClientException(message = "Something Went Crazy")
+        }.onFailure {
+            itemsFail = it
+        }.onComplete { res, e ->
+            res.shouldBeNull()
+            itemsComplete = e
+        }
+
+        itemsFail!!.message.shouldBe("Something Went Crazy")
+        itemsComplete!!.message.shouldBe("Something Went Crazy")
     }
 }

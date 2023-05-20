@@ -134,6 +134,45 @@ class Task<ResultT> private constructor(
         }
 
     /**
+     * Using the Task's instance, we can call complete.invoke passing in a [ResultT] if job succeeded or preferred Throwable [ClientException] as a failure result
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private var complete: ((ResultT?, ClientException?) -> Unit)? = null
+        set(value) {
+            try {
+                if (field == null && value != null && job.isCompleted) {
+                    val e = job.getCompletionExceptionOrNull()
+                    if (e == null)
+                        value.invoke(job.getCompleted(), null)
+                    else
+                        value.invoke(null, e.asClientException())
+                }
+            } catch (t: Throwable) {
+                ClientException.listener.invoke(t)
+            }
+            field = value
+        }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private var completeUI: ((ResultT?, ClientException?) -> Unit)? = null
+        set(value) {
+            try {
+                if (field == null && value != null && job.isCompleted) {
+                    val e = job.getCompletionExceptionOrNull()
+                    scopeUI.launch {
+                        if (e == null)
+                            value.invoke(job.getCompleted(), null)
+                        else
+                            value.invoke(null, e.asClientException())
+                    }
+                }
+            } catch (t: Throwable) {
+                ClientException.listener.invoke(t)
+            }
+            field = value
+        }
+
+    /**
      * using the Task's instance, we can cancel and running coroutines of this Task's scope.
      * alternatively we can use the Task's cancel fun @see [Task.cancel]
      */
@@ -163,6 +202,7 @@ class Task<ResultT> private constructor(
 
         success = { res ->
             action(res)
+            complete?.invoke(res, null)
             successUI?.let {
                 scopeUI.launch(DispatchersProvider.Main) {
                     it.invoke(res)
@@ -186,9 +226,33 @@ class Task<ResultT> private constructor(
 
         failure = { e ->
             action(e)
+            complete?.invoke(null, e)
             failureUI?.let {
                 scopeUI.launch(DispatchersProvider.Main) {
                     it.invoke(e)
+                }
+            }
+        }
+        return this
+    }
+
+    /**
+     * a task finished scope that is attachable to a task instance
+     *      *  task().onComplete {res, e ->
+     *     // handle task completed
+     *  }
+     *  use this scope to retrieve the failure response of a task
+     */
+    fun onComplete(action: (ResultT?, ClientException?) -> Unit): Task<ResultT> {
+
+        // Ignore duplicate complete & completeUI calls and accept the first pair only
+        if (complete != null && completeUI != null) return this
+
+        complete = { res, e ->
+            action(res, e)
+            completeUI?.let {
+                scopeUI.launch(DispatchersProvider.Main) {
+                    it.invoke(res, e)
                 }
             }
         }
@@ -205,6 +269,7 @@ class Task<ResultT> private constructor(
     fun onCancel(action: (ClientException) -> Unit): Task<ResultT> {
         cancelTask = { e ->
             action(e)
+            complete?.invoke(null, e)
         }
         return this
     }
@@ -219,7 +284,6 @@ class Task<ResultT> private constructor(
      *     // do UI logic , update TextViews ..etc
      *  }
      * ```
-     * if it did not work , or was miss used we can remove
      */
     fun onSuccessUI(action: (ResultT) -> Unit): Task<ResultT> {
 
@@ -251,8 +315,6 @@ class Task<ResultT> private constructor(
      *     // do UI logic , update TextViews ..etc
      *  }
      * ```
-     * example usage in client Manager. ensure to use task.failureUI instead of task.failure else the scope will never succeed
-     * if it did not work , or was miss used we can remove
      */
     fun onFailureUI(action: (ClientException) -> Unit): Task<ResultT> {
 
@@ -267,6 +329,36 @@ class Task<ResultT> private constructor(
                 if (!jobIsCompleted)
                     scopeUI.launch(DispatchersProvider.Main) {
                         action.invoke(e)
+                    }
+            }
+        }
+        return this
+    }
+
+    /**
+     * Experimental callback to avoid adding switch threads logic,
+     * Also allow a chance to perform UI and background jobs after a task is done without dealing with multithreading
+     * ```
+     *  callApi().onComplete {
+     *     // do background logic , call another api
+     *  }.onFailureUI {
+     *     // do UI logic , update TextViews ..etc
+     *  }
+     * ```
+     */
+    fun onCompleteUI(action: (ResultT?, ClientException?) -> Unit): Task<ResultT> {
+
+        // ignore duplicate failure & failureUI calls and accept the first pair only
+        if (complete != null && completeUI != null) return this
+
+        val jobIsCompleted = job.isCompleted
+        completeUI = action
+
+        if (complete == null) {
+            complete = { res, e ->
+                if (!jobIsCompleted)
+                    scopeUI.launch(DispatchersProvider.Main) {
+                        action.invoke(res, e)
                     }
             }
         }
