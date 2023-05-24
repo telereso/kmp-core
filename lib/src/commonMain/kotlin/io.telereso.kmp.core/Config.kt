@@ -28,6 +28,8 @@ import io.ktor.client.plugins.HttpTimeout
 import io.ktor.http.URLProtocol
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
+import kotlin.js.JsName
+import kotlin.jvm.JvmStatic
 import kotlin.native.concurrent.ThreadLocal
 
 /**
@@ -44,6 +46,10 @@ class Config private constructor(
     val builder: Builder
 ) {
 
+    fun buildUpon(): Builder {
+        return builder.copy()
+    }
+
     /**
      * class companion class
      */
@@ -54,14 +60,23 @@ class Config private constructor(
          * @param appName a mandatory value needed to be passed
          * @param appVersion a mandatory value needed to be passed
          */
+        @JsName("dslBuilder")
         inline fun builder(
             appName: String,
             appVersion: String,
-            block: Builder.() -> Unit
+            block: Builder.() -> Unit = {}
         ) =
             Builder(appName, appVersion)
                 .apply(block)
                 .build()
+
+        @JvmStatic
+        fun builder(
+            appName: String,
+            appVersion: String,
+        ): Builder {
+            return Builder(appName, appVersion)
+        }
     }
 
     /**
@@ -70,7 +85,7 @@ class Config private constructor(
      * @param appName mandatory param for the current app name that is using the client
      * @param appVersion mandatory param for the current app version of client
      */
-    class Builder(val appName: String, val appVersion: String) {
+    data class Builder(val appName: String, val appVersion: String) {
         var interceptors: List<Any?>? = null
         var logHttpRequests: Boolean = false
         var environment: Environment? = null

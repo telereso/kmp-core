@@ -80,7 +80,7 @@ actual fun httpClient(
     if (shouldLogHttpRequests) {
         install(Logging) {
             logger = Logger.SIMPLE
-            level = LogLevel.HEADERS
+            level = LogLevel.ALL
         }
     }
 

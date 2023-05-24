@@ -25,6 +25,7 @@
 package io.telereso.kmp.core
 
 import io.telereso.kmp.core.models.ClientException
+import kotlinx.coroutines.asDeferred
 import kotlin.js.Promise
 
 
@@ -49,6 +50,42 @@ object Tasks {
             }.onFailure {
                 failure(it)
             }
+        }
+    }
+
+    fun <ResultT> create(action: () -> ResultT): Task<ResultT> {
+        return Task.execute {
+            action()
+        }
+    }
+
+    fun <ResultT> from(action: Promise<ResultT>): Task<ResultT> {
+        return Task.execute {
+            action.asDeferred().await()
+        }
+    }
+
+    fun fromString(action: Promise<String>): Task<String> {
+        return Task.execute {
+            action.asDeferred().await()
+        }
+    }
+
+    fun fromNumber(action: Promise<Int>): Task<Int> {
+        return Task.execute {
+            action.asDeferred().await()
+        }
+    }
+
+    fun fromBoolean(action: Promise<Boolean>): Task<Boolean> {
+        return Task.execute {
+            action.asDeferred().await()
+        }
+    }
+
+    fun fromVoid(action: Promise<Unit>): Task<Unit> {
+        return Task.execute {
+            action.asDeferred().await()
         }
     }
 }
