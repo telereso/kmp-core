@@ -267,6 +267,7 @@ kotlin {
                 implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
                 implementation("io.ktor:ktor-client-auth:$ktorVersion")
+                implementation("io.ktor:ktor-client-logging:$ktorVersion")
 
                 implementation("io.github.aakira:napier:$napierVersion")
 
@@ -390,7 +391,6 @@ kotlin {
                  * Engines are used to process network requests. Note that a specific platform may require a specific engine that processes network requests.
                  */
                 implementation("io.ktor:ktor-client-darwin:$ktorVersion")
-                implementation("io.ktor:ktor-client-logging:$ktorVersion")
 
                 implementation("com.squareup.sqldelight:native-driver:$sqlDelightVersion")
 

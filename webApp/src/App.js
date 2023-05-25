@@ -1,19 +1,28 @@
 import logo from './logo.svg';
 import './App.css';
-import React, { useState ,useEffect} from 'react';
-const CoreClient =  require("core-client").io.telereso.kmp.core
+import React, {useState, useEffect} from 'react';
+
+const CoreClient = require("core-client").io.telereso.kmp.core
 
 CoreClient.debugLogger()
+
+
+function createPromise(): Promise<string> {
+    return new Promise((resolve, reject) => {
+        console.log("Promise to Task Converted ! ")
+        resolve("Promise resul!")
+    });
+}
 
 function App(block) {
     const [text, setText] = useState("Loading....");
 
     useEffect(async block => {
-          // CoreClient.async(CoreClient.TasksExamples.hi()).then((data)=>{
-          //   console.log("onSuccess",data)
-          //  }).catch((e)=>{
-          //   console.log("catch",e)
-          // })
+        // CoreClient.async(CoreClient.TasksExamples.hi()).then((data)=>{
+        //   console.log("onSuccess",data)
+        //  }).catch((e)=>{
+        //   console.log("catch",e)
+        // })
 
         CoreClient.TasksExamples.testVerify(new CoreClient.CoreClient())
 
@@ -50,6 +59,29 @@ function App(block) {
             .onFailureUI((e) => {
                 setText(e.message)
             })
+
+
+        // Convert Promise to Task
+        console.log("Converting Promise to Task ")
+
+        CoreClient.Tasks.fromString(new Promise((resolve, reject) => {
+            console.log("Promise String to Task Converted ! ")
+            resolve("Promise String resul!")
+        })).onSuccess((res) => {
+            console.log(res)
+        })
+
+
+        CoreClient.Tasks.from(createPromise())
+            .onSuccess((res) => {
+                console.log(res)
+            })
+
+        CoreClient.TasksExamples.apiCall()
+            .onSuccess((res) => {
+                console.log(res)
+            })
+
     },[]);
 
     return (
