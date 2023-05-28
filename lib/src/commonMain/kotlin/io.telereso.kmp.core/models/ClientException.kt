@@ -26,6 +26,7 @@ package io.telereso.kmp.core.models
 
 import io.telereso.kmp.core.Http
 import io.telereso.kmp.core.ThrowableSerializer
+import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlin.js.ExperimentalJsExport
@@ -58,6 +59,9 @@ open class ClientException(
     @JsName("ClientExceptionConstructor")
     constructor(cause: Throwable? = null) : this(null, cause = cause)
 
+    fun isCancellationException(): Boolean {
+        return cause is CancellationException
+    }
     /**
      * class companion class
      */

@@ -30,7 +30,6 @@ import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
-import kotlin.native.concurrent.ThreadLocal
 
 /**
  * All common config for client mangers
@@ -53,7 +52,6 @@ class Config private constructor(
     /**
      * class companion class
      */
-    @ThreadLocal
     companion object {
         /**
          * a Kotlin DSL fun that uses scope to build the Manager.

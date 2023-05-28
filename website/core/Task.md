@@ -316,6 +316,20 @@ using [cancel()](https://telereso.github.io/kmp-core/docs/core/0.0.10/-core/io.t
 
 ---
 
+### [onComplete](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core/-task/on-complete.html){:target="_blank"}
+
+Will be called after success, failure of cancel and return a nullable result or `ClientExcecptoin` depending on the outcome , 
+To check if task was completed due to cancellation you can use [isCancellationException](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core.modles/-client-exception/is-cancellation-exception.html){:target="_blank"}
+---
+
+### [onCompleteUI](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core/-task/on-complete-u-i.html){:target="_blank"}
+
+Will be called after success, failure of cancel and return a nullable result or `ClientExcecptoin` depending on the outcome ,
+To check if task was completed due to cancellation you can use [isCancellationException](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core.modles/-client-exception/is-cancellation-exception.html){:target="_blank"}
+Use this callback to update the UI in
+main thread (stop showing loaders)
+---
+
 ### [get](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core/-task/get.html){:target="_blank"}
 
 It's a blocking call to executing the task, best used in java 
