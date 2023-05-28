@@ -241,7 +241,7 @@ class Task<ResultT> private constructor(
      *      *  task().onComplete {res, e ->
      *     // handle task completed
      *  }
-     *  use this scope to retrieve the failure response of a task
+     *  Use this scope to retrieve the end result of a task with a [ResultT] if succeed or [ClientException] if failed
      */
     fun onComplete(action: (ResultT?, ClientException?) -> Unit): Task<ResultT> {
 
@@ -341,7 +341,7 @@ class Task<ResultT> private constructor(
      * ```
      *  callApi().onComplete {
      *     // do background logic , call another api
-     *  }.onFailureUI {
+     *  }.onCompleteUI {
      *     // do UI logic , update TextViews ..etc
      *  }
      * ```
