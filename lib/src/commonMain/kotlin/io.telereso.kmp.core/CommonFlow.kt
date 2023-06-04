@@ -58,12 +58,23 @@ import kotlin.jvm.JvmStatic
  */
 @JsExport
 class CommonFlow<T>(private val origin: Flow<T>) : Flow<T> by origin {
+
+    class Job internal constructor(private val collectJob: kotlinx.coroutines.Job) {
+        /**
+         * Platforms : iOS, JS
+         * Use to cancel the collecting job if used [watch]
+         */
+        fun cancel(){
+            runCatching { collectJob.cancel() }.getOrElse { ClientException.listener.invoke(it) }
+        }
+    }
     /**
      * similar to calling collect{}.
      * use watch to collect flow
      */
-    fun watch(stream: (T?, ClientException?) -> Unit) {
+    fun watch(stream: (T?, ClientException?) -> Unit): Job {
         val job = Job()
+        val commonFlowJob = Job(job)
         onEach {
             stream(it, null)
         }.catch { error: Throwable ->
@@ -73,9 +84,10 @@ class CommonFlow<T>(private val origin: Flow<T>) : Flow<T> by origin {
             if (error is ClientException) {
                 stream(null, error)
             }
-            throw error // Then propagate exeption on Kotlin code.
+            throw error // Then propagate exception on Kotlin code.
 
         }.launchIn(CoroutineScope(DispatchersProvider.Default + job))
+        return commonFlowJob
     }
 }
 

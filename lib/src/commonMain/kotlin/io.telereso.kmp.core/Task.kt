@@ -24,11 +24,15 @@
 
 package io.telereso.kmp.core
 
+import io.telereso.kmp.annotations.Builder
+import io.telereso.kmp.core.extensions.getOrDefault
 import io.telereso.kmp.core.models.ClientException
 import io.telereso.kmp.core.models.asClientException
 import kotlinx.coroutines.*
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
+import kotlin.jvm.JvmOverloads
+import kotlin.jvm.JvmStatic
 
 
 /**
@@ -39,20 +43,49 @@ import kotlin.js.JsExport
 @JsExport
 class Task<ResultT> private constructor(
     private val scope: CoroutineScope,
+    private val config: TaskConfig? = TaskConfig(),
     block: suspend CoroutineScope.() -> ResultT
 ) {
-    private var _task = InternalTask(this)
+
+    private val internalTask = InternalTask(this)
+
+    /**
+     * Number of tires to run the task , this will configured using [TaskConfig.retry]
+     */
+    private var tries = 1
 
     /**
      * Can be used to assign the task job while doing unit testing,
      * not meant to be exposed or used in actual logic
      */
-    internal val job: Deferred<ResultT> =
-        scope.async(block = block)
+    internal var job: Deferred<ResultT> =
+        scope.async(block = {
+            val c = config ?: TaskConfig()
+            if (c.startDelay.getOrDefault() > 0)
+                delay(c.startDelay.getOrDefault().toLong())
+
+            if (c.retry.getOrDefault() > 0) {
+                var res: ResultT? = null
+                while (res == null && tries <= c.retry.getOrDefault()) {
+                    res = runCatching { block() }.getOrNull()
+                    if (res != null)
+                        break
+
+                    if (c.backOffDelay.getOrDefault() > 0) {
+                        delay(tries * c.backOffDelay.getOrDefault().toLong())
+                    }
+                    tries++
+                }
+                // return result or run the block and allow it to fail
+                res ?: block()
+            } else {
+                block()
+            }
+        })
 
     init {
         val handler = CoroutineExceptionHandler { _, exception ->
-            failure?.invoke(exception.asClientException())
+            failure?.invoke(exception.asClientException(tries))
         }
         scope.launch(handler) {
             val res = job.await()
@@ -108,7 +141,7 @@ class Task<ResultT> private constructor(
                 if (field == null && value != null && job.isCompleted)
                     job.getCompletionExceptionOrNull()?.let {
                         if (it !is CancellationException)
-                            value.invoke(it.asClientException())
+                            value.invoke(it.asClientException(tries))
                     }
             } catch (t: Throwable) {
                 ClientException.listener.invoke(t)
@@ -124,7 +157,7 @@ class Task<ResultT> private constructor(
                     job.getCompletionExceptionOrNull()?.let {
                         if (it !is CancellationException)
                             scopeUI.launch {
-                                value.invoke(it.asClientException())
+                                value.invoke(it.asClientException(tries))
                             }
                     }
             } catch (t: Throwable) {
@@ -145,7 +178,7 @@ class Task<ResultT> private constructor(
                     if (e == null)
                         value.invoke(job.getCompleted(), null)
                     else
-                        value.invoke(null, e.asClientException())
+                        value.invoke(null, e.asClientException(tries))
                 }
             } catch (t: Throwable) {
                 ClientException.listener.invoke(t)
@@ -163,7 +196,7 @@ class Task<ResultT> private constructor(
                         if (e == null)
                             value.invoke(job.getCompleted(), null)
                         else
-                            value.invoke(null, e.asClientException())
+                            value.invoke(null, e.asClientException(tries))
                     }
                 }
             } catch (t: Throwable) {
@@ -181,7 +214,7 @@ class Task<ResultT> private constructor(
         set(value) {
             try {
                 if (field == null && value != null && job.isCancelled)
-                    value.invoke(job.getCancellationException().asClientException())
+                    value.invoke(job.getCancellationException().asClientException(tries))
             } catch (t: Throwable) {
                 ClientException.listener.invoke(t)
             }
@@ -383,7 +416,7 @@ class Task<ResultT> private constructor(
     @RunBlocking
     @Throws(Exception::class)
     fun get(): ResultT {
-        return _task.get()
+        return internalTask.get()
     }
 
     /**
@@ -394,7 +427,7 @@ class Task<ResultT> private constructor(
     @RunBlocking
     @Throws(Exception::class)
     fun getOrNull(): ResultT? {
-        return _task.getOrNull()
+        return internalTask.getOrNull()
     }
 
     class Builder {
@@ -412,12 +445,13 @@ class Task<ResultT> private constructor(
          * @param block provide your logic
          */
         fun <ResultT> execute(
+            config: TaskConfig? = TaskConfig(),
             block: suspend CoroutineScope.() -> ResultT
         ): Task<ResultT> {
             return Task(
                 scope ?: ContextScope.getSupervisor(
                     DispatchersProvider.Default
-                ), block
+                ), config, block
             )
         }
     }
@@ -428,9 +462,27 @@ class Task<ResultT> private constructor(
          * @param block That task logic
          */
         inline fun <ResultT> execute(
+            retry: Int = 0,
+            backOffDelay: Int = 0,
+            startDelay: Int = 0,
+            config: TaskConfig? = TaskConfig(retry, backOffDelay, startDelay),
             noinline block: suspend CoroutineScope.() -> ResultT
         ): Task<ResultT> {
-            return Builder().withScope().execute(block)
+            return Builder().withScope().execute(config, block)
+        }
+
+        @JvmStatic
+        @JvmOverloads
+        fun config(
+            retry: Int = 0,
+            backOffDelay: Int = 0,
+            startDelay: Int = 0
+        ): TaskConfig {
+            return TaskConfig(
+                retry = retry,
+                backOffDelay = backOffDelay,
+                startDelay = startDelay,
+            )
         }
     }
 }
@@ -466,5 +518,34 @@ suspend fun <ResultT> Task<ResultT>.awaitOrNull(): ResultT? {
     } catch (t: Throwable) {
         ClientException.listener.invoke(t)
         null
+    }
+}
+
+@Builder
+@JsExport
+data class TaskConfig(
+    /**
+     * If set will try to rerun the task if it fails with the set amount ,
+     * Example
+     * retry = 0 , run the task once
+     * retry = 1, run the job first time if failed run again
+     * retry = 2, run the job first time if failed run again, if failed run one more time
+     */
+    val retry: Int? = 0,
+    /**
+     * If set will add a delay of milli seconds when trying to rerun task after failure if [retry] is set
+     */
+    val backOffDelay: Int? = 0,
+    /**
+     * If set will delay starting the task with the set milli seconds
+     */
+    val startDelay: Int? = 0
+) {
+    companion object {
+
+        @JvmStatic
+        fun builder(): TaskConfigBuilder {
+            return TaskConfigBuilder()
+        }
     }
 }

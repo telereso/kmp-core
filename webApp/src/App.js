@@ -27,20 +27,34 @@ function App(block) {
         CoreClient.TasksExamples.testVerify(new CoreClient.CoreClient())
 
         // #1 watching flow in JS
-        CoreClient.watch(CoreClient.TasksExamples.getFlowPayload(), (data) => {
+        let job1 = CoreClient.watch(CoreClient.TasksExamples.getFlowPayload(), (data) => {
             console.log(data);
         }, (error) => {
             console.log(error)
         })
 
         // #2 watching flow in JS
-        // CoreClient.TasksExamples.getFlowPayload().watch((data, error) => {
+        // let job2 = CoreClient.TasksExamples.getFlowPayload().watch((data, error) => {
         //     if (error != null) {
         //         console.log(error)
         //     } else {
         //         console.log(data);
         //     }
         // })
+
+        let job3 = CoreClient.watch(CoreClient.TasksExamples.getDelayedFlowString(), (data) => {
+            console.log(data);
+        }, (error) => {
+            console.log(error)
+        })
+
+        setTimeout(function () {
+            job1.cancel()
+            // job2.cancel()
+            job3.cancel()
+        }, 2000);
+
+
         CoreClient.TasksExamples.exception()
             .onSuccess((e) => {
                 console.log("onSuccess", e)
@@ -82,6 +96,26 @@ function App(block) {
                 console.log(res)
             })
 
+        CoreClient.TasksExamples.testRetry3(CoreClient.TaskConfig.Companion
+            .builder()
+            .retry(5)
+            .backOffDelay(1000)
+            .startDelay(5000)
+            .build())
+            .onSuccess((res) => {
+                console.log(res)
+            })
+
+        CoreClient.Tasks.create(() => {
+            console.log("hi from created task")
+        })
+
+        CoreClient.Tasks.createWithConfig(CoreClient.TaskConfig.Companion
+            .builder()
+            .startDelay(4000)
+            .build(), () => {
+            console.log("hi from created task after 4 seconds")
+        })
     },[]);
 
     return (

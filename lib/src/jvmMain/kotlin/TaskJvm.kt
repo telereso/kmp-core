@@ -53,8 +53,12 @@ object Tasks {
     }
 
     @JvmStatic
-    fun <ResultT> create(callable: Callable<ResultT>): Task<ResultT> {
-        return Task.execute {
+    @JvmOverloads
+    fun <ResultT> create(
+        config: TaskConfig? = TaskConfig(),
+        callable: Callable<ResultT>
+    ): Task<ResultT> {
+        return Task.execute(config = config) {
             callable.call()
         }
     }

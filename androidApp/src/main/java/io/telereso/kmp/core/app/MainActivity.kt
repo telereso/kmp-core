@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import io.telereso.kmp.core.*
 import io.telereso.kmp.core.Log.logDebug
+import io.telereso.kmp.core.Log.logError
 import io.telereso.kmp.core.Utils.launchPeriodicAsync
 import io.telereso.kmp.core.app.databinding.ActivityMainBinding
 import io.telereso.kmp.core.models.JwtPayload
@@ -33,7 +34,7 @@ class MainActivity : AppCompatActivity() {
             println(e.message)
         }
 
-        TasksExamples.testVerify(CoreClient(application))
+//        TasksExamples.testVerify(CoreClient(application))
 //        lifecycleScope.launch(handler) {
 //
 //            runTest()
@@ -50,7 +51,25 @@ class MainActivity : AppCompatActivity() {
 //            logDebug(settings.getExpirableString("test") ?: "NA")
 //        }
 
-        testCancel()
+//        testCancel()
+
+        TasksExamples.testRetry3().onSuccess {
+            logDebug(it)
+        }.onFailure {
+            logError(it)
+        }
+
+//        TasksExamples.testRetry2().onSuccess {
+//            logDebug(it)
+//        }.onFailure {
+//            logError(it)
+//        }
+//
+//        TasksExamples.testRetry3().onSuccess {
+//            logDebug(it)
+//        }.onFailure {
+//            logError(it)
+//        }
     }
 
     fun testCancel() {

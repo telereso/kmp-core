@@ -21,39 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-package io.telereso.kmp.core.api;
-
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import io.telereso.kmp.core.Task;
-import io.telereso.kmp.core.TaskConfig;
-import io.telereso.kmp.core.Tasks;
-import io.telereso.kmp.core.TasksExamples;
+package io.telereso.kmp.core.extensions
 
 
-@Controller
-// Main class
-public class HelloWorldController {
-
-    @RequestMapping("")
-    @ResponseBody
-    public String hi() {
-
-        try {
-//            TasksExamples.hi().get();
-//            Tasks.create((Callable<String>) () -> "").get();
-            TasksExamples.testRetry3(TaskConfig
-                    .builder()
-                    .retry(5)
-                    .backOffDelay(1000)
-                    .build()).get();
-            return Tasks.future(TasksExamples.exception()).get();
-        } catch (Exception e ) {
-            return new RuntimeException(e).getMessage();
-        }
-    }
+fun Int?.getOrDefault(default: Int = 0): Int {
+    return this ?: default
 }

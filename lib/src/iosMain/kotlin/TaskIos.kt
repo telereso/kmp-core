@@ -41,7 +41,11 @@ internal actual class InternalTask<ResultT> actual constructor(_task: Task<Resul
 
 object Tasks {
     fun <ResultT> create(action: () -> ResultT): Task<ResultT> {
-        return Task.execute {
+        return create(TaskConfig(), action)
+    }
+
+    fun <ResultT> create(config: TaskConfig, action: () -> ResultT): Task<ResultT> {
+        return Task.execute(config = config) {
             action()
         }
     }
