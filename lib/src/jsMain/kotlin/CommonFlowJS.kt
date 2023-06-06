@@ -27,6 +27,7 @@ package io.telereso.kmp.core
 import io.telereso.kmp.core.models.ClientException
 import io.telereso.kmp.core.models.asClientException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.promise
 
 
@@ -40,7 +41,7 @@ fun <T> CommonFlow<T>.watch(
     stream: (T) -> Unit,
     error: (ClientException) -> Unit,
     scope: CoroutineScope = ContextScope.get(DispatchersProvider.Default)
-) {
+): CommonFlow.Job {
     scope.promise {
         try {
             collect {
@@ -50,4 +51,5 @@ fun <T> CommonFlow<T>.watch(
             error(exception.asClientException())
         }
     }
+    return CommonFlow.Job(scope.coroutineContext[Job]!!)
 }

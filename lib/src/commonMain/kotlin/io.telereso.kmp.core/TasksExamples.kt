@@ -33,8 +33,10 @@ import io.telereso.kmp.core.Log.logDebug
 import io.telereso.kmp.core.models.ClientException
 import io.telereso.kmp.core.models.JwtPayload
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlin.js.JsExport
+import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
 @JsExport
@@ -80,6 +82,20 @@ object TasksExamples {
         return flowOf(JwtPayload(), JwtPayload(), JwtPayload()).asCommonFlow()
     }
 
+    @JvmStatic
+    fun getDelayedFlowString(): CommonFlow<String> {
+        val stateFlow = MutableStateFlow("")
+        Task.execute {
+            delay(1000)
+            stateFlow.emit("1")
+            delay(2000)
+            stateFlow.emit("2")
+            delay(3000)
+            stateFlow.emit("3")
+        }
+        return stateFlow.asCommonFlow()
+    }
+
     fun testVerify(coreClient: CoreClient) {
 
         coreClient.verifyConsumer(mutableListOf<Consumer>().apply {
@@ -92,5 +108,45 @@ object TasksExamples {
             add(ios("orgIdentifier.iosApp"))
             add(website("localhost:*"))
         })
+    }
+
+    @JvmStatic
+    fun testRetry1(): Task<String> {
+        var count = 0
+        return Task.execute(retry = 1) {
+            if (count < 1) {
+                logDebug("testRetry1 failed $count")
+                count++
+                throw Throwable("testRetry1 Throwable")
+            }
+            "testRetry1 Passed!"
+        }
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun testRetry2(config: TaskConfig? = null): Task<String> {
+        var count = 0
+        return Task.execute(retry = 2, config = config) {
+            if (count < 2) {
+                logDebug("testRetry2 failed $count")
+                count++
+                throw Throwable("testRetry2 Throwable")
+            }
+            "testRetry2 Passed!"
+        }
+    }
+
+    @JvmStatic
+    fun testRetry3(config: TaskConfig? = null): Task<String> {
+        var count = 0
+        return Task.execute(retry = 3, startDelay = 3000, backOffDelay = 1000, config = config) {
+            if (count < 4) {
+                logDebug("testRetry3 failed $count")
+                count++
+                throw Throwable("testRetry3 Throwable")
+            }
+            "testRetry3 Passed!"
+        }
     }
 }

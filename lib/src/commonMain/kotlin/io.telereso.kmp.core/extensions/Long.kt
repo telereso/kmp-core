@@ -21,16 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package io.telereso.kmp.core.extensions
 
 
-private fun Boolean?.isTrue():Boolean{
-    return this == true
-}
-
-private fun Boolean?.isFalse():Boolean{
-    return this == false
-}
-
-private fun Boolean?.isNull():Boolean{
-    return this == null
+fun Long?.getOrDefault(default: Long = 0): Long {
+    return this ?: default
 }

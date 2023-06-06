@@ -32,6 +32,7 @@ import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldNotBeInstanceOf
+import io.telereso.kmp.core.extensions.getOrDefault
 import io.telereso.kmp.core.models.ClientException
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.TestResult
@@ -160,6 +161,9 @@ abstract class TaskTest {
     abstract fun taskShouldInvokeOnFailure(): TestResult
 
     abstract fun taskShouldInvokeOnFailureAndOnComplete(): TestResult
+
+    abstract fun taskWithRetry(): TestResult
+
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -1439,5 +1443,44 @@ class TaskTestImpl : TaskTest() {
 
         itemsFail!!.message.shouldBe("Something Went Crazy")
         itemsComplete!!.message.shouldBe("Something Went Crazy")
+    }
+
+    @Test
+    override fun taskWithRetry() = runTest {
+        var itemsOnSuccess: List<String>? = listOf()
+        var failureCount = 0
+        var count = 0
+        Task.execute<List<String>?>(retry = 2) {
+            if (count < 2) {
+                count++
+                throw Throwable("taskWithRetry")
+            }
+            listOf("abc", "abcd", "abcde")
+        }.onSuccess {
+            itemsOnSuccess = it
+        }.onFailure {
+            failureCount = it.failureCount.getOrDefault()
+        }
+
+        count.shouldBe(2)
+        itemsOnSuccess.shouldNotBeEmpty()
+        itemsOnSuccess?.size.shouldBe(3)
+        itemsOnSuccess?.shouldContain("abcde")
+
+        count = 0
+        Task.execute<List<String>?>(retry = 1) {
+            if (count < 2) {
+                count++
+                throw Throwable("taskWithRetry")
+            }
+            listOf("abc", "abcd", "abcde")
+        }.onSuccess {
+            itemsOnSuccess = it
+        }.onFailure {
+            failureCount = it.failureCount.getOrDefault()
+        }
+
+        failureCount.shouldBe(2)
+
     }
 }

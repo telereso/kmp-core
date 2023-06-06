@@ -54,7 +54,12 @@ object Tasks {
     }
 
     fun <ResultT> create(action: () -> ResultT): Task<ResultT> {
-        return Task.execute {
+        return create(TaskConfig(),action)
+    }
+
+    @JsName("createWithConfig")
+    fun <ResultT> create(config: TaskConfig,action: () -> ResultT): Task<ResultT> {
+        return Task.execute(config = config) {
             action()
         }
     }

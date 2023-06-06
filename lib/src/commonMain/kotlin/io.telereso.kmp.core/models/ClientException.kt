@@ -54,7 +54,8 @@ open class ClientException(
     val errorString: String? = null,
     val errorType: String? = null,
     val httpURl: String? = null,
-    val code: String? = null
+    val code: String? = null,
+    val failureCount: Int? = null
 ) : Throwable() {
     @JsName("ClientExceptionConstructor")
     constructor(cause: Throwable? = null) : this(null, cause = cause)
@@ -103,11 +104,12 @@ fun getErrorBody(body: String): ErrorBody {
  * Clients don't need to perform casting as its handled on the SDK level.
  * @return a [ClientException] object when casting success else it will return a [ClientException] with the throwable as a cause
  */
-fun Throwable.asClientException(): ClientException {
+fun Throwable.asClientException(failureCount: Int = 0): ClientException {
     return if (this as? ClientException != null) this else ClientException(
         cause = this,
         message = this.message,
-        errorType = "Throwable"
+        errorType = "Throwable",
+        failureCount = failureCount
     )
 }
 
