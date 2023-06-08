@@ -100,11 +100,12 @@ actual class CoreClient(private val application: Application) {
      */
     actual fun verifyConsumer(allowed: List<Consumer>) {
         val t = ClientException("App (${application.packageName}) is not allowed to use this sdk")
-        val c = allowed.firstOrNull {
-            it.platform == Platform.Type.ANDROID && it.appId == application.packageName
-        } ?: throw t
 
-        if (!isAppInstalled(c.appId, c.fingerprint, c.alg)) {
+        if (!allowed.any { c ->
+                c.platform == Platform.Type.ANDROID
+                        && c.appId == application.packageName
+                        && isAppInstalled(c.appId, c.fingerprint, c.alg)
+            }) {
             throw t
         }
     }

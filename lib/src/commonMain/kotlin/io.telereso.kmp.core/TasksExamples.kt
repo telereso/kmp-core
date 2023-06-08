@@ -102,6 +102,12 @@ object TasksExamples {
             add(
                 android(
                     "io.telereso.kmp.core.app",
+                    "25:2F:51:3C:AA:FD:E2:14:EB:2D:C0:A7:1E:D2:F3:E2:95:5A:BE:7F:BB:CE:D7:8A:F9:CB:BB:C0:5F:0C:12:98"
+                )
+            )
+            add(
+                android(
+                    "io.telereso.kmp.core.app",
                     "85:2F:51:3C:AA:FD:E2:14:EB:2D:C0:A7:1E:D2:F3:E2:95:5A:BE:7F:BB:CE:D7:8A:F9:CB:BB:C0:5F:0C:12:98"
                 )
             )
