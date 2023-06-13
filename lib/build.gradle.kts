@@ -319,7 +319,7 @@ kotlin {
                 implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
 
                 // sqlDelight jVM version
-                implementation("com.squareup.sqldelight:runtime-jvm:1.5.4")
+                implementation("com.squareup.sqldelight:runtime-jvm:1.5.5")
             }
         }
 
@@ -329,7 +329,7 @@ kotlin {
              * Since Android tests run on the JVM. we need to implement the database for it as well
              */
             dependencies {
-                implementation("com.squareup.sqldelight:sqlite-driver:1.5.4")
+                implementation("com.squareup.sqldelight:sqlite-driver:1.5.5")
             }
         }
         val androidMain by getting {
@@ -364,7 +364,7 @@ kotlin {
                  * enabling you to test code involving the database without needing an Android emulator or physical device. To do that use the jvm SQLite driver:
                  * https://cashapp.github.io/sqldelight/android_sqlite/testing/
                  */
-                implementation("com.squareup.sqldelight:sqlite-driver:1.5.4")
+                implementation("com.squareup.sqldelight:sqlite-driver:1.5.5")
                 implementation("io.mockk:mockk:1.13.2")
                 implementation("io.mockk:mockk-common:1.12.4")
             }
@@ -429,7 +429,7 @@ kotlin {
                 implementation("com.squareup.sqldelight:sqljs-driver:$sqlDelightVersion")
 
 //                implementation(devNpm("copy-webpack-plugin", "9.1.0"))
-                implementation(npm("sql.js", "1.7.0"))
+                implementation(npm("sql.js", "1.8.0"))
             }
         }
         val jsTest by getting {

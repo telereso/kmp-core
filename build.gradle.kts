@@ -8,7 +8,7 @@ plugins {
     kotlin("multiplatform").version("1.8.21").apply(false)
     id("org.jetbrains.kotlin.native.cocoapods").version("1.8.21").apply(false)
 
-    id("com.squareup.sqldelight").version("1.5.3").apply(false)
+    id("com.squareup.sqldelight").version("1.5.5").apply(false)
 }
 
 
@@ -48,7 +48,7 @@ val targetSdkVersion by extra { 31 }
 
 // Dependencies versions
 val ktorVersion by extra { "2.1.3" }
-val sqlDelightVersion by extra { "1.5.4" }
+val sqlDelightVersion by extra { "1.5.5" }
 val coroutinesVersion by extra { "1.6.4" }
 val napierVersion by extra { "2.6.1" }
 val multiplatformSettingsVersion by extra { "1.0.0-RC" }

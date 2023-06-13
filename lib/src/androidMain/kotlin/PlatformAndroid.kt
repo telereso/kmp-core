@@ -100,7 +100,7 @@ actual fun httpClient(
     }
 
     engine {
-        interceptors?.forEach {
+        interceptors?.iterator()?.forEach {
             if (it is Interceptor)
                 addInterceptor(it)
         }
