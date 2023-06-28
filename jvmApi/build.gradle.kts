@@ -16,7 +16,6 @@ repositories {
 	maven { url = uri("https://repo.spring.io/milestone") }
 	maven { url = uri("https://repo.spring.io/snapshot") }
 	maven { url = uri("https://s01.oss.sonatype.org/content/groups/staging") }
-	maven { url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap")}
 }
 
 dependencies {

@@ -47,9 +47,9 @@ val compileSdkVer by extra { 31 }
 val targetSdkVersion by extra { 31 }
 
 // Dependencies versions
-val ktorVersion by extra { "2.3.2-eap-692" }
+val ktorVersion by extra { "2.1.3" }
 val sqlDelightVersion by extra { "1.5.5" }
-val coroutinesVersion by extra { "1.7.1" }
+val coroutinesVersion by extra { "1.6.4" }
 val napierVersion by extra { "2.6.1" }
 val multiplatformSettingsVersion by extra { "1.0.0-RC" }
 val kotlinxDatetimeVersion by extra { "0.4.0" }
