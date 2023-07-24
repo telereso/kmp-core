@@ -91,6 +91,7 @@ jobs:
       if: startsWith(github.event.pull_request.title, '[DOCS]') != true
       run: |
         echo ${{ secrets.SIGNING_SECRET_KEY_RING_FILE }} | base64 -d > secret_key 
+        touch local.properties
         bash scripts/publish.sh ${{ steps.tag_version.outputs.new_version }}${{env.BUILD_NUMBER}} '--sonatype'
       env:
         OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
