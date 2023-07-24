@@ -179,7 +179,11 @@ kotlin {
     listOf(
         iosX64(),
         iosArm64(),
-        iosSimulatorArm64()
+        iosSimulatorArm64(),
+
+        watchosArm32(),
+        watchosArm64(),
+        watchosSimulatorArm64()
     ).forEach {
         it.binaries.framework {
             baseName = "core"
@@ -374,46 +378,54 @@ kotlin {
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
 
-        /**
-         * By using the by creating scope, we ensure the rest of the Darwin targets
-         * pick dependecies from the iOSMain.
-         * Note using this actual implementations should only exist in the iosMain else
-         * the project will complain.
-         */
+        val watchosArm32Main by getting
+        val watchosArm64Main by getting
+        val watchosSimulatorArm64Main by getting
+
+        val iosOnlyMain by creating {
+            dependsOn(commonMain)
+            iosX64Main.dependsOn(this)
+            iosArm64Main.dependsOn(this)
+            iosSimulatorArm64Main.dependsOn(this)
+        }
+
         val iosMain by creating {
             dependsOn(commonMain)
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
+
             dependencies {
-                /**
-                 * For iOS, we add the ktor-client-darwin dependency
-                 * Engines are used to process network requests. Note that a specific platform may require a specific engine that processes network requests.
-                 */
                 implementation("io.ktor:ktor-client-darwin:$ktorVersion")
-
                 implementation("com.squareup.sqldelight:native-driver:$sqlDelightVersion")
-
-                /**
-                 * For some reason iOS cannot pick up this implementation from commonMain.
-                 * Had to add it here. Maybw later we can look into this
-                 */
-                // implementation("io.github.aakira:napier:$napierVersion")
             }
         }
+
+        val watchosMain by creating {
+            dependsOn(iosMain)
+
+            watchosArm32Main.dependsOn(this)
+            watchosArm64Main.dependsOn(this)
+            watchosSimulatorArm64Main.dependsOn(this)
+        }
+
         val iosX64Test by getting
         val iosArm64Test by getting
-        val iosSimulatorArm64Test by getting {
-            dependsOn(commonTest)
-        }
+        val iosSimulatorArm64Test by getting
+
+        val watchosArm32Test by getting
+        val watchosArm64Test by getting
+        val watchosSimulatorArm64Test by getting
+
         val iosTest by creating {
             dependsOn(commonTest)
             iosX64Test.dependsOn(this)
             iosArm64Test.dependsOn(this)
-            /**
-             * TO runs tests for iOS the simulator should not depend on ioSTEst to avoid duplication.
-             */
-            //iosSimulatorArm64Test.dependsOn(this)
+            iosSimulatorArm64Test.dependsOn(this)
+
+            watchosArm32Test.dependsOn(this)
+            watchosArm64Test.dependsOn(this)
+            watchosSimulatorArm64Test.dependsOn(this)
         }
 
         /**

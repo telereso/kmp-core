@@ -42,7 +42,6 @@ import platform.Foundation.NSError
 import platform.Foundation.NSLocalizedDescriptionKey
 import platform.Foundation.NSLocalizedFailureReasonErrorKey
 import platform.Foundation.NSURLErrorFailingURLErrorKey
-import platform.UIKit.UIDevice
 
 /**
  * Since the rest of the Darwin targets depend on iOSMain during its creation,
@@ -57,7 +56,7 @@ class IOSPlatform : Platform() {
      * example : MyApp/1 iPhone5,2 iOS/10_1 CFNetwork/808.3 Darwin/16.3.0
      */
     override val userAgent: String =
-        "${UIDevice.currentDevice.systemName()}/${UIDevice.currentDevice.systemVersion} ${UIDevice.currentDevice.name}"
+        "${iosCurrentDeviceSystemName()}/${iosCurrentDeviceSystemVersion()} ${iosCurrentDeviceName()}"
 }
 
 /**

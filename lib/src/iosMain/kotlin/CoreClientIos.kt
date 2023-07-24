@@ -29,8 +29,6 @@ import io.github.aakira.napier.Napier
 import io.telereso.kmp.core.models.ClientException
 import platform.Foundation.NSBundle
 import platform.Foundation.NSURL
-import platform.UIKit.UIApplication
-
 
 actual class CoreClient {
     actual companion object {
@@ -57,7 +55,7 @@ actual class CoreClient {
     ): Boolean {
         return NSURL.URLWithString("${packageName}://app")
             ?.let { url ->
-                UIApplication.sharedApplication.canOpenURL(url)
+                iosApplicationCanOpenURL(url)
             } ?: false
     }
 
