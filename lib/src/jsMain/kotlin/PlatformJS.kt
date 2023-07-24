@@ -95,3 +95,11 @@ internal fun debugLoggerInternal(){
 fun debugLogger() {
     debugLoggerInternal()
 }
+
+actual fun iosCurrentDeviceName() = ""
+
+actual fun iosCurrentDeviceSystemName() = ""
+
+actual fun iosCurrentDeviceSystemVersion() = ""
+
+actual fun iosApplicationCanOpenURL(url: Any): Boolean = false

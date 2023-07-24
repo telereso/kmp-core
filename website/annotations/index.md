@@ -68,6 +68,19 @@ plugins {
 }
 ```
 
+Make sure to add the generated files into your src directory 
+
+```kotlin
+sourceSets {
+    val commonMain by getting {
+        kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
+        dependencies {
+            // your dependencies
+        }
+    }
+}
+```
+
 ---
 
 ## Configuration

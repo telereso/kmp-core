@@ -72,3 +72,13 @@ expect fun httpClient(
     userAgent: String? = null,
     config: HttpClientConfig<*>.() -> Unit = {}
 ): HttpClient
+
+
+expect fun iosCurrentDeviceName():String
+
+expect fun iosCurrentDeviceSystemName():String
+
+expect fun iosCurrentDeviceSystemVersion():String
+
+expect fun iosApplicationCanOpenURL(url: Any): Boolean
+
