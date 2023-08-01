@@ -24,7 +24,9 @@
 
 package io.telereso.kmp.core.models
 
+import io.ktor.client.plugins.ResponseException
 import io.telereso.kmp.core.Http
+import io.telereso.kmp.core.Http.asClientException
 import io.telereso.kmp.core.ThrowableSerializer
 import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.Serializable
@@ -113,13 +115,17 @@ fun Throwable.asClientException(failureCount: Int = 0): ClientException {
     )
 }
 
-@Deprecated(
-    "Use asClientException() instead of toClientException ()",
-    replaceWith = ReplaceWith("asClientException()", "io.telereso.kmp.core.models")
-)
-fun Throwable.toClientException(): ClientException {
-    return asClientException()
+/**
+ * provides a safe suspended casting of throwable
+ * converts any throwable into a [ClientException].
+ * Clients don't need to perform casting as its handled on the SDK level.
+ * @return a [ClientException] object when casting success else it will return a [ClientException] with the throwable as a cause
+ */
+suspend fun Throwable.toClientException(failureCount: Int = 0): ClientException {
+    return when (this) {
+        is ResponseException -> response.asClientException()
+        else -> asClientException(failureCount)
+    }
 }
-
 
 
