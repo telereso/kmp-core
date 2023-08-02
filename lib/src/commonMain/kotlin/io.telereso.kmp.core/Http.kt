@@ -152,7 +152,7 @@ object Http {
             )
         } catch (e: Throwable) {
             ClientException.listener(e.asClientException())
-            throw ClientException(
+            return ClientException(
                 cause = e,
                 message = "Failed to convert $this into a ClientException.",
                 errorType = "HTTP",
