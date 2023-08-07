@@ -67,6 +67,7 @@ object Http {
      * @return a HttpResponseValidator that when an exception is of Ktor Client or Server it will throw a [ClientException] instead for any API call accross the SDK.
      *
      */
+    @Deprecated("In favor of onFailed and await() exception casting")
     fun getHttpResponseValidator(config: HttpCallValidator.Config) =
         config.handleResponseExceptionWithRequest { exception, _ ->
             when (exception) {
@@ -151,7 +152,7 @@ object Http {
             )
         } catch (e: Throwable) {
             ClientException.listener(e.asClientException())
-            throw ClientException(
+            return ClientException(
                 cause = e,
                 message = "Failed to convert $this into a ClientException.",
                 errorType = "HTTP",

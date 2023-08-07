@@ -30,6 +30,7 @@ import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.types.shouldBeInstanceOf
 import io.ktor.client.*
 import io.ktor.client.engine.mock.*
 import io.ktor.client.plugins.*
@@ -115,9 +116,7 @@ class HttpTest {
             }
         }
 
-        shouldThrow<ClientException> {
-            httpResponse.asClientException()
-        }
+        httpResponse.asClientException().shouldBeInstanceOf<ClientException>()
     }
 
     @Test

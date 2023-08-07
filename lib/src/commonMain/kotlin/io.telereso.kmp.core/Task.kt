@@ -27,7 +27,7 @@ package io.telereso.kmp.core
 import io.telereso.kmp.annotations.Builder
 import io.telereso.kmp.core.extensions.getOrDefault
 import io.telereso.kmp.core.models.ClientException
-import io.telereso.kmp.core.models.asClientException
+import io.telereso.kmp.core.models.toClientException
 import kotlinx.coroutines.*
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
@@ -85,7 +85,9 @@ class Task<ResultT> private constructor(
 
     init {
         val handler = CoroutineExceptionHandler { _, exception ->
-            failure?.invoke(exception.asClientException(tries))
+            scope.launch {
+                failure?.invoke(exception.toClientException(tries))
+            }
         }
         scope.launch(handler) {
             val res = job.await()
@@ -141,7 +143,7 @@ class Task<ResultT> private constructor(
                 if (field == null && value != null && job.isCompleted)
                     job.getCompletionExceptionOrNull()?.let {
                         if (it !is CancellationException)
-                            value.invoke(it.asClientException(tries))
+                            scope.launch { value.invoke(it.toClientException(tries)) }
                     }
             } catch (t: Throwable) {
                 ClientException.listener.invoke(t)
@@ -157,7 +159,7 @@ class Task<ResultT> private constructor(
                     job.getCompletionExceptionOrNull()?.let {
                         if (it !is CancellationException)
                             scopeUI.launch {
-                                value.invoke(it.asClientException(tries))
+                                value.invoke(it.toClientException(tries))
                             }
                     }
             } catch (t: Throwable) {
@@ -178,7 +180,7 @@ class Task<ResultT> private constructor(
                     if (e == null)
                         value.invoke(job.getCompleted(), null)
                     else
-                        value.invoke(null, e.asClientException(tries))
+                        scope.launch { value.invoke(null, e.toClientException(tries)) }
                 }
             } catch (t: Throwable) {
                 ClientException.listener.invoke(t)
@@ -196,7 +198,7 @@ class Task<ResultT> private constructor(
                         if (e == null)
                             value.invoke(job.getCompleted(), null)
                         else
-                            value.invoke(null, e.asClientException(tries))
+                            value.invoke(null, e.toClientException(tries))
                     }
                 }
             } catch (t: Throwable) {
@@ -214,7 +216,9 @@ class Task<ResultT> private constructor(
         set(value) {
             try {
                 if (field == null && value != null && job.isCancelled)
-                    value.invoke(job.getCancellationException().asClientException(tries))
+                    scope.launch {
+                        value.invoke(job.getCancellationException().toClientException(tries))
+                    }
             } catch (t: Throwable) {
                 ClientException.listener.invoke(t)
             }
@@ -504,7 +508,7 @@ internal expect class InternalTask<ResultT>(_task: Task<ResultT>) {
  * @return [ResultT] if succeeded , or crash if job failed ,if you don't care about resultT check [awaitOrNull]
  */
 suspend fun <ResultT> Task<ResultT>.await(): ResultT {
-    return job.await()
+    return runCatching { job.await() }.getOrElse { throw it.toClientException() }
 }
 
 
@@ -514,7 +518,7 @@ suspend fun <ResultT> Task<ResultT>.await(): ResultT {
  */
 suspend fun <ResultT> Task<ResultT>.awaitOrNull(): ResultT? {
     return try {
-        job.await()
+        await()
     } catch (t: Throwable) {
         ClientException.listener.invoke(t)
         null
