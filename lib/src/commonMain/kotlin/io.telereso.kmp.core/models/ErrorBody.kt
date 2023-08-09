@@ -25,6 +25,8 @@
 package io.telereso.kmp.core.models
 
 
+import io.telereso.kmp.annotations.Builder
+import io.telereso.kmp.annotations.SwiftOverloads
 import kotlinx.serialization.Serializable
 import kotlin.js.JsExport
 
@@ -35,6 +37,8 @@ import kotlin.js.JsExport
  */
 @Serializable
 @JsExport
+@Builder
+@SwiftOverloads
 data class ErrorBody(
     val code:String? =null,
     val message:String? =null

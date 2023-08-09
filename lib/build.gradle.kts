@@ -30,29 +30,19 @@ import java.text.DecimalFormat
 import java.math.RoundingMode
 
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.multiplatform")
-    kotlin("plugin.serialization")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kotlinx.kover)
+    alias(libs.plugins.test.logger)
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.telereso.kmp)
+
     id("maven-publish")
-    id("org.jetbrains.kotlinx.kover") version "0.6.1"
-    id("com.adarshr.test-logger") version "3.2.0"
-    id("org.jetbrains.dokka")
-    id("io.telereso.kmp")
     id("convention.publication")
 }
 
 
-// Setup extras variables
-val ktorVersion: String by rootProject.extra
-val sqlDelightVersion: String by rootProject.extra
-val coroutinesVersion: String by rootProject.extra
-val napierVersion: String by rootProject.extra
-val kotlinxDatetimeVersion: String by rootProject.extra
-val buildToolsVersion: String by rootProject.extra
-val minSdkVersion: Int by rootProject.extra
-val compileSdkVer: Int by rootProject.extra
-val targetSdkVersion: Int by rootProject.extra
-val multiplatformSettingsVersion: String by rootProject.extra
 
 // Setup publish variables
 val baseProjectName = rootProject.name.replace("-client", "")
@@ -61,19 +51,6 @@ project.ext["artifactName"] = "${baseProjectName}-${project.name}"
 group = rootProject.group
 version = rootProject.version
 
-publishing {
-    repositories {
-        maven {
-            url = uri("${project.findProperty("artifactoryUrl") ?: "test"}/mobile-gradle")
-            credentials {
-                username = (project.findProperty("artifactoryUser") ?: "test") as String
-                password = (project.findProperty("artifactoryPassword") ?: "test") as String
-            }
-        }
-    }
-}
-
-//apply(from = "publish.gradle")
 
 /**
  * https://kotlin.github.io/dokka/1.6.0/user_guide/gradle/usage/
@@ -175,6 +152,8 @@ kotlin {
     android {
         publishLibraryVariants("release")
     }
+//    tasks.getByName("compileReleaseKotlinAndroid").dependsOn("kspCommonMainKotlinMetadata")
+
 
     listOf(
         iosX64(),
@@ -253,26 +232,17 @@ kotlin {
         val commonMain by getting {
             kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
             dependencies {
-                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
-                // Kotlin Time
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
-
-
+                implementation(libs.bundles.kotlinx)
                 /**
                  * Add Ktor dependencies
                  * To use the Ktor client in common code, add the dependency to ktor-client-core to the commonMain
                  */
-                implementation("io.ktor:ktor-client-core:$ktorVersion")
-                implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-                implementation("io.ktor:ktor-client-auth:$ktorVersion")
-                implementation("io.ktor:ktor-client-logging:$ktorVersion")
+                implementation(libs.bundles.ktor)
 
-                implementation("io.github.aakira:napier:$napierVersion")
+                implementation(libs.napier)
 
                 // Multiplatform settings for Shared Preference
-                implementation("com.russhwolf:multiplatform-settings-no-arg:$multiplatformSettingsVersion")
+                implementation(libs.multiplatform.settings )
 
             }
         }
@@ -281,92 +251,42 @@ kotlin {
                 implementation(kotlin("test"))
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")
-                implementation("io.kotest:kotest-framework-engine:5.5.3")
-                implementation("io.kotest:kotest-assertions-core:5.5.3")
-                /**
-                 * currently mockk is not support for Kotlin/Native iOS
-                 * leaving these hear for easier reference later/.
-                 */
-//                 implementation("io.mockk:mockk-common:1.12.4")
-//                 implementation("io.mockk:mockk:1.13.2")
+                implementation(libs.test.kotlinx.coroutines.test)
+                implementation(libs.test.kotest.framework.engine)
+                implementation(libs.test.kotest.assertions.core)
 
                 // Ktor Server Mock
-                implementation("io.ktor:ktor-client-mock:$ktorVersion")
+                implementation(libs.test.ktor.client.mock)
 
-                implementation("com.russhwolf:multiplatform-settings-test:1.0.0-RC")
-                implementation("app.cash.turbine:turbine:0.12.1")
+                implementation(libs.test.multiplatform.settings.test)
+                implementation(libs.test.turbine)
             }
         }
         val jvmMain by getting {
             dependencies {
-                /**
-                 * Add a ktor engine dependency
-                 * For Android, you can also use other engine types.
-                 * https://ktor.io/docs/http-client-engines.html#jvm-android
-                 * We chose the okhttp engine for Android since its one we are
-                 * most familiar with.
-                 * Engines are used to process network requests. Note that a specific platform may require a specific engine that processes network requests.
-                 *
-                 */
-                implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
-                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-                implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-                /**
-                 * For logging using the okHttp but we could also use the Ktor logging
-                 * implementation("io.ktor:ktor-client-logging:2.0.0-beta-1")
-                 */
-                implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
-
-                // sqlDelight jVM version
-                implementation("com.squareup.sqldelight:runtime-jvm:1.5.5")
+                implementation(libs.ktor.client.okhttp)
+                implementation(libs.okhttp.logging)
+                implementation(libs.sqldelight.runtime.jvm)
             }
         }
 
         val jvmTest by getting {
             dependsOn(commonTest)
-            /**
-             * Since Android tests run on the JVM. we need to implement the database for it as well
-             */
             dependencies {
-                implementation("com.squareup.sqldelight:sqlite-driver:1.5.5")
+                implementation(libs.sqldelight.sqlite.driver)
             }
         }
         val androidMain by getting {
             dependencies {
-                /**
-                 * Add a ktor engine dependency
-                 * For Android, you can also use other engine types.
-                 * https://ktor.io/docs/http-client-engines.html#jvm-android
-                 * We chose the okhttp engine for Android since its one we are
-                 * most familiar with.
-                 * Engines are used to process network requests. Note that a specific platform may require a specific engine that processes network requests.
-                 *
-                 */
-                implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
-                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-                implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-                implementation("io.ktor:ktor-client-auth:$ktorVersion")
-                /**
-                 * For logging using the okHttp but we could also use the Ktor logging
-                 * implementation("io.ktor:ktor-client-logging:2.0.0-beta-1")
-                 */
-                implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
-
-                implementation("com.squareup.sqldelight:android-driver:$sqlDelightVersion")
+                implementation(libs.ktor.client.okhttp)
+                implementation(libs.okhttp.logging)
+                implementation(libs.sqldelight.android.driver)
             }
         }
         val androidTest by getting {
             dependsOn(commonTest)
             dependencies {
-                /**
-                 * In some tests (like verification of migrations) you might wish to swap out the Android driver with the JVM driver,
-                 * enabling you to test code involving the database without needing an Android emulator or physical device. To do that use the jvm SQLite driver:
-                 * https://cashapp.github.io/sqldelight/android_sqlite/testing/
-                 */
-                implementation("com.squareup.sqldelight:sqlite-driver:1.5.5")
-                implementation("io.mockk:mockk:1.13.2")
-                implementation("io.mockk:mockk-common:1.12.4")
+                implementation(libs.sqldelight.sqlite.driver)
             }
         }
 
@@ -390,15 +310,9 @@ kotlin {
                  * For iOS, we add the ktor-client-darwin dependency
                  * Engines are used to process network requests. Note that a specific platform may require a specific engine that processes network requests.
                  */
-                implementation("io.ktor:ktor-client-darwin:$ktorVersion")
+                implementation(libs.ktor.client.darwin)
 
-                implementation("com.squareup.sqldelight:native-driver:$sqlDelightVersion")
-
-                /**
-                 * For some reason iOS cannot pick up this implementation from commonMain.
-                 * Had to add it here. Maybw later we can look into this
-                 */
-                // implementation("io.github.aakira:napier:$napierVersion")
+                implementation(libs.sqldelight.native.driver)
             }
         }
         val iosX64Test by getting
@@ -424,18 +338,17 @@ kotlin {
                 /**
                  * Engines are used to process network requests. Note that a specific platform may require a specific engine that processes network requests.
                  */
-                implementation("io.ktor:ktor-client-js:$ktorVersion")
+                implementation(libs.ktor.client.js)
 
-                implementation("com.squareup.sqldelight:sqljs-driver:$sqlDelightVersion")
+                implementation(libs.sqldelight.sqljs.driver)
 
-//                implementation(devNpm("copy-webpack-plugin", "9.1.0"))
-                implementation(npm("sql.js", "1.8.0"))
+                implementation(npm("sql.js", libs.versions.sqlJs.get()))
             }
         }
         val jsTest by getting {
             dependsOn(commonTest)
             dependencies {
-                implementation("com.squareup.sqldelight:sqljs-driver:$sqlDelightVersion")
+                implementation(libs.sqldelight.sqljs.driver)
             }
         }
     }
@@ -470,13 +383,16 @@ tasks.named(
 
 android {
     namespace = "$group.${project.name}"
-    compileSdk = compileSdkVer
+    compileSdk = libs.versions.compileSdk.get().toInt()
     buildFeatures {
         buildConfig = false
     }
     defaultConfig {
-        minSdk = minSdkVersion
-        targetSdk = targetSdkVersion
+        minSdk = libs.versions.minSdk.get().toInt()
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.valueOf("VERSION_${libs.versions.java.get()}")
+        targetCompatibility = JavaVersion.valueOf("VERSION_${libs.versions.java.get()}")
     }
 }
 
@@ -607,3 +523,4 @@ fun download(url: String, path: String) {
         destFile.createNewFile()
     ant.invokeMethod("get", mapOf("src" to url, "dest" to destFile))
 }
+
