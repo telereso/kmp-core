@@ -26,8 +26,11 @@ include(":jvmApi")
 
 // This is used while working with code generation project `kmp-annotations` (https://github.com/telereso/kmp-annotations)
 val localProps = java.util.Properties().apply {
-    File("${rootDir}/local.properties").inputStream().use { fis ->
-        load(fis)
+    File("${rootDir}/local.properties").apply {
+        if (exists())
+            inputStream().use { fis ->
+                load(fis)
+            }
     }
 }
 
