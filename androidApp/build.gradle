@@ -24,11 +24,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.valueOf("VERSION_${libs.versions.java.get()}")
-        targetCompatibility JavaVersion.valueOf("VERSION_${libs.versions.java.get()}")
+        sourceCompatibility JavaVersion.valueOf("VERSION_${kmpLibs.versions.java.get()}")
+        targetCompatibility JavaVersion.valueOf("VERSION_${kmpLibs.versions.java.get()}")
     }
     kotlinOptions {
-        jvmTarget = libs.versions.java.get()
+        jvmTarget = kmpLibs.versions.java.get()
     }
 
     buildFeatures {

@@ -30,13 +30,13 @@ import java.text.DecimalFormat
 import java.math.RoundingMode
 
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.kotlinx.kover)
-    alias(libs.plugins.test.logger)
-    alias(libs.plugins.dokka)
-    alias(libs.plugins.telereso.kmp)
+    alias(kmpLibs.plugins.android.library)
+    alias(kmpLibs.plugins.kotlin.multiplatform)
+    alias(kmpLibs.plugins.kotlin.serialization)
+    alias(kmpLibs.plugins.kotlinx.kover)
+    alias(kmpLibs.plugins.test.logger)
+    alias(kmpLibs.plugins.dokka)
+    alias(kmpLibs.plugins.telereso.kmp)
 
     id("maven-publish")
     id("convention.publication")
@@ -232,17 +232,17 @@ kotlin {
         val commonMain by getting {
             kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
             dependencies {
-                implementation(libs.bundles.kotlinx)
+                implementation(kmpLibs.bundles.kotlinx)
                 /**
                  * Add Ktor dependencies
                  * To use the Ktor client in common code, add the dependency to ktor-client-core to the commonMain
                  */
-                implementation(libs.bundles.ktor)
+                implementation(kmpLibs.bundles.ktor)
 
-                implementation(libs.napier)
+                implementation(kmpLibs.napier)
 
                 // Multiplatform settings for Shared Preference
-                implementation(libs.multiplatform.settings )
+                implementation(kmpLibs.multiplatform.settings )
 
             }
         }
@@ -251,42 +251,42 @@ kotlin {
                 implementation(kotlin("test"))
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
-                implementation(libs.test.kotlinx.coroutines.test)
-                implementation(libs.test.kotest.framework.engine)
-                implementation(libs.test.kotest.assertions.core)
+                implementation(kmpLibs.test.kotlinx.coroutines.test)
+                implementation(kmpLibs.test.kotest.framework.engine)
+                implementation(kmpLibs.test.kotest.assertions.core)
 
                 // Ktor Server Mock
-                implementation(libs.test.ktor.client.mock)
+                implementation(kmpLibs.test.ktor.client.mock)
 
-                implementation(libs.test.multiplatform.settings.test)
-                implementation(libs.test.turbine)
+                implementation(kmpLibs.test.multiplatform.settings.test)
+                implementation(kmpLibs.test.turbine)
             }
         }
         val jvmMain by getting {
             dependencies {
-                implementation(libs.ktor.client.okhttp)
-                implementation(libs.okhttp.logging)
-                implementation(libs.sqldelight.runtime.jvm)
+                implementation(kmpLibs.ktor.client.okhttp)
+                implementation(kmpLibs.okhttp.logging)
+                implementation(kmpLibs.sqldelight.runtime.jvm)
             }
         }
 
         val jvmTest by getting {
             dependsOn(commonTest)
             dependencies {
-                implementation(libs.sqldelight.sqlite.driver)
+                implementation(kmpLibs.sqldelight.sqlite.driver)
             }
         }
         val androidMain by getting {
             dependencies {
-                implementation(libs.ktor.client.okhttp)
-                implementation(libs.okhttp.logging)
-                implementation(libs.sqldelight.android.driver)
+                implementation(kmpLibs.ktor.client.okhttp)
+                implementation(kmpLibs.okhttp.logging)
+                implementation(kmpLibs.sqldelight.android.driver)
             }
         }
         val androidTest by getting {
             dependsOn(commonTest)
             dependencies {
-                implementation(libs.sqldelight.sqlite.driver)
+                implementation(kmpLibs.sqldelight.sqlite.driver)
             }
         }
 
@@ -310,9 +310,9 @@ kotlin {
                  * For iOS, we add the ktor-client-darwin dependency
                  * Engines are used to process network requests. Note that a specific platform may require a specific engine that processes network requests.
                  */
-                implementation(libs.ktor.client.darwin)
+                implementation(kmpLibs.ktor.client.darwin)
 
-                implementation(libs.sqldelight.native.driver)
+                implementation(kmpLibs.sqldelight.native.driver)
             }
         }
         val iosX64Test by getting
@@ -338,17 +338,17 @@ kotlin {
                 /**
                  * Engines are used to process network requests. Note that a specific platform may require a specific engine that processes network requests.
                  */
-                implementation(libs.ktor.client.js)
+                implementation(kmpLibs.ktor.client.js)
 
-                implementation(libs.sqldelight.sqljs.driver)
+                implementation(kmpLibs.sqldelight.sqljs.driver)
 
-                implementation(npm("sql.js", libs.versions.sqlJs.get()))
+                implementation(npm("sql.js", kmpLibs.versions.sqlJs.get()))
             }
         }
         val jsTest by getting {
             dependsOn(commonTest)
             dependencies {
-                implementation(libs.sqldelight.sqljs.driver)
+                implementation(kmpLibs.sqldelight.sqljs.driver)
             }
         }
     }
@@ -383,16 +383,16 @@ tasks.named(
 
 android {
     namespace = "$group.${project.name}"
-    compileSdk = libs.versions.compileSdk.get().toInt()
+    compileSdk = kmpLibs.versions.compileSdk.get().toInt()
     buildFeatures {
         buildConfig = false
     }
     defaultConfig {
-        minSdk = libs.versions.minSdk.get().toInt()
+        minSdk = kmpLibs.versions.minSdk.get().toInt()
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.valueOf("VERSION_${libs.versions.java.get()}")
-        targetCompatibility = JavaVersion.valueOf("VERSION_${libs.versions.java.get()}")
+        sourceCompatibility = JavaVersion.valueOf("VERSION_${kmpLibs.versions.java.get()}")
+        targetCompatibility = JavaVersion.valueOf("VERSION_${kmpLibs.versions.java.get()}")
     }
 }
 

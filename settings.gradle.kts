@@ -1,3 +1,5 @@
+val teleresoKmpCatalog: String by settings
+
 pluginManagement {
     repositories {
         mavenLocal()
@@ -12,15 +14,22 @@ pluginManagement {
 
 dependencyResolutionManagement {
     repositories {
+        mavenLocal()
         google()
         mavenCentral()
         maven { url = uri("https://s01.oss.sonatype.org/content/groups/staging") }
+    }
+    versionCatalogs {
+        create("kmpLibs") {
+            from(files("gradle/kmpLibs.versions.toml"))
+        }
     }
 }
 
 rootProject.name = "core"
 include(":lib")
 project(":lib").name = rootProject.name
+include(":catalog")
 include(":androidApp")
 include(":jvmApi")
 

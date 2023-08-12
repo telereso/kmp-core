@@ -30,7 +30,7 @@ multiplatformSettings = "1.0.0-RC"
 
 #Telereso
 teleresoCore = "0.0.32"
-teleresoKmp = "0.0.31-alpha.75"
+teleresoKmp = "0.0.31-alpha.77"
 
 #Test
 test-logger = "3.2.0"
