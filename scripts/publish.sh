@@ -3,11 +3,14 @@
 PUBLISH_VERSION=${1:-0.0.1}
 
 if [[ "$@" == *"--sonatype" ]]; then
-    ./gradlew koverReport dokkaHtml publishAllPublicationsToSonatypeRepository "-PpublishVersion=$PUBLISH_VERSION"
+    ./gradlew koverReport dokkaHtml publishAllPublicationsToSonatypeRepository "-PpublishVersion=$PUBLISH_VERSION" \
+    -x catalog:publishToMavenLocal
 #    ./gradlew closeAndReleaseSonatypeStagingRepository
 elif [[ "$@" == *"--local" ]]; then
-    ./gradlew koverReport dokkaHtml -Dmaven.repo.local="$(pwd)/build/.m2/repository" publishToMavenLocal "-PpublishVersion=$PUBLISH_VERSION"
+    ./gradlew koverReport dokkaHtml -Dmaven.repo.local="$(pwd)/build/.m2/repository" publishToMavenLocal "-PpublishVersion=$PUBLISH_VERSION" \
+    -x catalog:publishToMavenLocal
 else
-    ./gradlew publishToMavenLocal "-PpublishVersion=$PUBLISH_VERSION-local"
+    ./gradlew publishToMavenLocal "-PpublishVersion=$PUBLISH_VERSION-local" \
+    -x catalog:publishToMavenLocal
 fi
 
