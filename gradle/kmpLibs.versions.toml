@@ -9,7 +9,7 @@ kover = "0.6.1"
 dokka = "1.8.20"
 
 #Android
-androidGradlePlugin = "8.0.2"
+androidGradlePlugin = "8.1.1"
 buildTools = "31.0.0"
 minSdk = "21"
 compileSdk = "31"
@@ -29,8 +29,8 @@ napier = "2.6.1"
 multiplatformSettings = "1.0.0-RC"
 
 #Telereso
-teleresoCore = "0.0.32"
-teleresoKmp = "0.0.31-alpha.77"
+teleresoCore = "0.0.33"
+teleresoKmp = "0.0.32"
 
 #Test
 test-logger = "3.2.0"
