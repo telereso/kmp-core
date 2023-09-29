@@ -1193,6 +1193,114 @@ class TaskJvmTest : TaskTest()  {
         }
     }
 
+
+    @Test
+    override fun onCompleteOnly() = runTest {
+        var itemsOnSuccess: List<String>? = listOf()
+
+        Task.execute<List<String>?> {
+            listOf("abc", "abcd", "abcde")
+        }.onComplete { res, _ ->
+            itemsOnSuccess = res
+        }
+
+        itemsOnSuccess.shouldNotBeEmpty()
+        itemsOnSuccess?.size.shouldBe(3)
+        itemsOnSuccess?.shouldContain("abc")
+    }
+
+    @Test
+    override fun onCompleteOnlyFailed() = runTest {
+        var itemsOnSuccess: List<String>? = null
+        val itemsOnFailure = mutableListOf<Throwable?>()
+
+        Task.execute<List<String>?> {
+            throw ClientException(message = "Something Went Crazy")
+        }.onComplete { res, e ->
+            itemsOnSuccess = res
+            itemsOnFailure.add(e)
+        }
+
+        itemsOnSuccess.shouldBeNull()
+        itemsOnFailure.size.shouldBe(1)
+        itemsOnFailure[0]?.message.shouldBe("Something Went Crazy")
+    }
+
+    @Test
+    override fun onCompleteOnlyCanceled() = runTest {
+        var itemsOnSuccess: List<String>? = null
+        val itemsOnFailure = mutableListOf<Throwable?>()
+
+        Task.execute<List<String>?> {
+            delay(100)
+            listOf()
+        }.onComplete { res, e ->
+            itemsOnSuccess = res
+            itemsOnFailure.add(e)
+        }.apply {
+            cancel(message = "cancelled")
+        }.awaitOrNull()
+
+        itemsOnSuccess.shouldBeNull()
+        itemsOnFailure.size.shouldBe(1)
+        itemsOnFailure[0]?.message.shouldBe("cancelled")
+    }
+
+    @Test
+    override fun onCompleteOnlyWithDelay() = runTest {
+        var itemsOnSuccess: List<String>? = listOf()
+
+        Task.execute<List<String>?> {
+            delay(100)
+            listOf("abc", "abcd", "abcde")
+        }.onComplete { res, _ ->
+            itemsOnSuccess = res
+        }.awaitOrNull()
+
+        itemsOnSuccess.shouldNotBeEmpty()
+        itemsOnSuccess?.size.shouldBe(3)
+        itemsOnSuccess?.shouldContain("abc")
+    }
+
+    @Test
+    override fun onCompleteOnlyWithDelayFailed() = runTest {
+        var itemsOnSuccess: List<String>? = null
+        val itemsOnFailure = mutableListOf<Throwable?>()
+
+        Task.execute<List<String>?> {
+            delay(100)
+            throw ClientException(message = "Something Went Crazy")
+        }.onComplete { res, e ->
+            itemsOnSuccess = res
+            itemsOnFailure.add(e)
+        }.awaitOrNull()
+
+        itemsOnSuccess.shouldBeNull()
+        itemsOnFailure.size.shouldBe(1)
+        itemsOnFailure[0]?.message.shouldBe("Something Went Crazy")
+    }
+
+    @Test
+    override fun onCompleteOnlyCanceledWithDelay() = runTest {
+        var itemsOnSuccess: List<String>? = null
+        val itemsOnFailure = mutableListOf<Throwable?>()
+
+        Task.execute<List<String>?> {
+            delay(200)
+            listOf()
+        }.onComplete { res, e ->
+            itemsOnSuccess = res
+            itemsOnFailure.add(e)
+        }.apply {
+            delay(100)
+            cancel(message = "cancelled")
+        }.awaitOrNull()
+
+        itemsOnSuccess.shouldBeNull()
+        itemsOnFailure.size.shouldBe(1)
+        itemsOnFailure[0]?.message.shouldBe("cancelled")
+    }
+
     @Test
     override fun onCancel() = runTest {
         var itemsOnSuccess: List<String>? = listOf()

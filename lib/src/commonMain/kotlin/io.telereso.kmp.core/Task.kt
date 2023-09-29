@@ -86,12 +86,13 @@ class Task<ResultT> private constructor(
     init {
         val handler = CoroutineExceptionHandler { _, exception ->
             scope.launch {
-                failure?.invoke(exception.toClientException(tries))
+                val e = exception.toClientException(tries)
+                failure?.invoke(e) ?: complete?.invoke(null, e)
             }
         }
         scope.launch(handler) {
             val res = job.await()
-            success?.invoke(res)
+            success?.invoke(res) ?: complete?.invoke(res, null)
         }
     }
 
@@ -409,7 +410,7 @@ class Task<ResultT> private constructor(
     fun cancel(message: String, throwable: ClientException? = null) {
         val error = throwable ?: ClientException(message)
         scope.cancel(message, error)
-        cancelTask?.invoke(error)
+        cancelTask?.invoke(error) ?: complete?.invoke(null, error)
     }
 
     /**
