@@ -281,6 +281,8 @@ kotlin {
                 implementation(kmpLibs.ktor.client.okhttp)
                 implementation(kmpLibs.okhttp.logging)
                 implementation(kmpLibs.sqldelight.android.driver)
+                implementation(kmpLibs.androidx.core)
+                implementation(kmpLibs.androidx.lifecycle.process)
             }
         }
         val androidTest by getting {
