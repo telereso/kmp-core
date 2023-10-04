@@ -30,6 +30,7 @@ import io.telereso.kmp.core.models.ExpirableValue
 import io.telereso.kmp.core.models.fromJson
 import io.telereso.kmp.core.models.toJson
 import kotlinx.coroutines.Deferred
+import kotlinx.datetime.Clock
 import kotlin.time.Duration
 
 /**
@@ -189,6 +190,10 @@ interface Settings {
     fun getBooleanOrNull(key: String): Boolean?
 
     fun putExpirableString(key: String, value: String, exp: Long)
+
+    fun putExpirableString(key: String, value: String, exp: Duration){
+        putExpirableString(key, value, Clock.System.now().epochSeconds + exp.inWholeSeconds)
+    }
 
     fun getExpirableString(key: String, default: String?): String?
 
