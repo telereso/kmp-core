@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace 'io.telereso.kmp.core.app'
-    compileSdk 32
+    compileSdk kmpLibs.versions.compileSdk.get().toInteger()
 
     defaultConfig {
         applicationId "io.telereso.kmp.core.app"
         minSdk 26
-        targetSdk 32
+        targetSdk kmpLibs.versions.targetSdk.get().toInteger()
         versionCode 1
         versionName "1.0"
 
