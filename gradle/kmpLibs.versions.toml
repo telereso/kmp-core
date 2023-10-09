@@ -31,7 +31,7 @@ serializationJson = "1.5.1"
 buildkonfig = "0.13.3"
 okhttp = "4.10.0"
 napier = "2.6.1"
-multiplatformSettings = "1.0.0-RC"
+multiplatformSettings = "1.1.0"
 
 #Telereso
 teleresoCore = "0.0.41"

@@ -37,6 +37,7 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.serialization.kotlinx.json.json
 import io.telereso.kmp.core.models.ClientException
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
 import platform.Foundation.NSError
 import platform.Foundation.NSLocalizedDescriptionKey
@@ -114,6 +115,7 @@ fun initLogger() {
  * Converts a [ClientException] into an [NSError] object for better interop with Objective-C, Swift projects.
  * @return The [NSError] object created from the [ClientException].
  */
+@OptIn(ExperimentalForeignApi::class)
 fun ClientException.toNSError(): NSError {
     // Create a mutable map to hold the error information.
     val userInfo = mutableMapOf<String?, Any>()
