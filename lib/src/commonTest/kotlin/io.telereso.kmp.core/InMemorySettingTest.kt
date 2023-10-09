@@ -33,6 +33,7 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -217,6 +218,7 @@ class InMemorySettingTest {
         settings.putExpirableString("TEST", "test", now - 1)
         settings.size.shouldBe(1)
 
+        delay(100)
         afterRemoveExpired.await().shouldBe(0)
 
         settings.cancelRemovingExpiredKeys()

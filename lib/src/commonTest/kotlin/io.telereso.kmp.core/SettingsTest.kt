@@ -219,6 +219,7 @@ class SettingsTest {
         settings.putExpirableString("TEST", "test", now - 1)
         settings.size.shouldBe(1)
 
+        delay(100)
         afterRemoveExpired.await().shouldBe(0)
 
         settings.cancelRemovingExpiredKeys()

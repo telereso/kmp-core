@@ -111,10 +111,37 @@ object TasksExamples {
                     "85:2F:51:3C:AA:FD:E2:14:EB:2D:C0:A7:1E:D2:F3:E2:95:5A:BE:7F:BB:CE:D7:8A:F9:CB:BB:C0:5F:0C:12:98"
                 )
             )
+            add(
+                android(
+                    "io.telereso.kmp.core.app",
+                    "27:CD:DF:48:77:3E:9B:CF:FA:A4:6D:44:BF:8A:FC:23:96:F0:2F:71:C5:79:5C:C9:A0:1B:63:C6:BD:B1:05:6A"
+                )
+            )
             add(ios("orgIdentifier.iosApp"))
             add(website("localhost:*"))
         })
     }
+
+    fun testVerifyFailed(coreClient: CoreClient) {
+
+        coreClient.verifyConsumer(mutableListOf<Consumer>().apply {
+            add(
+                android(
+                    "io.telereso.kmp.core.app",
+                    "25:2F:51:3C:AA:FD:E2:14:EB:2D:C0:A7:1E:D2:F3:E2:95:5A:BE:7F:BB:CE:D7:8A:F9:CB:BB:C0:5F:0C:12:98"
+                )
+            )
+            add(
+                android(
+                    "io.telereso.kmp.core.app",
+                    "85:2F:51:3C:AA:FD:E2:14:EB:2D:C0:A7:1E:D2:F3:E2:95:5A:BE:7F:BB:CE:D7:8A:F9:CB:BB:C0:5F:0C:12:98"
+                )
+            )
+            add(ios("orgIdentifier.iosApp"))
+            add(website("localhost:*"))
+        })
+    }
+
 
     @JvmStatic
     fun testRetry1(): Task<String> {

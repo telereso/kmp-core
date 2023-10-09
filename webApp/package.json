@@ -4,10 +4,10 @@
   "private": true,
   "dependencies": {
     "@craco/craco": "^6.4.5",
+    "@telereso/core": "file:../lib/build/dist/js/productionLibrary",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "core-client": "file:../lib/build/productionLibrary",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
@@ -22,7 +22,7 @@
     "build:serve": "yarn build && serve -s build",
     "serve": "yarn build:serve",
     "watch": "yarn build && watch-run -d 500 -p src/**/* yarn build:serve",
-    "refresh": "yarn build:package && yarn add file:../lib/build/productionLibrary",
+    "refresh": "yarn build:package && yarn add file:../lib/build/dist/js/productionLibrary",
     "rs": "yarn refresh && yarn serve"
   },
   "eslintConfig": {

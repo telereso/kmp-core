@@ -2,7 +2,7 @@ import logo from './logo.svg';
 import './App.css';
 import React, {useState, useEffect} from 'react';
 
-const CoreClient = require("core-client").io.telereso.kmp.core
+const CoreClient = require("@telereso/core").io.telereso.kmp.core
 
 CoreClient.debugLogger()
 

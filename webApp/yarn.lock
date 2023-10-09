@@ -1778,6 +1778,26 @@
     "@svgr/plugin-svgo" "^5.5.0"
     loader-utils "^2.0.0"
 
+"@telereso/core@file:../lib/build/dist/js/productionLibrary":
+  version "0.0.1"
+  dependencies:
+    "@js-joda/core" "3.2.0"
+    abort-controller "3.0.0"
+    format-util "^1.0.5"
+    node-fetch "2.6.7"
+    sql.js "1.8.0"
+    ws "8.5.0"
+
+"@telereso/js@file:../lib/build/dist/js/productionLibrary":
+  version "0.0.1"
+  dependencies:
+    "@js-joda/core" "3.2.0"
+    abort-controller "3.0.0"
+    format-util "^1.0.5"
+    node-fetch "2.6.7"
+    sql.js "1.8.0"
+    ws "8.5.0"
+
 "@testing-library/dom@^8.5.0":
   version "8.19.0"
   resolved "https://registry.yarnpkg.com/@testing-library/dom/-/dom-8.19.0.tgz#bd3f83c217ebac16694329e413d9ad5fdcfd785f"
@@ -3293,15 +3313,6 @@ copy-webpack-plugin@^11.0.0:
     schema-utils "^4.0.0"
     serialize-javascript "^6.0.0"
 
-"core-client@file:../lib/build/productionLibrary":
-  version "0.0.1"
-  dependencies:
-    "@js-joda/core" "3.2.0"
-    abort-controller "3.0.0"
-    node-fetch "2.6.7"
-    sql.js "1.8.0"
-    ws "8.5.0"
-
 core-js-compat@^3.25.1:
   version "3.26.0"
   resolved "https://registry.yarnpkg.com/core-js-compat/-/core-js-compat-3.26.0.tgz#94e2cf8ba3e63800c4956ea298a6473bc9d62b44"
@@ -4581,6 +4592,11 @@ form-data@^3.0.0:
     asynckit "^0.4.0"
     combined-stream "^1.0.8"
     mime-types "^2.1.12"
+
+format-util@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/format-util/-/format-util-1.0.5.tgz#1ffb450c8a03e7bccffe40643180918cc297d271"
+  integrity sha512-varLbTj0e0yVyRpqQhuWV+8hlePAgaoFRhNFj50BNjEIrw1/DphHSObtqwskVCPWNgzwPoQrZAbfa/SBiicNeg==
 
 forwarded@0.2.0:
   version "0.2.0"
