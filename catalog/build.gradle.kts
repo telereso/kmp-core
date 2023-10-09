@@ -5,7 +5,7 @@ plugins {
 }
 
 group = rootProject.group
-version = "0.19"
+version = "0.25"
 
 
 catalog {
@@ -27,6 +27,9 @@ catalog {
             "compileSdk" to kmpLibs.versions.compileSdk.get(),
             "buildTools" to kmpLibs.versions.buildTools.get(),
             "minSdk" to kmpLibs.versions.minSdk.get(),
+
+            //iOS
+            "test-iphone-device" to kmpLibs.versions.test.iphone.device.get(),
 
             // Telereso
             "teleresoCore" to kmpLibs.versions.teleresoCore.get(),

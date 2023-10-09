@@ -51,6 +51,7 @@ jobs:
         path: |
          ~/.gradle/caches
          ~/.gradle/wrapper
+         ~/Users/runner/.konan/
         key: "gradle-cache"
 
     - name: Bump version and push tag
@@ -80,7 +81,8 @@ jobs:
         bucket="gs://telereso-docs/docs"
         projectDocs="$bucket/projects/${{ github.repository_id }}/public/docs"
         mkdir -p public/docs
-        gsutil -m -o "GSUtil:parallel_process_count=1" rsync -d -r "$projectDocs" public/docs
+        gsutil -o "GSUtil:parallel_process_count=1" cp "${projectDocs}.zip" docs.zip && unzip -q docs.zip -d public/docs || cd .. && gsutil -m -o "GSUtil:parallel_process_count=1" rsync -d -r "$projectDocs" public/docs
+        rm -rf docs.zip
 
     - name: Set flavored version
       run: |
@@ -154,7 +156,9 @@ jobs:
         run: |-
           bucket="gs://telereso-docs/docs"
           projectDocs="$bucket/projects/${{ github.repository_id }}/public/docs"
-          gsutil -m -o "GSUtil:parallel_process_count=1" rsync -r build-docs/docs "$projectDocs"
+          cd build-docs 
+          zip -q -r docs.zip docs
+          gsutil -o "GSUtil:parallel_process_count=1" cp docs.zip "${projectDocs}.zip"
 
       - name: Build website
         uses: actions/jekyll-build-pages@v1
