@@ -12,6 +12,7 @@ plugins {
 
 group = "io.telereso.kmp"
 version = project.findProperty("publishVersion") ?: "0.0.1"
+val scope by extra { "telereso" }
 
 
 buildscript {

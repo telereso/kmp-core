@@ -50,7 +50,7 @@ project.ext["artifactName"] = "${baseProjectName}-${project.name}"
 
 group = rootProject.group
 version = rootProject.version
-
+val scope: String by rootProject.extra
 
 /**
  * https://kotlin.github.io/dokka/1.6.0/user_guide/gradle/usage/
@@ -181,11 +181,9 @@ kotlin {
      *
      */
     js(IR) {
-        moduleName = "core-client"
+        moduleName = "@$scope/$moduleName"
+        version = project.version as String
 
-        compilations["main"].packageJson {
-            customField("buildTimeStamp", "${System.currentTimeMillis()}")
-        }
         /**
          * browser()
          * It sets the JavaScript target execution environment as browser.
@@ -285,7 +283,7 @@ kotlin {
                 implementation(kmpLibs.androidx.lifecycle.process)
             }
         }
-        val androidTest by getting {
+        val androidUnitTest by getting {
             dependsOn(commonTest)
             dependencies {
                 implementation(kmpLibs.sqldelight.sqlite.driver)
