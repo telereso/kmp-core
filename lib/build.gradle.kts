@@ -26,6 +26,7 @@ import groovy.util.Node
 import groovy.xml.XmlParser
 import org.gradle.configurationcache.extensions.capitalized
 import org.codehaus.groovy.runtime.ProcessGroovyMethods
+import org.jetbrains.kotlin.incremental.createDirectory
 import java.text.DecimalFormat
 import java.math.RoundingMode
 
@@ -397,12 +398,10 @@ android {
 }
 
 // We can filter out some classes in the generated report
-kover {
+koverReport {
     filters {
-        classes {
-            //includes += listOf("*.*ViewModelImpl*", "io.telereso.kmp.core.cache.*")
-            // exclude any classes named with Test
-            excludes += listOf("*.*Test*")
+        excludes {
+            classes(listOf("*.*Test*"))
         }
     }
     // The koverVerify currently only supports line counter values.
@@ -410,22 +409,22 @@ kover {
     verify {
         // Add VMs in the includes [list]. VMs added,their coverage % will be tracked.
         filters {
-            classes {
-                //includes += listOf("*.*ViewModelImpl*", "io.telereso.kmp.core.cache.*")
-                excludes += listOf("*.*Test*")
+            excludes {
+                classes(listOf("*.*Test*"))
             }
         }
         // Enforce Test Coverage
-        rule {
-            name = "Minimal line coverage rate in percent"
+        rule("Minimal line coverage rate in percent") {
             bound {
-                minValue = 47
+                minValue = 50
             }
         }
     }
 
-    htmlReport {
-        reportDir.set(rootDir.resolve("public/tests/kover"))
+    defaults {
+        html {
+            setReportDir(rootDir.resolve("public/tests/kover"))
+        }
     }
 }
 
@@ -473,7 +472,7 @@ tasks.register<Copy>("copyTestReportToPublish") {
 tasks.register("createCoverageBadge") {
     doLast {
 
-        val report = buildDir.resolve("reports/kover/xml/report.xml")
+        val report = buildDir.resolve("reports/kover/report.xml")
         val coverage = if (report.exists()) {
             val node = (XmlParser().parse(report)
                 .children()
@@ -500,14 +499,18 @@ tasks.register("createCoverageBadge") {
             else -> "red"
         }
 
+        val koverDir = rootDir.resolve("public/tests/kover").apply {
+            if (!exists())
+                createDirectory()
+        }
         download(
             "https://img.shields.io/badge/coverage-${coverage?.toString().plus("%25") ?: "unknown"}-$badgeColor",
-            "$rootDir/public/tests/kover/badge.svg"
+            koverDir.resolve("badge.svg").path
         )
     }
 }
 
-tasks.findByName("koverReport")?.apply {
+tasks.findByName("koverXmlReport")?.apply {
     finalizedBy("copyTestReportToPublish")
     finalizedBy("createCoverageBadge")
 }
