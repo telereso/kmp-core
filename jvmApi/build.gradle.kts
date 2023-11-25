@@ -3,6 +3,7 @@ plugins {
 	war
 	id("org.springframework.boot") version "2.7.9"
 	id("io.spring.dependency-management") version "1.0.15.RELEASE"
+	kotlin("jvm")
 }
 
 group = "com.airasia"
