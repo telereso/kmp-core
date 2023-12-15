@@ -153,8 +153,6 @@ kotlin {
     android {
         publishLibraryVariants("release")
     }
-//    tasks.getByName("compileReleaseKotlinAndroid").dependsOn("kspCommonMainKotlinMetadata")
-
 
     listOf(
         iosX64(),
@@ -215,6 +213,24 @@ kotlin {
         binaries.executable()
     }
 
+    val hostOs = System.getProperty("os.name")
+    val isMingwX64 = hostOs.startsWith("Windows")
+    val nativeTarget = when {
+        hostOs == "Mac OS X" -> macosX64("native")
+        hostOs == "Linux" -> linuxX64("native")
+        isMingwX64 -> mingwX64("native")
+        else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
+    }
+
+    nativeTarget.apply {
+        binaries {
+            sharedLib {
+                baseName = "KmpCoreNative" // on Linux and macOS
+                // baseName = "libnative" // on Windows
+            }
+        }
+    }
+
     sourceSets {
 
         /**
@@ -261,20 +277,7 @@ kotlin {
                 implementation(kmpLibs.test.turbine)
             }
         }
-        val jvmMain by getting {
-            dependencies {
-                implementation(kmpLibs.ktor.client.okhttp)
-                implementation(kmpLibs.okhttp.logging)
-                implementation(kmpLibs.sqldelight.runtime.jvm)
-            }
-        }
 
-        val jvmTest by getting {
-            dependsOn(commonTest)
-            dependencies {
-                implementation(kmpLibs.sqldelight.sqlite.driver)
-            }
-        }
         val androidMain by getting {
             dependencies {
                 implementation(kmpLibs.ktor.client.okhttp)
@@ -294,13 +297,6 @@ kotlin {
         val iosX64Main by getting
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
-
-        /**
-         * By using the by creating scope, we ensure the rest of the Darwin targets
-         * pick dependecies from the iOSMain.
-         * Note using this actual implementations should only exist in the iosMain else
-         * the project will complain.
-         */
         val iosMain by creating {
             dependsOn(commonMain)
             iosX64Main.dependsOn(this)
@@ -316,6 +312,7 @@ kotlin {
                 implementation(kmpLibs.sqldelight.native.driver)
             }
         }
+
         val iosX64Test by getting
         val iosArm64Test by getting
         val iosSimulatorArm64Test by getting {
@@ -331,9 +328,20 @@ kotlin {
             //iosSimulatorArm64Test.dependsOn(this)
         }
 
-        /**
-         * Adding main and test for JS.
-         */
+        val jvmMain by getting {
+            dependencies {
+                implementation(kmpLibs.ktor.client.okhttp)
+                implementation(kmpLibs.okhttp.logging)
+                implementation(kmpLibs.sqldelight.runtime.jvm)
+            }
+        }
+        val jvmTest by getting {
+            dependsOn(commonTest)
+            dependencies {
+                implementation(kmpLibs.sqldelight.sqlite.driver)
+            }
+        }
+
         val jsMain by getting {
             dependencies {
                 /**
@@ -352,6 +360,13 @@ kotlin {
                 implementation(kmpLibs.sqldelight.sqljs.driver)
             }
         }
+
+        val nativeMain by getting {
+            dependencies {
+                implementation(kmpLibs.ktor.client.darwin)
+            }
+        }
+        val nativeTest by getting
     }
 }
 

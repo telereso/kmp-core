@@ -38,7 +38,7 @@ abstract class Platform {
      * @suppress
      */
     enum class Type {
-        ANDROID, IOS, BROWSER, NODE, JVM
+        ANDROID, IOS, BROWSER, NODE, JVM, NATIVE
     }
 
     /**
