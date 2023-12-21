@@ -23,29 +23,6 @@ Http.ktorConfigJson
 
 Use this configuration to convert `Serializable` classes from/into json while ignoring Unknown Keys.
 
----
-
-### Http Response Validator
-
-```kotlin
-Http.getHttpResponseValidator()
-```
-
-A helper function to convert http errors into a `ClientException` object.
-
-you can add this when creating your ktor http client 
-
-```kotlin
-val client = HttpClient() {
-    install(ContentNegotiation) {
-        json(Http.ktorConfigJson)
-    }
-}.config {
-    HttpResponseValidator {
-        Http.getHttpResponseValidator(this)
-    }
-}
-```
 
 ---
 
