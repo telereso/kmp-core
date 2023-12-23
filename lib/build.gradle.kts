@@ -150,7 +150,7 @@ tasks.register("copyLatestVersionDocs") {
 tasks.getByName("dokkaHtml").finalizedBy("copyLatestVersionDocs")
 
 kotlin {
-    android {
+    androidTarget {
         publishLibraryVariants("release")
     }
 //    tasks.getByName("compileReleaseKotlinAndroid").dependsOn("kspCommonMainKotlinMetadata")
