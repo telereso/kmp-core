@@ -22,14 +22,21 @@
  * SOFTWARE.
  */
 
-package io.telereso.kmp.core.models
+package io.telereso.kmp.core
 
-import kotlinx.serialization.Serializable
-import kotlin.js.JsExport
+import io.telereso.kmp.core.models.ClientException
+import kotlinx.coroutines.asDeferred
+import kotlin.js.Promise
 
-@Serializable
-//@JsExport
-/**
- * A value with expiration date in epoch second format
- */
-data class ExpirableValue(val value: String, val exp: Long)
+
+internal actual class InternalTask<ResultT> actual constructor(_task: Task<ResultT>) {
+    internal actual val task: Task<ResultT> = _task
+
+    actual fun get(): ResultT {
+        throw ClientException("Use async instead for blocking calls")
+    }
+
+    actual fun getOrNull(): ResultT? {
+        throw ClientException("Use async instead for blocking calls")
+    }
+}

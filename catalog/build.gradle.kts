@@ -5,7 +5,7 @@ plugins {
 }
 
 group = rootProject.group
-version = "0.32"
+version = "0.32-wasm"
 
 
 catalog {

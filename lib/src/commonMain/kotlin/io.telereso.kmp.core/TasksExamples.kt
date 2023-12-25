@@ -39,7 +39,7 @@ import kotlin.js.JsExport
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
-@JsExport
+//@JsExport
 object TasksExamples {
     @JvmStatic
     fun hi(): Task<String> {

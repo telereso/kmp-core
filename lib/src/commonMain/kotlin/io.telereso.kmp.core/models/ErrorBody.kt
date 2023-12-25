@@ -36,7 +36,7 @@ import kotlin.js.JsExport
  * @param message The message about the error from API.
  */
 @Serializable
-@JsExport
+//@JsExport
 @Builder
 @SwiftOverloads
 data class ErrorBody(

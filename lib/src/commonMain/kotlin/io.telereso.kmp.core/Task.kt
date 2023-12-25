@@ -40,7 +40,7 @@ import kotlin.jvm.JvmStatic
  * @param scope a CoroutineScope defaulted to Default can provide your own scope as well, ensure its testable by injecting the provider.
  */
 @ExperimentalJsExport
-@JsExport
+// @JsExport
 class Task<ResultT> private constructor(
     private val scope: CoroutineScope,
     private val config: TaskConfig? = TaskConfig(),
@@ -527,7 +527,7 @@ suspend fun <ResultT> Task<ResultT>.awaitOrNull(): ResultT? {
 }
 
 @Builder
-@JsExport
+// @JsExport
 data class TaskConfig(
     /**
      * If set will try to rerun the task if it fails with the set amount ,

@@ -46,7 +46,7 @@ import kotlin.js.JsName
  */
 @Serializable
 @ExperimentalJsExport
-@JsExport
+//@JsExport
 open class ClientException(
     override val message: String? = null,
     @Serializable(with = ThrowableSerializer::class)
@@ -59,7 +59,7 @@ open class ClientException(
     val code: String? = null,
     val failureCount: Int? = null
 ) : Throwable() {
-    @JsName("ClientExceptionConstructor")
+//    @JsName("ClientExceptionConstructor")
     constructor(cause: Throwable? = null) : this(null, cause = cause)
 
     fun isCancellationException(): Boolean {

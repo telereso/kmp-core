@@ -26,6 +26,7 @@ import groovy.util.Node
 import groovy.xml.XmlParser
 import org.gradle.configurationcache.extensions.capitalized
 import org.codehaus.groovy.runtime.ProcessGroovyMethods
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.incremental.createDirectory
 import java.text.DecimalFormat
 import java.math.RoundingMode
@@ -215,6 +216,9 @@ kotlin {
         binaries.executable()
     }
 
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs()
+
     sourceSets {
 
         /**
@@ -251,14 +255,14 @@ kotlin {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
                 implementation(kmpLibs.test.kotlinx.coroutines.test)
-                implementation(kmpLibs.test.kotest.framework.engine)
-                implementation(kmpLibs.test.kotest.assertions.core)
+//                implementation(kmpLibs.test.kotest.framework.engine)
+//                implementation(kmpLibs.test.kotest.assertions.core)
 
                 // Ktor Server Mock
                 implementation(kmpLibs.test.ktor.client.mock)
 
                 implementation(kmpLibs.test.multiplatform.settings.test)
-                implementation(kmpLibs.test.turbine)
+//                implementation(kmpLibs.test.turbine)
             }
         }
         val jvmMain by getting {
@@ -526,3 +530,9 @@ fun download(url: String, path: String) {
         destFile.createNewFile()
     ant.invokeMethod("get", mapOf("src" to url, "dest" to destFile))
 }
+
+tasks.getByName("compileKotlinWasmJs")
+    .dependsOn("kspCommonMainKotlinMetadata")
+
+tasks.getByName("wasmJsSourcesJar")
+    .dependsOn("kspCommonMainKotlinMetadata")

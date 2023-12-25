@@ -31,7 +31,7 @@ import kotlin.js.JsExport
 /**
  * Defines the supported platforms by the sdks
  */
-@JsExport
+// @JsExport
 abstract class Platform {
 
     /**

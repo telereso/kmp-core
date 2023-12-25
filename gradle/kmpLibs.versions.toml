@@ -21,20 +21,20 @@ androidx-core = "1.12.0"
 test-iphone-device = "iPhone 15 Pro"
 
 #Others
-ktor = "2.3.7"
+ktor = "3.0.0-wasm2"
 sqldelight = "1.5.5"
 sqlJs = "1.8.0"
 js-joda-core = "3.2.0"
-coroutines = "1.7.3"
+coroutines = "1.8.0-RC2"
 datetime = "0.5.0"
 serializationJson = "1.6.2"
 buildkonfig = "0.13.3"
 okhttp = "4.10.0"
-napier = "2.6.1"
+napier = "2.7.1"
 multiplatformSettings = "1.1.0"
 
 #Telereso
-teleresoCore = "0.0.43"
+teleresoCore = "0.0.50-wasm"
 teleresoKmp = "0.0.38"
 
 #Test

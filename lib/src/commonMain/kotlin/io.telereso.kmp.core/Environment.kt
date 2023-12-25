@@ -30,7 +30,7 @@ import kotlin.js.JsExport
  * Defines the different Environments the sdk support.
  * this is usually passed to the SDK via the [Config] builder.
  */
-@JsExport
+// @JsExport
 enum class Environment {
     /**
      * staging environment value

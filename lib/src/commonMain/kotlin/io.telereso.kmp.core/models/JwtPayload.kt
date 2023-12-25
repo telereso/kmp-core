@@ -29,7 +29,7 @@ import kotlin.js.JsExport
 
 @kotlinx.serialization.Serializable
 @OptIn(ExperimentalJsExport::class)
-@JsExport
+//@JsExport
 data class JwtPayload(
     val iss: String? = null,
     val exp: Long? = null,

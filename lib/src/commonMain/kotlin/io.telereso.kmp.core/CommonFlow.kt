@@ -56,7 +56,7 @@ import kotlin.jvm.JvmStatic
  * and on iOS adn web we are able to get a error value with readable Exception of what went wrong.
  *
  */
-@JsExport
+// @JsExport
 class CommonFlow<T>(private val origin: Flow<T>) : Flow<T> by origin {
 
     class Job internal constructor(private val collectJob: kotlinx.coroutines.Job) {

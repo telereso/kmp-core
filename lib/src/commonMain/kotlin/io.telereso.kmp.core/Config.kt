@@ -40,7 +40,7 @@ import kotlin.jvm.JvmStatic
  * @since 11/11/2022
  */
 @ExperimentalJsExport
-@JsExport
+//@JsExport
 class Config private constructor(
     val builder: Builder
 ) {
