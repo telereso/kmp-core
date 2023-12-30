@@ -56,35 +56,6 @@ object Http {
     }
 
     /**
-     * To abstract the Ktor Specific Exception and provide our own general [ClientException] that
-     * all platforms should consume.
-     * It handles the Exceptions thrown during Ktor request.
-     * This is mostly setup during httpClient building
-     *             HttpResponseValidator {
-    getHttpResponseValidator(this)
-    }
-     * @param config an HttpCallValidator config
-     * @return a HttpResponseValidator that when an exception is of Ktor Client or Server it will throw a [ClientException] instead for any API call accross the SDK.
-     *
-     */
-    @Deprecated("In favor of onFailed and await() exception casting")
-    fun getHttpResponseValidator(config: HttpCallValidator.Config) =
-        config.handleResponseExceptionWithRequest { exception, _ ->
-            when (exception) {
-                is ClientRequestException -> {
-                    throw exception.asClientException()
-                }
-                is ServerResponseException -> {
-                    throw exception.asClientException()
-                }
-                else -> {
-                    // this should no normally happen since Ktor only handles Server and Client specific execptions.
-                    throw exception.asClientException()
-                }
-            }
-        }
-
-    /**
      * To build a user agent that provide information where this sdk is being used,
      * on client level pass app-version. here we can read the client version.
      * on client sdk level pass client-name and append. and client version

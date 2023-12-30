@@ -84,6 +84,12 @@ publishing {
 
         }
     }
+
+    // FIXME - workaround for https://github.com/gradle/gradle/issues/26091
+    val signingTasks = tasks.withType<Sign>()
+    tasks.withType<AbstractPublishToMaven>().configureEach {
+        mustRunAfter(signingTasks)
+    }
 }
 
 // Signing artifacts. Signing.* extra properties values will be used

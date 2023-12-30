@@ -5,7 +5,7 @@ plugins {
 }
 
 group = rootProject.group
-version = "0.30"
+version = "0.32"
 
 
 catalog {
@@ -15,7 +15,7 @@ catalog {
 
             // Kotlin
             "kotlin" to kmpLibs.versions.kotlin.get(),
-            "kover" to  kmpLibs.versions.kover.get() ,
+            "kover" to kmpLibs.versions.kover.get(),
             "dokka" to kmpLibs.versions.dokka.get(),
             "coroutines" to kmpLibs.versions.coroutines.get(),
             "datetime" to kmpLibs.versions.datetime.get(),
@@ -23,7 +23,7 @@ catalog {
             "ksp" to kmpLibs.versions.ksp.get(),
 
             // Android
-            "androidGradlePlugin" to kmpLibs.versions.androidGradlePlugin.get(),
+            "agp" to kmpLibs.versions.agp.get(),
             "compileSdk" to kmpLibs.versions.compileSdk.get(),
             "buildTools" to kmpLibs.versions.buildTools.get(),
             "minSdk" to kmpLibs.versions.minSdk.get(),
@@ -146,8 +146,8 @@ catalog {
             Triple("ksp", kmpLibs.plugins.ksp.get(), "ksp"),
 
             // Android
-            Triple("android.library", kmpLibs.plugins.android.library.get(), "androidGradlePlugin"),
-            Triple("android.application", kmpLibs.plugins.android.application.get(), "androidGradlePlugin"),
+            Triple("android.library", kmpLibs.plugins.android.library.get(), "agp"),
+            Triple("android.application", kmpLibs.plugins.android.application.get(), "agp"),
 
             // Telereso
             Triple("telereso.kmp", kmpLibs.plugins.telereso.kmp.get(), "teleresoKmp"),
