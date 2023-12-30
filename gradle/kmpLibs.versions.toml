@@ -35,7 +35,7 @@ multiplatformSettings = "1.1.0"
 
 #Telereso
 teleresoCore = "0.0.43"
-teleresoKmp = "0.0.38"
+teleresoKmp = "0.0.39"
 
 #Test
 test-logger = "3.2.0"
