@@ -34,7 +34,7 @@ napier = "2.6.1"
 multiplatformSettings = "1.1.0"
 
 #Telereso
-teleresoCore = "0.0.43"
+teleresoCore = "0.0.48"
 teleresoKmp = "0.0.39"
 
 #Test
