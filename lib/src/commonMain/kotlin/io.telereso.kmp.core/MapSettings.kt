@@ -30,6 +30,8 @@ import io.telereso.kmp.core.models.ExpirableValue
 import io.telereso.kmp.core.models.fromJson
 import io.telereso.kmp.core.models.toJson
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlin.time.Duration
 
 /**
@@ -154,6 +156,55 @@ class MapSettings constructor(
         delegate[key] as? Boolean ?: defaultValue
 
     override fun getBooleanOrNull(key: String): Boolean? = delegate[key] as? Boolean
+
+    override suspend fun getIntFlow(key: String, defaultValue: Int): Flow<Int> {
+        return flowOf(delegate[key] as? Int ?: defaultValue)
+    }
+
+    override suspend fun getIntOrNullFlow(key: String): Flow<Int?> {
+        return flowOf(delegate[key] as? Int)
+    }
+
+    override suspend fun getStringFlow(key: String, defaultValue: String): Flow<String> {
+        return flowOf(delegate[key] as? String ?: defaultValue)
+    }
+
+    override suspend fun getStringOrNullFlow(key: String): Flow<String?> {
+        return flowOf(delegate[key] as? String)
+    }
+
+    override suspend fun getLongOrNullFlow(key: String): Flow<Long?> {
+        return flowOf(delegate[key] as? Long)
+    }
+
+    override suspend fun getLongFlow(key: String, defaultValue: Long): Flow<Long> {
+        return flowOf(delegate[key] as? Long ?: defaultValue)
+    }
+
+    override fun getFloatFlow(key: String, defaultValue: Float): Flow<Float> {
+        return flowOf(delegate[key] as? Float ?: defaultValue)
+    }
+
+    override fun getFloatOrNullFlow(key: String): Flow<Float?> {
+        return flowOf(delegate[key] as? Float)
+    }
+
+    override fun getDoubleFlow(key: String, defaultValue: Double): Flow<Double> {
+        return flowOf(delegate[key] as? Double ?: defaultValue)
+    }
+
+    override fun getDoubleOrNullFlow(key: String): Flow<Double?> {
+        return flowOf(delegate[key] as? Double)
+    }
+
+    override fun getBooleanFlow(key: String, defaultValue: Boolean): Flow<Boolean> {
+        return flowOf(delegate[key] as? Boolean ?: defaultValue)
+    }
+
+    override fun getBooleanOrNullFlow(key: String): Flow<Boolean?> {
+        return flowOf(delegate[key] as? Boolean)
+    }
+
 
     override fun putExpirableString(key: String, value: String, exp: Long) {
         putString(key, ExpirableValue(value, exp).toJson())

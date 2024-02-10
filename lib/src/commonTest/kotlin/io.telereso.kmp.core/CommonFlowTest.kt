@@ -24,6 +24,7 @@
 
 package io.telereso.kmp.core
 
+import app.cash.turbine.test
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -56,18 +57,15 @@ class CommonFlowTest {
 
     @Test
     fun shouldCommonFlow() = runTest {
-        getTestsFlow().collect {
-            it.shouldBe("Hello Common Flow")
-        }
-    }
-
-    private fun getTestsFlow(): CommonFlow<String> {
         val abcFlow: Flow<String> = flow {
             emit("Hello Common Flow")
-        }
-        return abcFlow.asCommonFlow()
-    }
+        }.asCommonFlow()
 
+        abcFlow.test {
+            awaitItem().shouldBe("Hello Common Flow")
+            awaitComplete()
+        }
+    }
     @Test
     fun exceptionShouldBeNullOnEach()= runTest {
         var value:String?= null
@@ -87,34 +85,29 @@ class CommonFlowTest {
     @Test
     @Throws(ClientException::class)
     fun throwFlowError()= runTest {
-        var value:String?= null
-        var fail:ClientException? = null
-        val abcFlow: Flow<String> = flow {
+        val abcFlow: Flow<String> = flow<String> {
             throw ClientException(message = "Pay your Flow Bill to Resume")
+        }.asCommonFlow()
+        abcFlow.test {
+            awaitError().also {
+                it.shouldNotBeNull()
+                it.message.shouldBe("Pay your Flow Bill to Resume")
+            }
         }
-        abcFlow.asCommonFlow().watch { s, exception ->
-            value = s
-            fail = exception
-        }
-        value.shouldBe(null)
-        fail.shouldNotBeNull()
-        fail?.message.shouldBe("Pay your Flow Bill to Resume")
     }
 
     @Test
     @Throws(Throwable::class)
     fun throwFlowErrorThrowable()= runTest {
-        var value:String?= null
-        var fail:Throwable? = null
-        val abcFlow: Flow<String> = flow {
+        val abcFlow: Flow<String> = flow<String> {
             throw Throwable(message = "Pay your Flow Bill to Resume")
+        }.asCommonFlow()
+
+        abcFlow.test {
+            awaitError().also {
+                it.shouldNotBeNull()
+                it.message.shouldBe("Pay your Flow Bill to Resume")
+            }
         }
-        abcFlow.asCommonFlow().watch { s, exception ->
-            value = s
-            fail = exception
-        }
-        value.shouldBe(null)
-        fail.shouldBeNull()
-        fail?.message.shouldBe(null)
     }
 }

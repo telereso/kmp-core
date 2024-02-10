@@ -39,6 +39,8 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
+import app.cash.turbine.test
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsTest {
@@ -255,5 +257,102 @@ class SettingsTest {
         afterRemoveExpired.await().shouldBe(null)
 
         settings.cancelRemovingExpiredKeys()
+    }
+
+
+    @Test
+    fun shouldPutEnGetStringFlow() = runTest {
+        settings.putString("STRING_KEY_FLOW", "SOMESTRINGFLOW")
+        settings.getStringFlow("STRING_KEY_FLOW","DEFAULT").test {
+            awaitItem().shouldBe("SOMESTRINGFLOW")
+        }
+        // should return null value given key not found
+        settings.getStringOrNullFlow("12345").test {
+            awaitItem().shouldBeNull()
+        }
+        // should get default value
+        settings.getStringFlow("888","DEFAULT").test {
+            awaitItem().shouldBe("DEFAULT")
+        }
+    }
+
+    @Test
+    fun shouldPutEnGetLongFlow() = runTest {
+        settings.putLong("LONGKEY_FLOW", 66L)
+        settings.getLongFlow("LONGKEY_FLOW",0L).test {
+            awaitItem().shouldBe(66L)
+        }
+        // should return null value given key not found
+        settings.getLongOrNullFlow("UT5554").test {
+            awaitItem().shouldBeNull()
+        }
+        // should get default value
+        settings.getLongFlow("INTDEF",2L).test {
+            awaitItem().shouldBe(2L)
+        }
+    }
+
+    @Test
+    fun shouldPutEnGetFloatFlow() = runTest {
+        settings.putFloat("FLOATKEY_FLOW", 60F)
+        settings.getFloatFlow("FLOATKEY_FLOW",0F).test {
+            awaitItem().shouldBe(60F)
+        }
+        // should return null value given key not found
+        settings.getFloatOrNullFlow("TOEOEOE").test {
+            awaitItem().shouldBeNull()
+        }
+        // should get default value
+        settings.getFloatFlow("INTDEF",0F).test {
+            awaitItem().shouldBe(0F)
+        }
+    }
+
+    @Test
+    fun shouldPutEnGetDoubleFlow() = runTest {
+        settings.putDouble("DOUBLEKEY_FLOW", 100000.99)
+        settings.getDoubleFlow("DOUBLEKEY_FLOW",0.0).test {
+            awaitItem().shouldBe(100000.99)
+        }
+        // should return null value given key not found
+        settings.getDoubleOrNullFlow("DFFDS").test {
+            awaitItem().shouldBeNull()
+        }
+        // should get default value
+        settings.getDoubleFlow("INTDEF",100.0).test {
+            awaitItem().shouldBe(100.0)
+        }
+    }
+
+    @Test
+    fun shouldPutEnGetBooleanFlow() = runTest {
+        settings.putBoolean("BOOLEANKEY_FLOW", false)
+        settings.getBooleanFlow("BOOLEANKEY_FLOW",false).test {
+            awaitItem().shouldBeFalse()
+        }
+        // should return null value given key not found
+        settings.getBooleanOrNullFlow("FNFNFNF").test {
+            awaitItem().shouldBeNull()
+        }
+        // should get default value
+        settings.getBooleanFlow("INTDEF",true).test {
+            awaitItem().shouldBeTrue()
+        }
+    }
+
+    @Test
+    fun shouldPutEnGetIntFlow() = runTest {
+        settings.putInt("INTKEY_FLOW", 666)
+        settings.getIntFlow("INTKEY_FLOW",0).test {
+            awaitItem().shouldBe(666)
+        }
+        // should return null value given key not found
+        settings.getIntOrNullFlow("FFJJGf").test {
+            awaitItem().shouldBeNull()
+        }
+        // should get default value
+        settings.getIntFlow("INTDEF",0).test {
+            awaitItem().shouldBe(0)
+        }
     }
 }

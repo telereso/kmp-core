@@ -91,6 +91,7 @@ catalog {
 
             Triple("napier", kmpLibs.napier.get(), "napier"),
             Triple("multiplatform.settings", kmpLibs.multiplatform.settings.get(), "multiplatformSettings"),
+            Triple("multiplatform.coroutines", kmpLibs.multiplatform.coroutines.get(), "multiplatformSettings"),
             Triple("test.multiplatform.settings.test", kmpLibs.test.multiplatform.settings.test.get(), "multiplatformSettings"),
 
             // Test

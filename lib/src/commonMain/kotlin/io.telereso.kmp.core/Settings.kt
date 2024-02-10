@@ -24,14 +24,29 @@
 
 package io.telereso.kmp.core
 
+import com.russhwolf.settings.ExperimentalSettingsApi
 import io.telereso.kmp.core.Log.logDebug
 import io.telereso.kmp.core.Utils.launchPeriodicAsync
 import io.telereso.kmp.core.models.ExpirableValue
 import io.telereso.kmp.core.models.fromJson
 import io.telereso.kmp.core.models.toJson
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Clock
 import kotlin.time.Duration
+import com.russhwolf.settings.ObservableSettings
+import com.russhwolf.settings.coroutines.getBooleanFlow
+import com.russhwolf.settings.coroutines.getBooleanOrNullFlow
+import com.russhwolf.settings.coroutines.getDoubleFlow
+import com.russhwolf.settings.coroutines.getDoubleOrNullFlow
+import com.russhwolf.settings.coroutines.getFloatFlow
+import com.russhwolf.settings.coroutines.getFloatOrNullFlow
+import com.russhwolf.settings.coroutines.getIntFlow
+import com.russhwolf.settings.coroutines.getIntOrNullFlow
+import com.russhwolf.settings.coroutines.getLongFlow
+import com.russhwolf.settings.coroutines.getLongOrNullFlow
+import com.russhwolf.settings.coroutines.getStringFlow
+import com.russhwolf.settings.coroutines.getStringOrNullFlow
 
 /**
  * A Wrapper for saving simple key-value data.
@@ -105,6 +120,18 @@ interface Settings {
     fun getIntOrNull(key: String): Int?
 
     /**
+     * Returns a Flow  `Int` value stored at [key], or [defaultValue] if no value was stored. If a value of a different
+     * type was stored at `key`, the behavior is not defined.
+     */
+    suspend fun getIntFlow(key: String, defaultValue: Int): Flow<Int>
+
+    /**
+     * Returns a Flow `Int` value stored at [key], or `null` if no value was stored. If a value of a different type was
+     * stored at `key`, the behavior is not defined.
+     */
+    suspend fun getIntOrNullFlow(key: String): Flow<Int?>
+
+    /**
      * Stores the `Long` [value] at [key].
      */
     fun putLong(key: String, value: Long)
@@ -120,6 +147,18 @@ interface Settings {
      * stored at `key`, the behavior is not defined.
      */
     fun getLongOrNull(key: String): Long?
+
+    /**
+     * Returns a Flow `Long` value stored at [key], or `null` if no value was stored. If a value of a different type was
+     * stored at `key`, the behavior is not defined.
+     */
+    suspend fun getLongOrNullFlow(key: String): Flow<Long?>
+
+    /**
+     * Returns a Flow `Long` value stored at [key], or [defaultValue] if no value was stored. If a value of a different
+     * type was stored at `key`, the behavior is not defined.
+     */
+    suspend fun getLongFlow(key: String, defaultValue: Long): Flow<Long>
 
     /**
      * Stores the `String` [value] at [key].
@@ -139,6 +178,18 @@ interface Settings {
     fun getStringOrNull(key: String): String?
 
     /**
+     * Returns a Flow `String` value stored at [key], or [defaultValue] if no value was stored. If a value of a different
+     * type was stored at `key`, the behavior is not defined.
+     */
+    suspend fun getStringFlow(key: String, defaultValue: String): Flow<String>
+
+    /**
+     * Returns a Flow `String` value stored at [key], or `null` if no value was stored. If a value of a different type was
+     * stored at `key`, the behavior is not defined.
+     */
+    suspend fun getStringOrNullFlow(key: String): Flow<String?>
+
+    /**
      * Stores the `Float` [value] at [key].
      */
     fun putFloat(key: String, value: Float)
@@ -154,6 +205,18 @@ interface Settings {
      * stored at `key`, the behavior is not defined.
      */
     fun getFloatOrNull(key: String): Float?
+
+    /**
+     * Returns a Flow `Float` value stored at [key], or [defaultValue] if no value was stored. If a value of a different
+     * type was stored at `key`, the behavior is not defined.
+     */
+    fun getFloatFlow(key: String, defaultValue: Float): Flow<Float>
+
+    /**
+     * Returns a Flow `Float` value stored at [key], or `null` if no value was stored. If a value of a different type was
+     * stored at `key`, the behavior is not defined.
+     */
+    fun getFloatOrNullFlow(key: String): Flow<Float?>
 
     /**
      * Stores the `Double` [value] at [key].
@@ -173,6 +236,18 @@ interface Settings {
     fun getDoubleOrNull(key: String): Double?
 
     /**
+     * Returns a Flow `Double` value stored at [key], or [defaultValue] if no value was stored. If a value of a different
+     * type was stored at `key`, the behavior is not defined.
+     */
+    fun getDoubleFlow(key: String, defaultValue: Double): Flow<Double>
+
+    /**
+     * Returns a Flow `Double` value stored at [key], or `null` if no value was stored. If a value of a different type was
+     * stored at `key`, the behavior is not defined.
+     */
+    fun getDoubleOrNullFlow(key: String): Flow<Double?>
+
+    /**
      * Stores the `Boolean` [value] at [key].
      */
     fun putBoolean(key: String, value: Boolean)
@@ -188,6 +263,18 @@ interface Settings {
      * stored at `key`, the behavior is not defined.
      */
     fun getBooleanOrNull(key: String): Boolean?
+
+    /**
+     * Returns a Flow `Boolean` value stored at [key], or [defaultValue] if no value was stored. If a value of a different
+     * type was stored at `key`, the behavior is not defined.
+     */
+    fun getBooleanFlow(key: String, defaultValue: Boolean): Flow<Boolean>
+
+    /**
+     * Returns a Flow `Boolean` value stored at [key], or `null` if no value was stored. If a value of a different type was
+     * stored at `key`, the behavior is not defined.
+     */
+    fun getBooleanOrNullFlow(key: String): Flow<Boolean?>
 
     fun putExpirableString(key: String, value: String, exp: Long)
 
@@ -218,11 +305,13 @@ interface Settings {
 /**
  * https://github.com/russhwolf/multiplatform-settings
  */
+@OptIn(ExperimentalSettingsApi::class)
 internal class SettingsImpl(
-    private val settings: com.russhwolf.settings.Settings = com.russhwolf.settings.Settings(),
+    private val settings : com.russhwolf.settings.Settings = com.russhwolf.settings.Settings(),
     clearExpiredKeysDuration: Duration? = null
-) :
-    Settings {
+) : Settings {
+
+    private val settingsObservable: ObservableSettings = settings as ObservableSettings
 
     override var listener: Settings.Listener? = null
     private var removeExpiredJob : Deferred<Unit>? = null
@@ -340,6 +429,54 @@ internal class SettingsImpl(
 
     override fun getBooleanOrNull(key: String): Boolean? {
         return settings.getBooleanOrNull(key)
+    }
+
+    override suspend fun getIntFlow(key: String, defaultValue: Int): Flow<Int> {
+        return settingsObservable.getIntFlow(key, defaultValue)
+    }
+
+    override suspend fun getIntOrNullFlow(key: String): Flow<Int?> {
+        return settingsObservable.getIntOrNullFlow(key)
+    }
+
+    override suspend fun getStringFlow(key: String, defaultValue: String): Flow<String> {
+        return settingsObservable.getStringFlow(key, defaultValue)
+    }
+
+    override suspend fun getStringOrNullFlow(key: String): Flow<String?> {
+        return settingsObservable.getStringOrNullFlow(key)
+    }
+
+    override suspend fun getLongOrNullFlow(key: String): Flow<Long?> {
+        return settingsObservable.getLongOrNullFlow(key)
+    }
+
+    override suspend fun getLongFlow(key: String, defaultValue: Long): Flow<Long> {
+        return settingsObservable.getLongFlow(key, defaultValue)
+    }
+
+    override fun getFloatFlow(key: String, defaultValue: Float): Flow<Float> {
+        return settingsObservable.getFloatFlow(key, defaultValue)
+    }
+
+    override fun getFloatOrNullFlow(key: String): Flow<Float?> {
+        return settingsObservable.getFloatOrNullFlow(key)
+    }
+
+    override fun getDoubleFlow(key: String, defaultValue: Double): Flow<Double> {
+        return settingsObservable.getDoubleFlow(key, defaultValue)
+    }
+
+    override fun getDoubleOrNullFlow(key: String): Flow<Double?> {
+        return settingsObservable.getDoubleOrNullFlow(key)
+    }
+
+    override fun getBooleanFlow(key: String, defaultValue: Boolean): Flow<Boolean> {
+        return settingsObservable.getBooleanFlow(key, defaultValue)
+    }
+
+    override fun getBooleanOrNullFlow(key: String): Flow<Boolean?> {
+        return settingsObservable.getBooleanOrNullFlow(key)
     }
 
     override fun putExpirableString(key: String, value: String, exp: Long) {

@@ -30,6 +30,7 @@ import io.telereso.kmp.core.models.ExpirableValue
 import io.telereso.kmp.core.models.fromJson
 import io.telereso.kmp.core.models.toJson
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.flow.Flow
 import kotlin.time.Duration
 
 /**
@@ -158,6 +159,54 @@ class InMemorySetting(
 
     override fun getBooleanOrNull(key: String): Boolean? {
         return settings.getBooleanOrNull(key)
+    }
+
+    override suspend fun getIntFlow(key: String, defaultValue: Int): Flow<Int> {
+        return settings.getIntFlow(key, defaultValue)
+    }
+
+    override suspend fun getIntOrNullFlow(key: String): Flow<Int?> {
+        return settings.getIntOrNullFlow(key)
+    }
+
+    override suspend fun getStringFlow(key: String, defaultValue: String): Flow<String> {
+        return settings.getStringFlow(key, defaultValue)
+    }
+
+    override suspend fun getStringOrNullFlow(key: String): Flow<String?> {
+        return settings.getStringOrNullFlow(key)
+    }
+
+    override suspend fun getLongOrNullFlow(key: String): Flow<Long?> {
+        return settings.getLongOrNullFlow(key)
+    }
+
+    override suspend fun getLongFlow(key: String, defaultValue: Long): Flow<Long> {
+        return settings.getLongFlow(key, defaultValue)
+    }
+
+    override fun getFloatFlow(key: String, defaultValue: Float): Flow<Float> {
+        return settings.getFloatFlow(key, defaultValue)
+    }
+
+    override fun getFloatOrNullFlow(key: String): Flow<Float?> {
+        return settings.getFloatOrNullFlow(key)
+    }
+
+    override fun getDoubleFlow(key: String, defaultValue: Double): Flow<Double> {
+        return settings.getDoubleFlow(key, defaultValue)
+    }
+
+    override fun getDoubleOrNullFlow(key: String): Flow<Double?> {
+        return settings.getDoubleOrNullFlow(key)
+    }
+
+    override fun getBooleanFlow(key: String, defaultValue: Boolean): Flow<Boolean> {
+        return settings.getBooleanFlow(key, defaultValue)
+    }
+
+    override fun getBooleanOrNullFlow(key: String): Flow<Boolean?> {
+        return settings.getBooleanOrNullFlow(key)
     }
 
     override fun putExpirableString(key: String, value: String, exp: Long) {
