@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         testSettingsFlow()
 
 
-        //TasksExamples.testVerify(CoreClient(application))
+        TasksExamples.testVerify(CoreClient(application))
 //        lifecycleScope.launch(handler) {
 //
 //            runTest()
