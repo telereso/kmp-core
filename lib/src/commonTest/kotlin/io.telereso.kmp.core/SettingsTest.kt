@@ -267,7 +267,7 @@ class SettingsTest {
             awaitItem().shouldBe("SOMESTRINGFLOW")
         }
         // should return null value given key not found
-        settings.getStringOrNullFlow("12345").test {
+        settings.getStringFlow("12345").test {
             awaitItem().shouldBeNull()
         }
         // should get default value
@@ -283,7 +283,7 @@ class SettingsTest {
             awaitItem().shouldBe(66L)
         }
         // should return null value given key not found
-        settings.getLongOrNullFlow("UT5554").test {
+        settings.getLongFlow("UT5554").test {
             awaitItem().shouldBeNull()
         }
         // should get default value
@@ -299,7 +299,7 @@ class SettingsTest {
             awaitItem().shouldBe(60F)
         }
         // should return null value given key not found
-        settings.getFloatOrNullFlow("TOEOEOE").test {
+        settings.getFloatFlow("TOEOEOE").test {
             awaitItem().shouldBeNull()
         }
         // should get default value
@@ -315,7 +315,7 @@ class SettingsTest {
             awaitItem().shouldBe(100000.99)
         }
         // should return null value given key not found
-        settings.getDoubleOrNullFlow("DFFDS").test {
+        settings.getDoubleFlow("DFFDS").test {
             awaitItem().shouldBeNull()
         }
         // should get default value
@@ -331,7 +331,7 @@ class SettingsTest {
             awaitItem().shouldBeFalse()
         }
         // should return null value given key not found
-        settings.getBooleanOrNullFlow("FNFNFNF").test {
+        settings.getBooleanFlow("FNFNFNF").test {
             awaitItem().shouldBeNull()
         }
         // should get default value
@@ -347,7 +347,7 @@ class SettingsTest {
             awaitItem().shouldBe(666)
         }
         // should return null value given key not found
-        settings.getIntOrNullFlow("FFJJGf").test {
+        settings.getIntFlow("FFJJGf").test {
             awaitItem().shouldBeNull()
         }
         // should get default value

@@ -161,27 +161,27 @@ class InMemorySetting(
         return settings.getBooleanOrNull(key)
     }
 
-    override suspend fun getIntFlow(key: String, defaultValue: Int): Flow<Int> {
+    override fun getIntFlow(key: String, defaultValue: Int): Flow<Int> {
         return settings.getIntFlow(key, defaultValue)
     }
 
-    override suspend fun getIntOrNullFlow(key: String): Flow<Int?> {
-        return settings.getIntOrNullFlow(key)
+    override fun getIntFlow(key: String): Flow<Int?> {
+        return settings.getIntFlow(key)
     }
 
-    override suspend fun getStringFlow(key: String, defaultValue: String): Flow<String> {
+    override fun getStringFlow(key: String, defaultValue: String): Flow<String> {
         return settings.getStringFlow(key, defaultValue)
     }
 
-    override suspend fun getStringOrNullFlow(key: String): Flow<String?> {
-        return settings.getStringOrNullFlow(key)
+    override fun getStringFlow(key: String): Flow<String?> {
+        return settings.getStringFlow(key)
     }
 
-    override suspend fun getLongOrNullFlow(key: String): Flow<Long?> {
-        return settings.getLongOrNullFlow(key)
+    override fun getLongFlow(key: String): Flow<Long?> {
+        return settings.getLongFlow(key)
     }
 
-    override suspend fun getLongFlow(key: String, defaultValue: Long): Flow<Long> {
+    override fun getLongFlow(key: String, defaultValue: Long): Flow<Long> {
         return settings.getLongFlow(key, defaultValue)
     }
 
@@ -189,24 +189,24 @@ class InMemorySetting(
         return settings.getFloatFlow(key, defaultValue)
     }
 
-    override fun getFloatOrNullFlow(key: String): Flow<Float?> {
-        return settings.getFloatOrNullFlow(key)
+    override fun getFloatFlow(key: String): Flow<Float?> {
+        return settings.getFloatFlow(key)
     }
 
     override fun getDoubleFlow(key: String, defaultValue: Double): Flow<Double> {
         return settings.getDoubleFlow(key, defaultValue)
     }
 
-    override fun getDoubleOrNullFlow(key: String): Flow<Double?> {
-        return settings.getDoubleOrNullFlow(key)
+    override fun getDoubleFlow(key: String): Flow<Double?> {
+        return settings.getDoubleFlow(key)
     }
 
     override fun getBooleanFlow(key: String, defaultValue: Boolean): Flow<Boolean> {
         return settings.getBooleanFlow(key, defaultValue)
     }
 
-    override fun getBooleanOrNullFlow(key: String): Flow<Boolean?> {
-        return settings.getBooleanOrNullFlow(key)
+    override fun getBooleanFlow(key: String): Flow<Boolean?> {
+        return settings.getBooleanFlow(key)
     }
 
     override fun putExpirableString(key: String, value: String, exp: Long) {

@@ -123,13 +123,13 @@ interface Settings {
      * Returns a Flow  `Int` value stored at [key], or [defaultValue] if no value was stored. If a value of a different
      * type was stored at `key`, the behavior is not defined.
      */
-    suspend fun getIntFlow(key: String, defaultValue: Int): Flow<Int>
+    fun getIntFlow(key: String, defaultValue: Int): Flow<Int>
 
     /**
      * Returns a Flow `Int` value stored at [key], or `null` if no value was stored. If a value of a different type was
      * stored at `key`, the behavior is not defined.
      */
-    suspend fun getIntOrNullFlow(key: String): Flow<Int?>
+    fun getIntFlow(key: String): Flow<Int?>
 
     /**
      * Stores the `Long` [value] at [key].
@@ -152,13 +152,13 @@ interface Settings {
      * Returns a Flow `Long` value stored at [key], or `null` if no value was stored. If a value of a different type was
      * stored at `key`, the behavior is not defined.
      */
-    suspend fun getLongOrNullFlow(key: String): Flow<Long?>
+    fun getLongFlow(key: String): Flow<Long?>
 
     /**
      * Returns a Flow `Long` value stored at [key], or [defaultValue] if no value was stored. If a value of a different
      * type was stored at `key`, the behavior is not defined.
      */
-    suspend fun getLongFlow(key: String, defaultValue: Long): Flow<Long>
+    fun getLongFlow(key: String, defaultValue: Long): Flow<Long>
 
     /**
      * Stores the `String` [value] at [key].
@@ -181,13 +181,13 @@ interface Settings {
      * Returns a Flow `String` value stored at [key], or [defaultValue] if no value was stored. If a value of a different
      * type was stored at `key`, the behavior is not defined.
      */
-    suspend fun getStringFlow(key: String, defaultValue: String): Flow<String>
+    fun getStringFlow(key: String, defaultValue: String): Flow<String>
 
     /**
      * Returns a Flow `String` value stored at [key], or `null` if no value was stored. If a value of a different type was
      * stored at `key`, the behavior is not defined.
      */
-    suspend fun getStringOrNullFlow(key: String): Flow<String?>
+    fun getStringFlow(key: String): Flow<String?>
 
     /**
      * Stores the `Float` [value] at [key].
@@ -216,7 +216,7 @@ interface Settings {
      * Returns a Flow `Float` value stored at [key], or `null` if no value was stored. If a value of a different type was
      * stored at `key`, the behavior is not defined.
      */
-    fun getFloatOrNullFlow(key: String): Flow<Float?>
+    fun getFloatFlow(key: String): Flow<Float?>
 
     /**
      * Stores the `Double` [value] at [key].
@@ -245,7 +245,7 @@ interface Settings {
      * Returns a Flow `Double` value stored at [key], or `null` if no value was stored. If a value of a different type was
      * stored at `key`, the behavior is not defined.
      */
-    fun getDoubleOrNullFlow(key: String): Flow<Double?>
+    fun getDoubleFlow(key: String): Flow<Double?>
 
     /**
      * Stores the `Boolean` [value] at [key].
@@ -274,7 +274,7 @@ interface Settings {
      * Returns a Flow `Boolean` value stored at [key], or `null` if no value was stored. If a value of a different type was
      * stored at `key`, the behavior is not defined.
      */
-    fun getBooleanOrNullFlow(key: String): Flow<Boolean?>
+    fun getBooleanFlow(key: String): Flow<Boolean?>
 
     fun putExpirableString(key: String, value: String, exp: Long)
 
@@ -431,27 +431,27 @@ internal class SettingsImpl(
         return settings.getBooleanOrNull(key)
     }
 
-    override suspend fun getIntFlow(key: String, defaultValue: Int): Flow<Int> {
+    override fun getIntFlow(key: String, defaultValue: Int): Flow<Int> {
         return settingsObservable.getIntFlow(key, defaultValue)
     }
 
-    override suspend fun getIntOrNullFlow(key: String): Flow<Int?> {
+    override  fun getIntFlow(key: String): Flow<Int?> {
         return settingsObservable.getIntOrNullFlow(key)
     }
 
-    override suspend fun getStringFlow(key: String, defaultValue: String): Flow<String> {
+    override fun getStringFlow(key: String, defaultValue: String): Flow<String> {
         return settingsObservable.getStringFlow(key, defaultValue)
     }
 
-    override suspend fun getStringOrNullFlow(key: String): Flow<String?> {
+    override fun getStringFlow(key: String): Flow<String?> {
         return settingsObservable.getStringOrNullFlow(key)
     }
 
-    override suspend fun getLongOrNullFlow(key: String): Flow<Long?> {
+    override fun getLongFlow(key: String): Flow<Long?> {
         return settingsObservable.getLongOrNullFlow(key)
     }
 
-    override suspend fun getLongFlow(key: String, defaultValue: Long): Flow<Long> {
+    override fun getLongFlow(key: String, defaultValue: Long): Flow<Long> {
         return settingsObservable.getLongFlow(key, defaultValue)
     }
 
@@ -459,7 +459,7 @@ internal class SettingsImpl(
         return settingsObservable.getFloatFlow(key, defaultValue)
     }
 
-    override fun getFloatOrNullFlow(key: String): Flow<Float?> {
+    override fun getFloatFlow(key: String): Flow<Float?> {
         return settingsObservable.getFloatOrNullFlow(key)
     }
 
@@ -467,7 +467,7 @@ internal class SettingsImpl(
         return settingsObservable.getDoubleFlow(key, defaultValue)
     }
 
-    override fun getDoubleOrNullFlow(key: String): Flow<Double?> {
+    override fun getDoubleFlow(key: String): Flow<Double?> {
         return settingsObservable.getDoubleOrNullFlow(key)
     }
 
@@ -475,7 +475,7 @@ internal class SettingsImpl(
         return settingsObservable.getBooleanFlow(key, defaultValue)
     }
 
-    override fun getBooleanOrNullFlow(key: String): Flow<Boolean?> {
+    override fun getBooleanFlow(key: String): Flow<Boolean?> {
         return settingsObservable.getBooleanOrNullFlow(key)
     }
 

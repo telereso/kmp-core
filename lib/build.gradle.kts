@@ -244,7 +244,7 @@ kotlin {
                 implementation(kmpLibs.multiplatform.settings )
 
                 // Multiplatform settings for observing and collecting settings flows
-                implementation(kmpLibs.multiplatform.coroutines)
+                implementation(kmpLibs.multiplatform.settings.coroutines)
 
             }
         }

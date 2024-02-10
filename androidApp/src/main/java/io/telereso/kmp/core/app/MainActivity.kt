@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun testSettingsFlow() {
         lifecycleScope.launch {
-            Settings.get().getIntOrNullFlow("test").asCommonFlow().collect {
+            Settings.get().getIntFlow("test").asCommonFlow().collect {
                 logDebug("SettingFlowTest: test value collected is:  $it")
             }
         }

@@ -157,27 +157,27 @@ class MapSettings constructor(
 
     override fun getBooleanOrNull(key: String): Boolean? = delegate[key] as? Boolean
 
-    override suspend fun getIntFlow(key: String, defaultValue: Int): Flow<Int> {
+    override fun getIntFlow(key: String, defaultValue: Int): Flow<Int> {
         return flowOf(delegate[key] as? Int ?: defaultValue)
     }
 
-    override suspend fun getIntOrNullFlow(key: String): Flow<Int?> {
+    override fun getIntFlow(key: String): Flow<Int?> {
         return flowOf(delegate[key] as? Int)
     }
 
-    override suspend fun getStringFlow(key: String, defaultValue: String): Flow<String> {
+    override fun getStringFlow(key: String, defaultValue: String): Flow<String> {
         return flowOf(delegate[key] as? String ?: defaultValue)
     }
 
-    override suspend fun getStringOrNullFlow(key: String): Flow<String?> {
+    override fun getStringFlow(key: String): Flow<String?> {
         return flowOf(delegate[key] as? String)
     }
 
-    override suspend fun getLongOrNullFlow(key: String): Flow<Long?> {
+    override fun getLongFlow(key: String): Flow<Long?> {
         return flowOf(delegate[key] as? Long)
     }
 
-    override suspend fun getLongFlow(key: String, defaultValue: Long): Flow<Long> {
+    override fun getLongFlow(key: String, defaultValue: Long): Flow<Long> {
         return flowOf(delegate[key] as? Long ?: defaultValue)
     }
 
@@ -185,7 +185,7 @@ class MapSettings constructor(
         return flowOf(delegate[key] as? Float ?: defaultValue)
     }
 
-    override fun getFloatOrNullFlow(key: String): Flow<Float?> {
+    override fun getFloatFlow(key: String): Flow<Float?> {
         return flowOf(delegate[key] as? Float)
     }
 
@@ -193,7 +193,7 @@ class MapSettings constructor(
         return flowOf(delegate[key] as? Double ?: defaultValue)
     }
 
-    override fun getDoubleOrNullFlow(key: String): Flow<Double?> {
+    override fun getDoubleFlow(key: String): Flow<Double?> {
         return flowOf(delegate[key] as? Double)
     }
 
@@ -201,7 +201,7 @@ class MapSettings constructor(
         return flowOf(delegate[key] as? Boolean ?: defaultValue)
     }
 
-    override fun getBooleanOrNullFlow(key: String): Flow<Boolean?> {
+    override fun getBooleanFlow(key: String): Flow<Boolean?> {
         return flowOf(delegate[key] as? Boolean)
     }
 
