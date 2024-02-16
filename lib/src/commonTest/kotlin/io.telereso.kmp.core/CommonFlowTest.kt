@@ -84,6 +84,23 @@ class CommonFlowTest {
 
     @Test
     @Throws(ClientException::class)
+    fun watchThrowFlowError()= runTest {
+        var value:String?= null
+        var fail:ClientException? = null
+        val abcFlow: Flow<String> = flow {
+            throw ClientException(message = "Pay your Flow Bill to Resume")
+        }
+        abcFlow.asCommonFlow().watch { s, exception ->
+            value = s
+            fail = exception
+        }
+        value.shouldBe(null)
+        fail.shouldNotBeNull()
+        fail?.message.shouldBe("Pay your Flow Bill to Resume")
+    }
+
+    @Test
+    @Throws(ClientException::class)
     fun throwFlowError()= runTest {
         val abcFlow: Flow<String> = flow<String> {
             throw ClientException(message = "Pay your Flow Bill to Resume")
@@ -94,6 +111,23 @@ class CommonFlowTest {
                 it.message.shouldBe("Pay your Flow Bill to Resume")
             }
         }
+    }
+
+    @Test
+    @Throws(Throwable::class)
+    fun watchThrowFlowErrorThrowable()= runTest {
+        var value:String?= null
+        var fail:Throwable? = null
+        val abcFlow: Flow<String> = flow {
+            throw Throwable(message = "Pay your Flow Bill to Resume")
+        }
+        abcFlow.asCommonFlow().watch { s, exception ->
+            value = s
+            fail = exception
+        }
+        value.shouldBe(null)
+        fail.shouldBeNull()
+        fail?.message.shouldBe(null)
     }
 
     @Test
