@@ -35,7 +35,6 @@ class UtilsTest {
 
     private val accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoiQUNDRVNTX1RPS0VOIiwidXNlcklkIjoiNTU1MDA5NGQtYzUzZi00YzhhLWE0NDYtZjdjNzM1MmQyNTlkIiwic2Vzc2lvbklkIjoiWXg2SElHS1ZQWUZ4UEFZSlBLTHAiLCJpYXQiOjE2NzEwODU1MDQsImV4cCI6MTY3MTA4NjEwNH0.fGALCFFf47kgcXdcTFIPYGY1e9PbNgI96GXN9hjC5zo"
     private val accessTokenFailed = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ10eXBlIjoiQUNDRVNTX1RPS0VOIiwidXNlcklkIjoiNTU1MDA5NGQtYzUzZi00YzhhLWE0NDYtZjdjNzM1MmQyNTlkIiwic2Vzc2lvbklkIjoiWXg2SElHS1ZQWUZ4UEFZSlBLTHAiLCJpYXQiOjE2NzEwODU1MDQsImV4cCI6MTY3MTA4NjEwNH0.fGALCFFf47kgcXdcTFIPYGY1e9PbNgI96GXN9hjC5zo"
-
     @Test
     fun hasExpiredShouldBeTrueGivenIllegalToken() {
         shouldThrow<ClientException> {
