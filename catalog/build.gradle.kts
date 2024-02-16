@@ -5,7 +5,7 @@ plugins {
 }
 
 group = rootProject.group
-version = "0.33"
+version = "0.34"
 
 
 catalog {
@@ -90,7 +90,8 @@ catalog {
             Triple("telereso.core.android", kmpLibs.telereso.core.android.get(), "teleresoCore"),
 
             Triple("napier", kmpLibs.napier.get(), "napier"),
-            Triple("multiplatform.settings", kmpLibs.multiplatform.settings.get(), "multiplatformSettings"),
+            Triple("multiplatform.settings", kmpLibs.multiplatform.settings.asProvider().get(), "multiplatformSettings"),
+            Triple("multiplatform.settings.coroutines", kmpLibs.multiplatform.settings.coroutines.get(), "multiplatformSettings"),
             Triple("test.multiplatform.settings.test", kmpLibs.test.multiplatform.settings.test.get(), "multiplatformSettings"),
 
             // Test

@@ -243,6 +243,9 @@ kotlin {
                 // Multiplatform settings for Shared Preference
                 implementation(kmpLibs.multiplatform.settings )
 
+                // Multiplatform settings for observing and collecting settings flows
+                implementation(kmpLibs.multiplatform.settings.coroutines)
+
             }
         }
         val commonTest by getting {

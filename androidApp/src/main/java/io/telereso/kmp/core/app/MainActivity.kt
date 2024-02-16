@@ -34,6 +34,9 @@ class MainActivity : AppCompatActivity() {
             println(e.message)
         }
 
+        testSettingsFlow()
+
+
         TasksExamples.testVerify(CoreClient(application))
 //        lifecycleScope.launch(handler) {
 //
@@ -70,6 +73,37 @@ class MainActivity : AppCompatActivity() {
 //        }.onFailure {
 //            logError(it)
 //        }
+    }
+
+
+    private fun testSettingsFlow() {
+        lifecycleScope.launch {
+            Settings.get().getIntFlow("test").asCommonFlow().collect {
+                logDebug("SettingFlowTest: test value collected is:  $it")
+            }
+        }
+
+        lifecycleScope.launch {
+            Settings.get().getStringOrNullFlow("testString").asCommonFlow().collect {
+                logDebug("SettingFlowTest: test string value collected is:  $it")
+            }
+        }
+
+        lifecycleScope.launch {
+            val settings: Settings = Settings.get()
+            delay(5000)
+            logDebug("SettingFlowTest: test saved value from non settings flow : ${Settings.get().getInt("test",0)}")
+            logDebug("SettingFlowTest: test String saved value from non settings flow : ${Settings.get().getString("testString","")}")
+            settings.putInt("test", 1)
+            settings.putString("testString", "Hi")
+            delay(3000)
+            settings.putInt("test", 2)
+            settings.putString("testString", "There")
+            settings.putInt("test", 4)
+            delay(5000)
+            // assert deletion
+            settings.clear()
+        }
     }
 
     fun testCancel() {

@@ -30,6 +30,7 @@ import io.telereso.kmp.core.models.ExpirableValue
 import io.telereso.kmp.core.models.fromJson
 import io.telereso.kmp.core.models.toJson
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.flow.Flow
 import kotlin.time.Duration
 
 /**
@@ -158,6 +159,54 @@ class InMemorySetting(
 
     override fun getBooleanOrNull(key: String): Boolean? {
         return settings.getBooleanOrNull(key)
+    }
+
+    override fun getIntFlow(key: String, defaultValue: Int): Flow<Int> {
+        return settings.getIntFlow(key, defaultValue)
+    }
+
+    override fun getIntFlow(key: String): Flow<Int?> {
+        return settings.getIntFlow(key)
+    }
+
+    override fun getStringFlow(key: String, defaultValue: String): Flow<String> {
+        return settings.getStringFlow(key, defaultValue)
+    }
+
+    override fun getStringFlow(key: String): Flow<String?> {
+        return settings.getStringFlow(key)
+    }
+
+    override fun getLongFlow(key: String): Flow<Long?> {
+        return settings.getLongFlow(key)
+    }
+
+    override fun getLongFlow(key: String, defaultValue: Long): Flow<Long> {
+        return settings.getLongFlow(key, defaultValue)
+    }
+
+    override fun getFloatFlow(key: String, defaultValue: Float): Flow<Float> {
+        return settings.getFloatFlow(key, defaultValue)
+    }
+
+    override fun getFloatFlow(key: String): Flow<Float?> {
+        return settings.getFloatFlow(key)
+    }
+
+    override fun getDoubleFlow(key: String, defaultValue: Double): Flow<Double> {
+        return settings.getDoubleFlow(key, defaultValue)
+    }
+
+    override fun getDoubleFlow(key: String): Flow<Double?> {
+        return settings.getDoubleFlow(key)
+    }
+
+    override fun getBooleanFlow(key: String, defaultValue: Boolean): Flow<Boolean> {
+        return settings.getBooleanFlow(key, defaultValue)
+    }
+
+    override fun getBooleanFlow(key: String): Flow<Boolean?> {
+        return settings.getBooleanFlow(key)
     }
 
     override fun putExpirableString(key: String, value: String, exp: Long) {
