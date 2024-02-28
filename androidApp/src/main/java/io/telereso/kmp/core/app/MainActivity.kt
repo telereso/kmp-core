@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-            Settings.get().getStringOrNullFlow("testString").asCommonFlow().collect {
+            Settings.get().getStringFlow("testString").asCommonFlow().collect {
                 logDebug("SettingFlowTest: test string value collected is:  $it")
             }
         }
