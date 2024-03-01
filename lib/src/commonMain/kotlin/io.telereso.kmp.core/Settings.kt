@@ -311,7 +311,7 @@ internal class SettingsImpl(
     clearExpiredKeysDuration: Duration? = null
 ) : Settings {
 
-    private val settingsObservable: ObservableSettings = settings as ObservableSettings
+    private val settingsObservable: ObservableSettings get() = settings as ObservableSettings
 
     override var listener: Settings.Listener? = null
     private var removeExpiredJob : Deferred<Unit>? = null
