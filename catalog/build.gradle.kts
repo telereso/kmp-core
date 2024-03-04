@@ -5,7 +5,7 @@ plugins {
 }
 
 group = rootProject.group
-version = "1.1"
+version = "1.2"
 
 
 catalog {
@@ -21,6 +21,7 @@ catalog {
             "datetime" to kmpLibs.versions.datetime.get(),
             "serializationJson" to kmpLibs.versions.serializationJson.get(),
             "ksp" to kmpLibs.versions.ksp.get(),
+            "detekt" to kmpLibs.versions.detekt.get(),
 
             // Android
             "agp" to kmpLibs.versions.agp.get(),
@@ -145,6 +146,7 @@ catalog {
             Triple("kotlinx.kover", kmpLibs.plugins.kotlinx.kover.get(), "kover"),
             Triple("dokka", kmpLibs.plugins.dokka.get(), "dokka"),
             Triple("ksp", kmpLibs.plugins.ksp.get(), "ksp"),
+            Triple("detekt", kmpLibs.plugins.detekt.get(), "detekt"),
 
             // Android
             Triple("android.library", kmpLibs.plugins.android.library.get(), "agp"),
