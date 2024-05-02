@@ -1,0 +1,24 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: telereso-kmp-client
+  description: Core sdk to provide reusable multiplaftorm bridges and other usable implementations  
+  annotations:
+    backstage.io/source-location: url:https://github.com/telereso/kmp-cor
+    backstage.io/techdocs-ref: dir:/-/blob/main/README.md
+  tags:
+    - kotlin
+    - kmp
+  links:
+    - url: https://kmp.telereso.io/
+      title: Docs
+    - url: https://github.com/telereso/kmp-core/releases
+      title: Releases
+      icon: dashboard
+    - url: https://github.com/telereso/kmp-core/issues
+      title: Report Issue
+spec:
+  type: library
+  lifecycle: production
+  owner: platform
+  dependsOn: []
