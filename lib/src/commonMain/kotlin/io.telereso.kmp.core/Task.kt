@@ -84,9 +84,7 @@ class Task<ResultT> private constructor(
             if (c.retry.getOrDefault() > 0) {
                 var res: ResultT? = null
                 while (res == null && tries <= c.retry.getOrDefault()) {
-                    res = runCatching {
-                        runBlock(this, c, false, block)
-                    }.getOrNull()
+                    res = runCatching { runBlock(this, c, false, block) }.getOrNull()
                     if (res != null)
                         break
 
