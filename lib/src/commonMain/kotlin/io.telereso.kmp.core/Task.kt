@@ -589,7 +589,8 @@ data class TaskConfig(
     val startDelay: Int? = 0,
 
     /**
-     * If set will timeout the task job after the set milli seconds
+     * If set will timeout the task job after the set milli seconds,
+     * if set [retry] too each try will use this timeout
      */
     val timeout: Int? = null
 ) {
