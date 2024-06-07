@@ -54,6 +54,23 @@ class Task<ResultT> private constructor(
      */
     private var tries = 1
 
+    private suspend fun runBlock(
+        scope: CoroutineScope,
+        config: TaskConfig,
+        handleFailure: Boolean,
+        block: suspend CoroutineScope.() -> ResultT
+    ): ResultT {
+        return config.timeout?.let { t ->
+            runCatching {
+                withTimeout(t.toLong(), block)
+            }.getOrElse {
+                if (handleFailure && it is TimeoutCancellationException)
+                    failure?.invoke(it.toClientException(tries))
+                throw it
+            }
+        } ?: block(scope)
+    }
+
     /**
      * Can be used to assign the task job while doing unit testing,
      * not meant to be exposed or used in actual logic
@@ -67,7 +84,7 @@ class Task<ResultT> private constructor(
             if (c.retry.getOrDefault() > 0) {
                 var res: ResultT? = null
                 while (res == null && tries <= c.retry.getOrDefault()) {
-                    res = runCatching { block() }.getOrNull()
+                    res = runCatching { runBlock(this, c, false, block) }.getOrNull()
                     if (res != null)
                         break
 
@@ -77,9 +94,9 @@ class Task<ResultT> private constructor(
                     tries++
                 }
                 // return result or run the block and allow it to fail
-                res ?: block()
+                res ?: runBlock(this, c, true, block)
             } else {
-                block()
+                runBlock(this, c, true, block)
             }
         })
 
@@ -470,7 +487,8 @@ class Task<ResultT> private constructor(
             retry: Int = 0,
             backOffDelay: Int = 0,
             startDelay: Int = 0,
-            config: TaskConfig? = TaskConfig(retry, backOffDelay, startDelay),
+            timeout: Int? = null,
+            config: TaskConfig? = TaskConfig(retry, backOffDelay, startDelay, timeout),
             noinline block: suspend CoroutineScope.() -> ResultT
         ): Task<ResultT> {
             return Builder().withScope().execute(config, block)
@@ -526,6 +544,30 @@ suspend fun <ResultT> Task<ResultT>.awaitOrNull(): ResultT? {
     }
 }
 
+/**
+ * Wait for all tasks to finish
+ * @return [List<ResultT>] or crash if one task failed and will not run the rest, if you don't care about resultT check [awaitOrNull]
+ */
+suspend fun <ResultT> List<Task<ResultT>>.awaitAll() = map { it.await() }
+
+/**
+ * Wait for all tasks to finish
+ * @return [List<ResultT?>] if some tasks failed they will be null, and all tasks will be executed
+ */
+suspend fun <ResultT> List<Task<ResultT>>.awaitOrNullAll() = map { it.awaitOrNull() }
+
+/**
+ * Wait for all tasks to finish
+ * @return [Array<ResultT>] or crash if one task failed and will not run the rest, if you don't care about resultT check [awaitOrNull]
+ */
+suspend fun <ResultT> Array<Task<ResultT>>.awaitAll() = map { it.await() }
+
+/**
+ * Wait for all tasks to finish
+ * @return [Array<ResultT?>] if some tasks failed they will be null, and all tasks will be executed
+ */
+suspend fun <ResultT> Array<Task<ResultT>>.awaitOrNullAll() = map { it.awaitOrNull() }
+
 @Builder
 @JsExport
 data class TaskConfig(
@@ -544,7 +586,13 @@ data class TaskConfig(
     /**
      * If set will delay starting the task with the set milli seconds
      */
-    val startDelay: Int? = 0
+    val startDelay: Int? = 0,
+
+    /**
+     * If set will timeout the task job after the set milli seconds,
+     * if set [retry] too each try will use this timeout
+     */
+    val timeout: Int? = null
 ) {
     companion object {
 
@@ -554,3 +602,4 @@ data class TaskConfig(
         }
     }
 }
+

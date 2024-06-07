@@ -31,6 +31,7 @@ import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import io.telereso.kmp.core.extensions.getOrDefault
 import io.telereso.kmp.core.models.ClientException
 import kotlinx.coroutines.*
@@ -1460,5 +1461,137 @@ class TaskAndroidTest : TaskTest()  {
 
         failureCount.shouldBe(2)
 
+    }
+
+    @Test
+    override fun taskWithTimeout() = runTest {
+        var itemsOnSuccess: List<String>? = listOf()
+        var exception : ClientException? = null
+        Task.execute<List<String>?>(3,timeout = 500) {
+            delay(1000)
+            listOf("abc", "abcd", "abcde")
+        }.onSuccess {
+            itemsOnSuccess = it
+        }.onFailure {
+            exception = it
+        }.awaitOrNull()
+
+        exception.shouldNotBeNull()
+        (exception as ClientException).apply {
+            failureCount.shouldBe(4)
+            cause.shouldBeInstanceOf<TimeoutCancellationException>()
+        }
+        itemsOnSuccess.shouldBeEmpty()
+    }
+
+    @Test
+    override fun tasksAwaitListArray() = runTest {
+        var itemsOnSuccess: List<String>? = listOf()
+        var exception : ClientException? = null
+        val t1 = Task.execute {
+            delay(1000)
+            listOf("1", "2", "3")
+        }.onSuccess {
+            itemsOnSuccess = it
+        }.onFailure {
+            exception = it
+        }
+
+        val t2 = Task.execute {
+            delay(500)
+            listOf("4", "5", "6")
+        }.onSuccess {
+            itemsOnSuccess = it
+        }.onFailure {
+            exception = it
+        }
+
+        val t3 = Task.execute {
+            listOf("7", "8", "9")
+        }.onSuccess {
+            itemsOnSuccess = it
+        }.onFailure {
+            exception = it
+        }
+
+        listOf(t1, t2, t3)
+            .awaitAll()
+            .flatten()
+            .apply {
+                size.shouldBe(9)
+                for (i in 0..8) {
+                    this[i].shouldBe((i + 1).toString())
+                }
+            }
+
+        arrayOf(t1, t2, t3)
+            .awaitAll()
+            .flatten()
+            .apply {
+                size.shouldBe(9)
+                for (i in 0..8) {
+                    this[i].shouldBe((i + 1).toString())
+                }
+            }
+
+        exception.shouldBeNull()
+        itemsOnSuccess.shouldNotBeEmpty()
+    }
+
+    @Test
+    override fun tasksAwaitOrNullListArray() = runTest {
+        var itemsOnSuccess: List<String>? = listOf()
+        var exception : ClientException? = null
+        val t1 = Task.execute {
+            delay(1000)
+            throw Throwable("test")
+            listOf("1", "2", "3")
+        }.onSuccess {
+            itemsOnSuccess = it
+        }.onFailure {
+            exception = it
+        }
+
+        val t2 = Task.execute {
+            delay(500)
+            listOf("4", "5", "6")
+        }.onSuccess {
+            itemsOnSuccess = it
+        }.onFailure {
+            exception = it
+        }
+
+        val t3 = Task.execute {
+            listOf("7", "8", "9")
+        }.onSuccess {
+            itemsOnSuccess = it
+        }.onFailure {
+            exception = it
+        }
+
+        listOf(t1, t2, t3)
+            .awaitOrNullAll()
+            .filterNotNull()
+            .flatten()
+            .apply {
+                size.shouldBe(6)
+                for (i in 0..5) {
+                    this[i].shouldBe((i + 4).toString())
+                }
+            }
+
+        arrayOf(t1, t2, t3)
+            .awaitOrNullAll()
+            .filterNotNull()
+            .flatten()
+            .apply {
+                size.shouldBe(6)
+                for (i in 0..5) {
+                    this[i].shouldBe((i + 4).toString())
+                }
+            }
+
+        exception.shouldNotBeNull()
+        itemsOnSuccess.shouldNotBeEmpty()
     }
 }
