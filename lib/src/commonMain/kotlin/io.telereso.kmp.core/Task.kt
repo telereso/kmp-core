@@ -31,6 +31,7 @@ import io.telereso.kmp.core.models.toClientException
 import kotlinx.coroutines.*
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
+import kotlin.js.JsName
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
@@ -483,12 +484,23 @@ class Task<ResultT> private constructor(
          * Build that will create a task and it's logic
          * @param block That task logic
          */
+        @JsName("executeWithTimeout")
         inline fun <ResultT> execute(
             retry: Int = 0,
             backOffDelay: Int = 0,
             startDelay: Int = 0,
             timeout: Int? = null,
             config: TaskConfig? = TaskConfig(retry, backOffDelay, startDelay, timeout),
+            noinline block: suspend CoroutineScope.() -> ResultT
+        ): Task<ResultT> {
+            return Builder().withScope().execute(config, block)
+        }
+
+        inline fun <ResultT> execute(
+            retry: Int = 0,
+            backOffDelay: Int = 0,
+            startDelay: Int = 0,
+            config: TaskConfig? = TaskConfig(retry, backOffDelay, startDelay),
             noinline block: suspend CoroutineScope.() -> ResultT
         ): Task<ResultT> {
             return Builder().withScope().execute(config, block)
