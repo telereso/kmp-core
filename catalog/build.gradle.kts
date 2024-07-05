@@ -5,7 +5,7 @@ plugins {
 }
 
 group = rootProject.group
-version = "1.3"
+version = "1.4"
 
 
 catalog {
