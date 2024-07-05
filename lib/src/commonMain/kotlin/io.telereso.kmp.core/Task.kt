@@ -606,6 +606,15 @@ data class TaskConfig(
      */
     val timeout: Int? = null
 ) {
+
+    @JsName("TaskConfigDefault")
+    constructor(retry: Int? = 0, backOffDelay: Int? = 0, startDelay: Int? = 0) : this(
+        retry,
+        backOffDelay,
+        startDelay,
+        null
+    )
+
     companion object {
 
         @JvmStatic
