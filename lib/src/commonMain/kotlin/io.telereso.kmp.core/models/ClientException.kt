@@ -97,7 +97,7 @@ open class ClientException(
  * and then it returns the code field of the object
  */
 fun getErrorBody(body: String): ErrorBody {
-    return Http.ktorConfigJson.decodeFromString(body)
+    return runCatching { Http.ktorConfigJson.decodeFromString<ErrorBody>(body) }.getOrElse { ErrorBody() }
 }
 
 /**
