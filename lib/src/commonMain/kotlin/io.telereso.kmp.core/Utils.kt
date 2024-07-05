@@ -141,6 +141,30 @@ object Utils {
         }
     }
 
+    /**
+     * Retrieves and decodes a response from a token
+     *
+     * @param fromToken The token used for authentication or authorization
+     *
+     * @return The decoded response and allow nullable values
+     *
+     * @throws Throwable if an exception is thrown during decoding
+     */
+    @Throws(Throwable::class)
+    fun getMap(fromToken: String): Map<String,String?> {
+        //retrieve the JSON body of the response by calling getJsonBody() function
+        val jsonBody = getJsonBody(fromToken)
+        //attempt to decode the JSON body and return the decoded response
+        return try {
+            Http.ktorConfigJson.decodeFromString(jsonBody)
+        } catch (e: Throwable) {
+            //if an exception is thrown during decoding, call the ClientException.listener method
+            ClientException.listener(e.asClientException())
+            //re-throw the exception
+            throw e
+        }
+    }
+
     fun CoroutineScope.launchPeriodicAsync(
         interval: Duration,
         action: () -> Unit
