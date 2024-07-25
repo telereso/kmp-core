@@ -27,12 +27,12 @@ package io.telereso.kmp.core
 import android.os.Build
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
-import io.ktor.client.HttpClient
-import io.ktor.client.HttpClientConfig
-import io.ktor.client.engine.okhttp.OkHttp
-import io.ktor.client.plugins.UserAgent
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.serialization.kotlinx.json.json
+//import io.ktor.client.HttpClient
+//import io.ktor.client.HttpClientConfig
+//import io.ktor.client.engine.okhttp.OkHttp
+//import io.ktor.client.plugins.UserAgent
+//import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+//import io.ktor.serialization.kotlinx.json.json
 import okhttp3.Interceptor
 import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
@@ -53,69 +53,69 @@ class AndroidPlatform : Platform() {
 
 actual fun getPlatform(): Platform = AndroidPlatform()
 
-actual fun httpClient(
-    shouldLogHttpRequests: Boolean,
-    interceptors: List<Any?>?,
-    userAgent: String?,
-    config: HttpClientConfig<*>.() -> Unit
-) = HttpClient(OkHttp) {
-
-    // https://github.com/square/okhttp/tree/master/okhttp-logging-interceptor
-    val logging = HttpLoggingInterceptor().also {
-        it.setLevel(HttpLoggingInterceptor.Level.BODY)
-    }
-    config(this)
-
-    install(UserAgent) {
-        agent = userAgent ?: getPlatform().userAgent
-    }
-    /**
-     * needed to define the transformation of the HttClient.
-     * JsonFeature was replaced by ContentNegotiation in Ktor 2 above
-     * https://ktor.io/docs/serialization-client.html#add_content_negotiation_dependency
-     * Ktor has a set of plugins already built in that are disabled by default. The
-    ContentNegotiation, for example, allows you to deserialize responses,
-     */
-    /**
-     * needed to define the transformation of the HttClient.
-     * JsonFeature was replaced by ContentNegotiation in Ktor 2 above
-     * https://ktor.io/docs/serialization-client.html#add_content_negotiation_dependency
-     * Ktor has a set of plugins already built in that are disabled by default. The
-    ContentNegotiation, for example, allows you to deserialize responses,
-     */
-    install(ContentNegotiation) {
-        /**
-         * Since it’s JSON, you can install
-        ContentNegotiation for json so the response from this function will be the
-        deserialized object.
-        Also contentnegotion is needed to pass data objects as body in a request.
-         */
-        /**
-         * Since it’s JSON, you can install
-        ContentNegotiation for json so the response from this function will be the
-        deserialized object.
-        Also contentnegotion is needed to pass data objects as body in a request.
-         */
-        json(Http.ktorConfigJson)
-    }
-
-    engine {
-        interceptors?.iterator()?.forEach {
-            if (it is Interceptor)
-                addInterceptor(it)
-        }
-        // Here we can add out usual network interceptors.
-        if (shouldLogHttpRequests) {
-            // Here we can add out usual network interceptors.
-            addInterceptor(logging)
-        }
-        //addInterceptor(ChuckerInterceptor(context))
-        config {
-            retryOnConnectionFailure(true)
-            connectTimeout(0, TimeUnit.SECONDS)
-        }
-    }
-}
+//actual fun httpClient(
+//    shouldLogHttpRequests: Boolean,
+//    interceptors: List<Any?>?,
+//    userAgent: String?,
+//    config: HttpClientConfig<*>.() -> Unit
+//) = HttpClient(OkHttp) {
+//
+//    // https://github.com/square/okhttp/tree/master/okhttp-logging-interceptor
+//    val logging = HttpLoggingInterceptor().also {
+//        it.setLevel(HttpLoggingInterceptor.Level.BODY)
+//    }
+//    config(this)
+//
+//    install(UserAgent) {
+//        agent = userAgent ?: getPlatform().userAgent
+//    }
+//    /**
+//     * needed to define the transformation of the HttClient.
+//     * JsonFeature was replaced by ContentNegotiation in Ktor 2 above
+//     * https://ktor.io/docs/serialization-client.html#add_content_negotiation_dependency
+//     * Ktor has a set of plugins already built in that are disabled by default. The
+//    ContentNegotiation, for example, allows you to deserialize responses,
+//     */
+//    /**
+//     * needed to define the transformation of the HttClient.
+//     * JsonFeature was replaced by ContentNegotiation in Ktor 2 above
+//     * https://ktor.io/docs/serialization-client.html#add_content_negotiation_dependency
+//     * Ktor has a set of plugins already built in that are disabled by default. The
+//    ContentNegotiation, for example, allows you to deserialize responses,
+//     */
+//    install(ContentNegotiation) {
+//        /**
+//         * Since it’s JSON, you can install
+//        ContentNegotiation for json so the response from this function will be the
+//        deserialized object.
+//        Also contentnegotion is needed to pass data objects as body in a request.
+//         */
+//        /**
+//         * Since it’s JSON, you can install
+//        ContentNegotiation for json so the response from this function will be the
+//        deserialized object.
+//        Also contentnegotion is needed to pass data objects as body in a request.
+//         */
+//        json(Http.ktorConfigJson)
+//    }
+//
+//    engine {
+//        interceptors?.iterator()?.forEach {
+//            if (it is Interceptor)
+//                addInterceptor(it)
+//        }
+//        // Here we can add out usual network interceptors.
+//        if (shouldLogHttpRequests) {
+//            // Here we can add out usual network interceptors.
+//            addInterceptor(logging)
+//        }
+//        //addInterceptor(ChuckerInterceptor(context))
+//        config {
+//            retryOnConnectionFailure(true)
+//            connectTimeout(0, TimeUnit.SECONDS)
+//        }
+//    }
+//}
 
 /**
  * Called from the client to initialize Napier logger

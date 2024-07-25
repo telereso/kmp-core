@@ -24,10 +24,10 @@
 
 package io.telereso.kmp.core
 
-import io.ktor.client.plugins.HttpTimeout
-import io.ktor.http.URLProtocol
+//import io.ktor.client.plugins.HttpTimeout
+//import io.ktor.http.URLProtocol
+import io.telereso.kmp.annotations.JsOnlyExport
 import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -40,7 +40,7 @@ import kotlin.jvm.JvmStatic
  * @since 11/11/2022
  */
 @ExperimentalJsExport
-@JsExport
+@JsOnlyExport
 class Config private constructor(
     val builder: Builder
 ) {

@@ -24,14 +24,14 @@
 
 package io.telereso.kmp.core
 
-import io.ktor.client.HttpClient
-import io.ktor.client.HttpClientConfig
-import kotlin.js.JsExport
+//import io.ktor.client.HttpClient
+//import io.ktor.client.HttpClientConfig
+import io.telereso.kmp.annotations.JsOnlyExport
 
 /**
  * Defines the supported platforms by the sdks
  */
-@JsExport
+@JsOnlyExport
 abstract class Platform {
 
     /**
@@ -66,9 +66,9 @@ expect fun getPlatform(): Platform
  * It calls different HTTP functions in different platforms which you can define platform-specific.
  *
  */
-expect fun httpClient(
-    shouldLogHttpRequests: Boolean = false,
-    interceptors: List<Any?>? = listOf(),
-    userAgent: String? = null,
-    config: HttpClientConfig<*>.() -> Unit = {}
-): HttpClient
+//expect fun httpClient(
+//    shouldLogHttpRequests: Boolean = false,
+//    interceptors: List<Any?>? = listOf(),
+//    userAgent: String? = null,
+//    config: HttpClientConfig<*>.() -> Unit = {}
+//): HttpClient

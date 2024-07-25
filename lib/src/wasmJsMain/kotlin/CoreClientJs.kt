@@ -26,11 +26,10 @@ package io.telereso.kmp.core
 
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
-import io.telereso.kmp.annotations.JsOnlyExport
 import io.telereso.kmp.core.models.ClientException
 import kotlinx.browser.window
 
-@JsOnlyExport
+// @JsExport
 actual class CoreClient {
     actual companion object {
         private val instant: CoreClient by lazy {
@@ -89,7 +88,7 @@ actual class CoreClient {
 /**
  * Return Singleton CoreClient
  */
-@JsExport
+// @JsExport
 fun get(): CoreClient {
     return CoreClient.get()
 }

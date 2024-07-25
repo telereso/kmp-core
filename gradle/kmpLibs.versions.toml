@@ -22,7 +22,7 @@ androidx-core = "1.12.0"
 test-iphone-device = "iPhone 15 Pro"
 
 #Others
-ktor = "2.3.12"
+ktor = "3.0.0-beta-2"
 sqldelight = "1.5.5"
 sqlJs = "1.8.0"
 js-joda-core = "3.2.0"
