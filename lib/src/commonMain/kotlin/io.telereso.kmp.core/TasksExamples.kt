@@ -24,8 +24,8 @@
 
 package io.telereso.kmp.core
 
-import io.ktor.client.request.get
-import io.ktor.client.statement.bodyAsText
+//import io.ktor.client.request.get
+//import io.ktor.client.statement.bodyAsText
 import io.telereso.kmp.core.Consumer.Companion.android
 import io.telereso.kmp.core.Consumer.Companion.ios
 import io.telereso.kmp.core.Consumer.Companion.website
@@ -35,11 +35,11 @@ import io.telereso.kmp.core.models.JwtPayload
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
-import kotlin.js.JsExport
+import io.telereso.kmp.annotations.JsOnlyExport
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
-@JsExport
+@JsOnlyExport
 object TasksExamples {
     @JvmStatic
     fun hi(): Task<String> {
@@ -68,7 +68,8 @@ object TasksExamples {
     @JvmStatic
     fun apiCall(): Task<String> {
         return Task.execute {
-            httpClient {  }.get("https://run.mocky.io/v3/7a7a924f-72dd-4cd7-aefa-12be3608e839").bodyAsText()
+            ""
+//            httpClient {  }.get("https://run.mocky.io/v3/7a7a924f-72dd-4cd7-aefa-12be3608e839").bodyAsText()
         }
     }
 

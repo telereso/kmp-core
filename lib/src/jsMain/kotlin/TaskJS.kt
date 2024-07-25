@@ -24,6 +24,7 @@
 
 package io.telereso.kmp.core
 
+import io.telereso.kmp.annotations.JsOnlyExport
 import io.telereso.kmp.core.models.ClientException
 import kotlinx.coroutines.asDeferred
 import kotlin.js.Promise
@@ -41,7 +42,7 @@ internal actual class InternalTask<ResultT> actual constructor(_task: Task<Resul
     }
 }
 
-@JsExport
+@JsOnlyExport
 object Tasks {
     fun <ResultT> Task<ResultT>.async(): Promise<ResultT> {
         return Promise { success: (ResultT) -> Unit, failure: (Throwable) -> Unit ->
