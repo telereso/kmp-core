@@ -215,11 +215,11 @@ kotlin {
             kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
             dependencies {
                 implementation(kmpLibs.bundles.kotlinx)
-//                /**
-//                 * Add Ktor dependencies
-//                 * To use the Ktor client in common code, add the dependency to ktor-client-core to the commonMain
-//                 */
-//                implementation(kmpLibs.bundles.ktor)
+                /**
+                 * Add Ktor dependencies
+                 * To use the Ktor client in common code, add the dependency to ktor-client-core to the commonMain
+                 */
+                implementation(kmpLibs.bundles.ktor)
 
                 implementation(kmpLibs.napier)
 
@@ -484,9 +484,3 @@ fun download(url: String, path: String) {
         destFile.createNewFile()
     ant.invokeMethod("get", mapOf("src" to url, "dest" to destFile))
 }
-
-tasks.getByName("compileKotlinWasmJs")
-    .dependsOn("kspCommonMainKotlinMetadata")
-
-tasks.getByName("wasmJsSourcesJar")
-    .dependsOn("kspCommonMainKotlinMetadata")

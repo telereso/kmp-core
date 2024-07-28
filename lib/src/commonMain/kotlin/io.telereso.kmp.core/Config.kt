@@ -24,12 +24,12 @@
 
 package io.telereso.kmp.core
 
-//import io.ktor.client.plugins.HttpTimeout
-//import io.ktor.http.URLProtocol
-import io.telereso.kmp.annotations.JsOnlyExport
+import io.ktor.client.plugins.HttpTimeout
+import io.ktor.http.URLProtocol
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
+import io.telereso.kmp.annotations.JsOnlyExport
 
 /**
  * All common config for client mangers

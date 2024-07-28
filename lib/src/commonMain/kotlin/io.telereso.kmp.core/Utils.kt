@@ -24,7 +24,7 @@
 
 package io.telereso.kmp.core
 
-//import io.ktor.util.*
+import io.ktor.util.*
 import io.telereso.kmp.core.models.ClientException
 import io.telereso.kmp.core.models.JwtPayload
 import io.telereso.kmp.core.models.asClientException
@@ -62,14 +62,13 @@ object Utils {
     var unitTestInstance: Instant? = null
 
     private fun getJsonBody(encodeJwt: String): String {
-        return ""
-//        return try {
-//            val split = encodeJwt.split(".").toTypedArray()
-//            split[1].decodeBase64String()
-//        } catch (e: Throwable) {
-//            ClientException.listener(e.asClientException())
-//            ""
-//        }
+        return try {
+            val split = encodeJwt.split(".").toTypedArray()
+            split[1].decodeBase64String()
+        } catch (e: Throwable) {
+            ClientException.listener(e.asClientException())
+            ""
+        }
     }
 
     /**

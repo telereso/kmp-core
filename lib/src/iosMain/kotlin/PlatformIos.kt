@@ -26,16 +26,16 @@ package io.telereso.kmp.core
 
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
-//import io.ktor.client.HttpClient
-//import io.ktor.client.HttpClientConfig
-//import io.ktor.client.engine.darwin.Darwin
-//import io.ktor.client.plugins.UserAgent
-//import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-//import io.ktor.client.plugins.logging.LogLevel
-//import io.ktor.client.plugins.logging.Logger
-//import io.ktor.client.plugins.logging.Logging
-//import io.ktor.client.plugins.logging.SIMPLE
-//import io.ktor.serialization.kotlinx.json.json
+import io.ktor.client.HttpClient
+import io.ktor.client.HttpClientConfig
+import io.ktor.client.engine.darwin.Darwin
+import io.ktor.client.plugins.UserAgent
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.plugins.logging.SIMPLE
+import io.ktor.serialization.kotlinx.json.json
 import io.telereso.kmp.core.models.ClientException
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
@@ -70,35 +70,35 @@ actual fun getPlatform(): Platform = IOSPlatform()
 /**
  * actual declaration of the httpClient function for the iOS
  */
-//actual fun httpClient(
-//    shouldLogHttpRequests: Boolean,
-//    interceptors: List<Any?>?,
-//    userAgent: String?,
-//    config: HttpClientConfig<*>.() -> Unit
-//) = HttpClient(Darwin) {
-//    config(this)
-//
-//    if (shouldLogHttpRequests) {
-//        install(Logging) {
-//            logger = Logger.SIMPLE
-//            level = LogLevel.ALL
-//        }
-//    }
-//
-//    install(UserAgent) {
-//        agent = userAgent ?: getPlatform().userAgent
-//    }
-//
-//    install(ContentNegotiation) {
-//        json(Http.ktorConfigJson)
-//    }
-//
-//    engine {
-//        configureRequest {
-//            setAllowsCellularAccess(true)
-//        }
-//    }
-//}
+actual fun httpClient(
+    shouldLogHttpRequests: Boolean,
+    interceptors: List<Any?>?,
+    userAgent: String?,
+    config: HttpClientConfig<*>.() -> Unit
+) = HttpClient(Darwin) {
+    config(this)
+
+    if (shouldLogHttpRequests) {
+        install(Logging) {
+            logger = Logger.SIMPLE
+            level = LogLevel.ALL
+        }
+    }
+
+    install(UserAgent) {
+        agent = userAgent ?: getPlatform().userAgent
+    }
+
+    install(ContentNegotiation) {
+        json(Http.ktorConfigJson)
+    }
+
+    engine {
+        configureRequest {
+            setAllowsCellularAccess(true)
+        }
+    }
+}
 
 /**
  * Called from the client to initialize Napier logger

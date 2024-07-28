@@ -44,14 +44,11 @@ import io.telereso.kmp.core.models.JwtPayload
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
-import kotlin.js.JsExport
+import io.telereso.kmp.annotations.JsOnlyExport
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
-@JsExport
+@JsOnlyExport
 object TasksExamples {
     @JvmStatic
     fun hi(): Task<String> {

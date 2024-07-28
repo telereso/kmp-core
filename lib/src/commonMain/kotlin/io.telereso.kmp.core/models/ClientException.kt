@@ -24,9 +24,9 @@
 
 package io.telereso.kmp.core.models
 
-//import io.ktor.client.plugins.ResponseException
+import io.ktor.client.plugins.ResponseException
 import io.telereso.kmp.core.Http
-//import io.telereso.kmp.core.Http.asClientException
+import io.telereso.kmp.core.Http.asClientException
 import io.telereso.kmp.core.ThrowableSerializer
 import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.Serializable
@@ -123,7 +123,7 @@ fun Throwable.asClientException(failureCount: Int = 0): ClientException {
  */
 suspend fun Throwable.toClientException(failureCount: Int = 0): ClientException {
     return when (this) {
-//        is ResponseException -> response.asClientException()
+        is ResponseException -> response.asClientException()
         else -> asClientException(failureCount)
     }
 }
