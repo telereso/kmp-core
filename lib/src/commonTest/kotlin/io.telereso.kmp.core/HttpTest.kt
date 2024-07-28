@@ -24,22 +24,22 @@
 
 package io.telereso.kmp.core
 
-//import io.telereso.kmp.core.Http.asClientException
+import io.telereso.kmp.core.Http.asClientException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.types.shouldBeInstanceOf
-//import io.ktor.client.*
-//import io.ktor.client.engine.mock.*
-//import io.ktor.client.plugins.*
-//import io.ktor.client.plugins.contentnegotiation.*
-//import io.ktor.client.request.*
-//import io.ktor.http.*
-//import io.ktor.serialization.kotlinx.json.*
-//import io.telereso.kmp.core.Http.hasStatus
-//import io.telereso.kmp.core.Http.successful
+import io.ktor.client.*
+import io.ktor.client.engine.mock.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
+import io.telereso.kmp.core.Http.hasStatus
+import io.telereso.kmp.core.Http.successful
 import io.telereso.kmp.core.models.ClientException
 import io.telereso.kmp.core.models.ErrorBody
 import io.telereso.kmp.core.models.asClientException
@@ -54,93 +54,93 @@ class HttpTest {
     @Test
     fun shouldReturnProperClientExceptionGivenHttpResponse() = runTest {
         val errorBody = ErrorBody(code = "TESTING", message = "testing").toJson()
-//        val client = HttpClient(MockEngine) {
-//            engine {
-//                addHandler {
-//                    respond(
-//                        errorBody,
-//                        HttpStatusCode.BadRequest,
-//                        headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
-//                    )
-//                }
-//            }
-//            install(ContentNegotiation) {
-//                json(Http.ktorConfigJson)
-//            }
-//        }
-//
-//        val httpResponse = client.post {
-//            url {
-//                protocol = URLProtocol.HTTPS
-//                host = "example.com"
-//                path("hello")
-//                parameter("clientId", "clientId")
-//            }
-//        }
-//
-//        httpResponse.asClientException(cause = NullPointerException("sample setting cause")).run {
-//            httpStatusCode.shouldBe(HttpStatusCode.BadRequest.value)
-//            errorBody.shouldBe(errorBody)
-//            errorType.shouldBe("HTTP")
-//            message.shouldBe("testing")
-//            cause?.message.shouldBe("sample setting cause")
-//        }
-//
-//        httpResponse.asClientException(message = "SomeMessage").run {
-//            httpStatusCode.shouldBe(HttpStatusCode.BadRequest.value)
-//            errorBody.shouldBe(errorBody)
-//            errorType.shouldBe("HTTP")
-//            message.shouldBe("SomeMessage")
-//        }
+        val client = HttpClient(MockEngine) {
+            engine {
+                addHandler {
+                    respond(
+                        errorBody,
+                        HttpStatusCode.BadRequest,
+                        headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
+                    )
+                }
+            }
+            install(ContentNegotiation) {
+                json(Http.ktorConfigJson)
+            }
+        }
+
+        val httpResponse = client.post {
+            url {
+                protocol = URLProtocol.HTTPS
+                host = "example.com"
+                path("hello")
+                parameter("clientId", "clientId")
+            }
+        }
+
+        httpResponse.asClientException(cause = NullPointerException("sample setting cause")).run {
+            httpStatusCode.shouldBe(HttpStatusCode.BadRequest.value)
+            errorBody.shouldBe(errorBody)
+            errorType.shouldBe("HTTP")
+            message.shouldBe("testing")
+            cause?.message.shouldBe("sample setting cause")
+        }
+
+        httpResponse.asClientException(message = "SomeMessage").run {
+            httpStatusCode.shouldBe(HttpStatusCode.BadRequest.value)
+            errorBody.shouldBe(errorBody)
+            errorType.shouldBe("HTTP")
+            message.shouldBe("SomeMessage")
+        }
     }
 
     @Test
     fun shouldThrowClientExceptionGivenFailed() = runTest {
-//        val client = HttpClient(MockEngine) {
-//            engine {
-//                addHandler {
-//                    respond("", HttpStatusCode.BadRequest)
-//                }
-//            }
-//            install(ContentNegotiation) {
-//                json(Http.ktorConfigJson)
-//            }
-//        }
-//
-//        val httpResponse = client.post {
-//            url {
-//                protocol = URLProtocol.HTTPS
-//                host = "example.com"
-//                path("hello")
-//                parameter("clientId", "clientId")
-//            }
-//        }
-//
-//        httpResponse.asClientException().shouldBeInstanceOf<ClientException>()
+        val client = HttpClient(MockEngine) {
+            engine {
+                addHandler {
+                    respond("", HttpStatusCode.BadRequest)
+                }
+            }
+            install(ContentNegotiation) {
+                json(Http.ktorConfigJson)
+            }
+        }
+
+        val httpResponse = client.post {
+            url {
+                protocol = URLProtocol.HTTPS
+                host = "example.com"
+                path("hello")
+                parameter("clientId", "clientId")
+            }
+        }
+
+        httpResponse.asClientException().shouldBeInstanceOf<ClientException>()
     }
 
     @Test
     fun protocolGivenHTTPValue() {
-//        Http.protocol("http").shouldBe(URLProtocol.HTTP)
+        Http.protocol("http").shouldBe(URLProtocol.HTTP)
     }
 
     @Test
     fun protocolGivenHTTPSValue() {
-//        Http.protocol("https").shouldBe(URLProtocol.HTTPS)
+        Http.protocol("https").shouldBe(URLProtocol.HTTPS)
     }
 
     @Test
     fun protocolGivenNullValue() {
         // should return a HTTPS protocol
-//        Http.protocol(null).shouldBe(URLProtocol.HTTPS)
+        Http.protocol(null).shouldBe(URLProtocol.HTTPS)
     }
 
     @Test
     fun protocolGivenFakeValue() {
         // should return a HTTPS protocol given fake value
-//        Http.protocol("fake").shouldBe(URLProtocol.HTTPS)
+        Http.protocol("fake").shouldBe(URLProtocol.HTTPS)
 
-//        Http.protocol("").shouldBe(URLProtocol.HTTPS)
+        Http.protocol("").shouldBe(URLProtocol.HTTPS)
     }
 
     @Test
@@ -266,101 +266,101 @@ class HttpTest {
 
     @Test
     fun shouldReturnTrueIfResponseIsSuccessful() = runTest {
-//        val client = HttpClient(MockEngine) {
-//            engine {
-//                addHandler {
-//                    respond("", HttpStatusCode.Accepted)
-//                }
-//            }
-//            install(ContentNegotiation) {
-//                json(Http.ktorConfigJson)
-//            }
-//        }
-//
-//        val httpResponse = client.post {
-//            url {
-//                protocol = URLProtocol.HTTPS
-//                host = "example.com"
-//                path("hello")
-//                parameter("clientId", "clientId")
-//            }
-//        }
-//
-//        httpResponse.successful().shouldBe(true)
+        val client = HttpClient(MockEngine) {
+            engine {
+                addHandler {
+                    respond("", HttpStatusCode.Accepted)
+                }
+            }
+            install(ContentNegotiation) {
+                json(Http.ktorConfigJson)
+            }
+        }
+
+        val httpResponse = client.post {
+            url {
+                protocol = URLProtocol.HTTPS
+                host = "example.com"
+                path("hello")
+                parameter("clientId", "clientId")
+            }
+        }
+
+        httpResponse.successful().shouldBe(true)
     }
 
     @Test
     fun shouldReturnFalseIfResponseFails() = runTest {
-//        val client = HttpClient(MockEngine) {
-//            engine {
-//                addHandler {
-//                    respond("", HttpStatusCode.BadRequest)
-//                }
-//            }
-//            install(ContentNegotiation) {
-//                json(Http.ktorConfigJson)
-//            }
-//        }
-//
-//        val httpResponse = client.post {
-//            url {
-//                protocol = URLProtocol.HTTPS
-//                host = "example.com"
-//                path("hello")
-//                parameter("clientId", "clientId")
-//            }
-//        }
-//
-//        httpResponse.successful().shouldBe(false)
+        val client = HttpClient(MockEngine) {
+            engine {
+                addHandler {
+                    respond("", HttpStatusCode.BadRequest)
+                }
+            }
+            install(ContentNegotiation) {
+                json(Http.ktorConfigJson)
+            }
+        }
+
+        val httpResponse = client.post {
+            url {
+                protocol = URLProtocol.HTTPS
+                host = "example.com"
+                path("hello")
+                parameter("clientId", "clientId")
+            }
+        }
+
+        httpResponse.successful().shouldBe(false)
     }
 
     @Test
     fun shouldReturnTrueIfStatusCodeIsPresent() = runTest {
-//        val client = HttpClient(MockEngine) {
-//            engine {
-//                addHandler {
-//                    respond("", HttpStatusCode.Accepted)
-//                }
-//            }
-//            install(ContentNegotiation) {
-//                json(Http.ktorConfigJson)
-//            }
-//        }
-//
-//        val httpResponse = client.post {
-//            url {
-//                protocol = URLProtocol.HTTPS
-//                host = "example.com"
-//                path("hello")
-//                parameter("clientId", "clientId")
-//            }
-//        }
-//
-//        httpResponse.hasStatus(HttpStatusCode.Accepted).shouldBe(true)
+        val client = HttpClient(MockEngine) {
+            engine {
+                addHandler {
+                    respond("", HttpStatusCode.Accepted)
+                }
+            }
+            install(ContentNegotiation) {
+                json(Http.ktorConfigJson)
+            }
+        }
+
+        val httpResponse = client.post {
+            url {
+                protocol = URLProtocol.HTTPS
+                host = "example.com"
+                path("hello")
+                parameter("clientId", "clientId")
+            }
+        }
+
+        httpResponse.hasStatus(HttpStatusCode.Accepted).shouldBe(true)
     }
 
     @Test
     fun shouldReturnFalseIfStatusCodeIsNotPresent() = runTest {
-//        val client = HttpClient(MockEngine) {
-//            engine {
-//                addHandler {
-//                    respond("", HttpStatusCode.Accepted)
-//                }
-//            }
-//            install(ContentNegotiation) {
-//                json(Http.ktorConfigJson)
-//            }
-//        }
-//
-//        val httpResponse = client.post {
-//            url {
-//                protocol = URLProtocol.HTTPS
-//                host = "example.com"
-//                path("hello")
-//                parameter("clientId", "clientId")
-//            }
-//        }
-//
-//        httpResponse.hasStatus(HttpStatusCode.BadRequest).shouldBe(false)
+        val client = HttpClient(MockEngine) {
+            engine {
+                addHandler {
+                    respond("", HttpStatusCode.Accepted)
+                }
+            }
+            install(ContentNegotiation) {
+                json(Http.ktorConfigJson)
+            }
+        }
+
+        val httpResponse = client.post {
+            url {
+                protocol = URLProtocol.HTTPS
+                host = "example.com"
+                path("hello")
+                parameter("clientId", "clientId")
+            }
+        }
+
+        httpResponse.hasStatus(HttpStatusCode.BadRequest).shouldBe(false)
     }
 }

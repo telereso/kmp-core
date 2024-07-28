@@ -24,9 +24,9 @@
 
 package io.telereso.kmp.core
 
-//import io.ktor.client.plugins.*
-//import io.ktor.client.statement.*
-//import io.ktor.http.*
+import io.ktor.client.plugins.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import io.telereso.kmp.core.models.ClientException
 import io.telereso.kmp.core.models.asClientException
 import io.telereso.kmp.core.models.getErrorBody
@@ -88,14 +88,14 @@ object Http {
      * @param protocol passed protocol as String.
      * This will return https as default given null or empty or illegal protocol
      */
-//    fun protocol(protocol: String?): URLProtocol {
-//        val urlProtocol = URLProtocol.createOrDefault(protocol ?: URLProtocol.HTTPS.name)
-//        return if (urlProtocol.defaultPort == DEFAULT_PORT) {
-//            URLProtocol.HTTPS
-//        } else {
-//            urlProtocol
-//        }
-//    }
+    fun protocol(protocol: String?): URLProtocol {
+        val urlProtocol = URLProtocol.createOrDefault(protocol ?: URLProtocol.HTTPS.name)
+        return if (urlProtocol.defaultPort == DEFAULT_PORT) {
+            URLProtocol.HTTPS
+        } else {
+            urlProtocol
+        }
+    }
 
     /**
      * Constructs a ClientException based on the HttpResponse
@@ -104,34 +104,34 @@ object Http {
      * if message is not set, it will set the Http response as message.
      * @return a [ClientException] with values filled
      */
-//    suspend fun HttpResponse.asClientException(
-//        message: String = "",
-//        cause: Throwable? = null
-//    ): ClientException {
-//        return try {
-//            val body = this.bodyAsText()
-//            val errorBody = getErrorBody(body)
-//            val errorMessage = message.ifEmpty { errorBody.message?:this.toString() }
-//            ClientException(
-//                httpStatusCode = this.status.value,
-//                errorBody = getErrorBody(body),
-//                message = errorMessage,
-//                errorType = "HTTP",
-//                cause = cause,
-//                errorString = body,
-//                httpURl = this.request.url.toString()
-//            )
-//        } catch (e: Throwable) {
-//            ClientException.listener(e.asClientException())
-//            return ClientException(
-//                cause = e,
-//                message = "Failed to convert $this into a ClientException.",
-//                errorType = "HTTP",
-//                httpURl = this.request.url.toString()
-//
-//            )
-//        }
-//    }
+    suspend fun HttpResponse.asClientException(
+        message: String = "",
+        cause: Throwable? = null
+    ): ClientException {
+        return try {
+            val body = this.bodyAsText()
+            val errorBody = getErrorBody(body)
+            val errorMessage = message.ifEmpty { errorBody.message?:this.toString() }
+            ClientException(
+                httpStatusCode = this.status.value,
+                errorBody = getErrorBody(body),
+                message = errorMessage,
+                errorType = "HTTP",
+                cause = cause,
+                errorString = body,
+                httpURl = this.request.url.toString()
+            )
+        } catch (e: Throwable) {
+            ClientException.listener(e.asClientException())
+            return ClientException(
+                cause = e,
+                message = "Failed to convert $this into a ClientException.",
+                errorType = "HTTP",
+                httpURl = this.request.url.toString()
+
+            )
+        }
+    }
 
     /**
      * similar to the HttpResponse.asClientException only that it covers
@@ -145,40 +145,40 @@ object Http {
      *
      * @return : a ClientException object that represents the converted error
      */
-//    suspend fun ResponseException.asClientException(
-//        message: String = "",
-//        cause: Throwable? = null
-//    ): ClientException {
-//        return try {
-//            // Getting the response body as text
-//            val body = this.response.bodyAsText()
-//            // Extracting the error body from the response
-//            val errorBody = getErrorBody(body)
-//            // Setting the error message, it's either the extracted error message or the custom message or the default string representation of the exception
-//            val errorMessage = message.ifEmpty { errorBody.message?:this.message }
-//            // Creating the ClientException object
-//            ClientException(
-//                httpStatusCode = this.response.status.value, // setting the http status code
-//                errorBody = errorBody, // setting the error body
-//                message = errorMessage, // setting the error message
-//                code = errorBody.code, // setting the error code
-//                errorType = "HTTP", // setting the error type
-//                cause = cause?:this, // setting the cause of the error
-//                errorString = body, // setting the error string,
-//                httpURl = this.response.request.url.toString()
-//            )
-//        } catch (e: Throwable) {
-//            // Logging the exception
-//            ClientException.listener(e.asClientException())
-//            // Throwing a new ClientException object with a custom message that indicates the failure.
-//            throw ClientException(
-//                cause = e,
-//                message = "Failed to convert $this into a ClientException.",
-//                errorType = "HTTP",
-//                httpURl = this.response.request.url.toString()
-//            )
-//        }
-//    }
+    suspend fun ResponseException.asClientException(
+        message: String = "",
+        cause: Throwable? = null
+    ): ClientException {
+        return try {
+            // Getting the response body as text
+            val body = this.response.bodyAsText()
+            // Extracting the error body from the response
+            val errorBody = getErrorBody(body)
+            // Setting the error message, it's either the extracted error message or the custom message or the default string representation of the exception
+            val errorMessage = message.ifEmpty { errorBody.message?:this.message }
+            // Creating the ClientException object
+            ClientException(
+                httpStatusCode = this.response.status.value, // setting the http status code
+                errorBody = errorBody, // setting the error body
+                message = errorMessage, // setting the error message
+                code = errorBody.code, // setting the error code
+                errorType = "HTTP", // setting the error type
+                cause = cause?:this, // setting the cause of the error
+                errorString = body, // setting the error string,
+                httpURl = this.response.request.url.toString()
+            )
+        } catch (e: Throwable) {
+            // Logging the exception
+            ClientException.listener(e.asClientException())
+            // Throwing a new ClientException object with a custom message that indicates the failure.
+            throw ClientException(
+                cause = e,
+                message = "Failed to convert $this into a ClientException.",
+                errorType = "HTTP",
+                httpURl = this.response.request.url.toString()
+            )
+        }
+    }
 
     /**
      * Returns a Boolean indicating whether the [HttpResponse] has the specified [status] code.
@@ -187,12 +187,12 @@ object Http {
      * @param status The [HttpStatusCode] to check against the [HttpResponse] status.
      * @return True if the [HttpResponse] has the specified [status] code, false otherwise.
      */
-//    fun HttpResponse.hasStatus(status: HttpStatusCode) = (this.status == status)
+    fun HttpResponse.hasStatus(status: HttpStatusCode) = (this.status == status)
 
     /**
      * Returns a [Boolean] indicating whether the [HttpResponse] is successful.
      * @return True if the [HttpResponse] has [HttpStatusCode] value in the range of 200-299 , false otherwise.
      */
-//    fun HttpResponse.successful() = (this.status.value in 200..299)
+    fun HttpResponse.successful() = (this.status.value in 200..299)
 
 }

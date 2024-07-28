@@ -22,6 +22,8 @@ repositories {
 			includeVersionByRegex(".*", ".*", ".*-beap[0-9]+")
 		}
 	}
+	maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+	maven("https://maven.pkg.jetbrains.space/kotlin/p/wasm/experimental")
 }
 
 dependencies {

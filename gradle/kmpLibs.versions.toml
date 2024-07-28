@@ -22,7 +22,7 @@ androidx-core = "1.12.0"
 test-iphone-device = "iPhone 15 Pro"
 
 #Others
-ktor = "3.0.0-beta-2"
+ktor = "3.0.0-wasm2"
 sqldelight = "1.5.5"
 sqlJs = "1.8.0"
 js-joda-core = "3.2.0"
@@ -35,8 +35,8 @@ napier = "2.7.1"
 multiplatformSettings = "1.2.0-beap1"
 
 #Telereso
-teleresoCore = "0.2.6-local"
-teleresoKmp = "0.2.7-local"
+teleresoCore = "0.2.0-alpha"
+teleresoKmp = "0.2.0-alpha"
 
 #Test
 test-logger = "3.2.0"

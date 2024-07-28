@@ -24,8 +24,8 @@
 
 package io.telereso.kmp.core
 
-//import io.ktor.client.request.get
-//import io.ktor.client.statement.bodyAsText
+import io.ktor.client.request.get
+import io.ktor.client.statement.bodyAsText
 import io.telereso.kmp.core.Consumer.Companion.android
 import io.telereso.kmp.core.Consumer.Companion.ios
 import io.telereso.kmp.core.Consumer.Companion.website
@@ -68,8 +68,7 @@ object TasksExamples {
     @JvmStatic
     fun apiCall(): Task<String> {
         return Task.execute {
-            ""
-//            httpClient {  }.get("https://run.mocky.io/v3/7a7a924f-72dd-4cd7-aefa-12be3608e839").bodyAsText()
+            httpClient {  }.get("https://run.mocky.io/v3/7a7a924f-72dd-4cd7-aefa-12be3608e839").bodyAsText()
         }
     }
 

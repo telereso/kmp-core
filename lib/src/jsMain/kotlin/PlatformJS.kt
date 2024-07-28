@@ -26,18 +26,18 @@ package io.telereso.kmp.core
 
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
-import io.telereso.kmp.annotations.JsOnlyExport
-//import io.ktor.client.HttpClient
-//import io.ktor.client.HttpClientConfig
-//import io.ktor.client.engine.js.Js
-//import io.ktor.client.plugins.UserAgent
-//import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-//import io.ktor.client.plugins.logging.LogLevel
-//import io.ktor.client.plugins.logging.Logger
-//import io.ktor.client.plugins.logging.Logging
-//import io.ktor.client.plugins.logging.SIMPLE
-//import io.ktor.serialization.kotlinx.json.json
+import io.ktor.client.HttpClient
+import io.ktor.client.HttpClientConfig
+import io.ktor.client.engine.js.Js
+import io.ktor.client.plugins.UserAgent
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.plugins.logging.SIMPLE
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.browser.window
+import io.telereso.kmp.annotations.JsOnlyExport
 
 /**
  * A class we define platform specific  or actual implementations for JS Target
@@ -61,28 +61,28 @@ class NodeJsPlatform : Platform() {
 actual fun getPlatform(): Platform =
     if (runCatching { window.navigator }.getOrNull() != null) BrowserPlatform() else NodeJsPlatform()
 
-//actual fun httpClient(
-//    shouldLogHttpRequests: Boolean,
-//    interceptors: List<Any?>?,
-//    userAgent: String?,
-//    config: HttpClientConfig<*>.() -> Unit
-//) = HttpClient(Js) {
-//
-//    install(UserAgent) {
-//        agent = userAgent ?: getPlatform().userAgent
-//    }
-//
-//    install(ContentNegotiation) {
-//        json(Http.ktorConfigJson)
-//    }
-//
-//    if (shouldLogHttpRequests) {
-//        install(Logging) {
-//            logger = Logger.SIMPLE
-//            level = LogLevel.ALL
-//        }
-//    }
-//}
+actual fun httpClient(
+    shouldLogHttpRequests: Boolean,
+    interceptors: List<Any?>?,
+    userAgent: String?,
+    config: HttpClientConfig<*>.() -> Unit
+) = HttpClient(Js) {
+
+    install(UserAgent) {
+        agent = userAgent ?: getPlatform().userAgent
+    }
+
+    install(ContentNegotiation) {
+        json(Http.ktorConfigJson)
+    }
+
+    if (shouldLogHttpRequests) {
+        install(Logging) {
+            logger = Logger.SIMPLE
+            level = LogLevel.ALL
+        }
+    }
+}
 
 
 internal fun debugLoggerInternal(){
