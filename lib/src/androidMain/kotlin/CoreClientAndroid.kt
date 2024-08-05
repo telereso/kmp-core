@@ -94,19 +94,60 @@ actual class CoreClient(private val application: Application) {
     }
 
     /**
+     * Use this function get the app fingerprint
+     * @param packageName android application package name
+     * @param alg the fingerprint algorithm, can use "SHA-256"
+     */
+    @SuppressLint("PackageManagerGetSignatures")
+    fun getAppFingerprints(
+        packageName: String,
+        alg: String
+    ): List<String> {
+        return try {
+            val signatures = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                val packageInfo = application.packageManager.getPackageInfo(
+                    packageName, PackageManager.GET_SIGNING_CERTIFICATES
+                )
+
+                packageInfo.signingInfo?.apkContentsSigners
+            } else {
+                val packageInfo =
+                    application.packageManager.getPackageInfo(
+                        packageName,
+                        PackageManager.GET_SIGNATURES
+                    )
+                packageInfo.signatures
+            } ?: emptyArray()
+
+            val md = MessageDigest.getInstance(alg)
+
+            signatures.map {
+                val signatureBytes = it.toByteArray()
+                val hashBytes = md.digest(signatureBytes)
+                byte2HexFormatted(hashBytes)
+            }
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            emptyList()
+        }
+    }
+
+    /**
      * This is to be used by a sdk only,
      * Verify that the current application is allowed to use the calling library
      * @param allowed a list of [Consumer] depending on the sdk platforms
      */
     actual fun verifyConsumer(allowed: List<Consumer>) {
-        val t = ClientException("App (${application.packageName}) is not allowed to use this sdk")
-
         if (!allowed.any { c ->
                 c.platform == Platform.Type.ANDROID
                         && c.appId == application.packageName
                         && isAppInstalled(c.appId, c.fingerprint, c.alg)
             }) {
-            throw t
+            throw ClientException(
+                "App (${application.packageName}:${
+                    getAppFingerprints(application.packageName, Consumer.DEFAULT_ALG)
+                }) is not allowed to use this sdk"
+            )
         }
     }
 
