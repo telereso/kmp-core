@@ -78,7 +78,7 @@ data class Consumer(
 ) {
 
     companion object {
-        private const val DEFAULT_ALG = "SHA-256"
+        const val DEFAULT_ALG = "SHA-256"
 
         /**
          * Create an allowed android application [Consumer] to use the sdk

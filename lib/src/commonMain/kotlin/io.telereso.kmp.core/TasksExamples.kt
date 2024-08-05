@@ -24,17 +24,29 @@
 
 package io.telereso.kmp.core
 
+import io.ktor.client.call.body
+import io.ktor.client.plugins.onUpload
+import io.ktor.client.request.forms.MultiPartFormDataContent
+import io.ktor.client.request.forms.formData
 import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
 import io.telereso.kmp.core.Consumer.Companion.android
 import io.telereso.kmp.core.Consumer.Companion.ios
 import io.telereso.kmp.core.Consumer.Companion.website
 import io.telereso.kmp.core.Log.logDebug
 import io.telereso.kmp.core.models.ClientException
+import io.telereso.kmp.core.models.FileRequest
 import io.telereso.kmp.core.models.JwtPayload
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import kotlin.js.JsExport
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
@@ -180,6 +192,25 @@ object TasksExamples {
                 throw Throwable("testRetry3 Throwable")
             }
             "testRetry3 Passed!"
+        }
+    }
+
+    @JvmStatic
+    fun testUploadFile(file: FileRequest): Task<String> {
+        return Task.execute {
+            val res = httpClient().post("https://tmpfiles.org/api/v1/upload") {
+                setBody(MultiPartFormDataContent(formData {
+                    append("file", file.getByteArray(), Headers.build {
+                        append(HttpHeaders.ContentType, file.getType().toString())
+                        append(HttpHeaders.ContentDisposition, "filename=${file.name}")
+                    })
+                }))
+                onUpload { bytesSentTotal, contentLength ->
+                    val progress = (bytesSentTotal * 100L / contentLength).toInt()
+                    file.progress(progress)
+                }
+            }
+            res.body<JsonObject>()["data"]?.jsonObject?.get("url")?.jsonPrimitive?.content ?: ""
         }
     }
 }
