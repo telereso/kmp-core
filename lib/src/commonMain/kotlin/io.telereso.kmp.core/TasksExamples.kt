@@ -45,6 +45,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import io.telereso.kmp.annotations.JsOnlyExport
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
@@ -203,8 +206,10 @@ object TasksExamples {
                     })
                 }))
                 onUpload { bytesSentTotal, contentLength ->
-                    val progress = (bytesSentTotal * 100L / contentLength).toInt()
-                    file.progress(progress)
+                    if (contentLength != null){
+                        val progress = (bytesSentTotal * 100L / contentLength).toInt()
+                        file.progress(progress)
+                    }
                 }
             }
             res.body<JsonObject>()["data"]?.jsonObject?.get("url")?.jsonPrimitive?.content ?: ""

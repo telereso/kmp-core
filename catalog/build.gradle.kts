@@ -23,6 +23,12 @@ catalog {
             "ksp" to kmpLibs.versions.ksp.get(),
             "detekt" to kmpLibs.versions.detekt.get(),
 
+            // Compose
+            "compose-compiler" to kmpLibs.versions.compose.compiler.get(),
+            "compose-wasm" to kmpLibs.versions.compose.wasm.get(),
+            "compose-navigation" to kmpLibs.versions.compose.navigation.get(),
+            "coil3" to kmpLibs.versions.coil3.get(),
+
             // Android
             "agp" to kmpLibs.versions.agp.get(),
             "compileSdk" to kmpLibs.versions.compileSdk.get(),
@@ -37,7 +43,8 @@ catalog {
             "teleresoKmp" to kmpLibs.versions.teleresoKmp.get(),
 
             // Others
-            "ktor" to kmpLibs.versions.ktor.get(),
+            "ktor" to kmpLibs.versions.ktor.asProvider().get(),
+            "ktor-swagger-ui" to kmpLibs.versions.ktor.swagger.ui.get(),
             "okhttp" to kmpLibs.versions.okhttp.get(),
             "napier" to kmpLibs.versions.napier.get(),
             "multiplatformSettings" to kmpLibs.versions.multiplatformSettings.get(),
@@ -59,6 +66,7 @@ catalog {
         val libList = listOf(
             // kotlin
             Triple("kotlinx.coroutines.core", kmpLibs.kotlinx.coroutines.core.get(), "coroutines"),
+            Triple("kotlinx-coroutines-swing", kmpLibs.kotlinx.coroutines.swing.get(), "coroutines"),
             Triple("kotlinx.datetime", kmpLibs.kotlinx.datetime.get(), "datetime"),
             Triple("kotlinx.serialization.json", kmpLibs.kotlinx.serialization.json.get(), "serializationJson"),
             Triple("test.kotlinx.coroutines.test", kmpLibs.test.kotlinx.coroutines.test.get(), "coroutines"),
@@ -73,7 +81,18 @@ catalog {
             Triple("ktor.client.darwin", kmpLibs.ktor.client.darwin.get(), "ktor"),
             Triple("ktor.client.js", kmpLibs.ktor.client.js.get(), "ktor"),
             Triple("ktor.client.okhttp", kmpLibs.ktor.client.okhttp.get(), "ktor"),
+            Triple("ktor-client-cio", kmpLibs.ktor.client.cio.get(), "ktor"),
+            Triple("ktor-utils", kmpLibs.ktor.utils.get(), "ktor"),
+            Triple("ktor-swagger-ui", kmpLibs.ktor.swagger.ui.get(), "ktor-swagger-ui"),
             Triple("test.ktor.client.mock", kmpLibs.test.ktor.client.mock.get(), "ktor"),
+
+            // Compose
+            Triple("compose-navigation", kmpLibs.compose.navigation.get(), "compose-navigation"),
+            Triple("coil3-compose", kmpLibs.coil3.compose.asProvider().get(), "coil3"),
+            Triple("coil3-compose-core", kmpLibs.coil3.compose.core.get(), "coil3"),
+            Triple("coil3-network-ktor", kmpLibs.coil3.network.ktor.get(), "coil3"),
+            Triple("coil3-svg", kmpLibs.coil3.svg.get(), "coil3"),
+            Triple("coil3-mp", kmpLibs.coil3.mp.get(), "coil3"),
 
             // Others
             Triple("okhttp.logging", kmpLibs.okhttp.logging.get(), "okhttp"),
@@ -147,6 +166,7 @@ catalog {
             Triple("dokka", kmpLibs.plugins.dokka.get(), "dokka"),
             Triple("ksp", kmpLibs.plugins.ksp.get(), "ksp"),
             Triple("detekt", kmpLibs.plugins.detekt.get(), "detekt"),
+            Triple("compose", kmpLibs.plugins.compose.get(), "compose-wasm"),
 
             // Android
             Triple("android.library", kmpLibs.plugins.android.library.get(), "agp"),
