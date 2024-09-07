@@ -12,5 +12,6 @@ elif [[ "$@" == *"--local" ]]; then
 else
     ./gradlew publishToMavenLocal "-PpublishVersion=$PUBLISH_VERSION-local" \
     -x catalog:publishToMavenLocal
+    echo "published $PUBLISH_VERSION-local !"
 fi
 

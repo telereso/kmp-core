@@ -185,34 +185,15 @@ kotlin {
         moduleName = "@$scope/${project.name}"
         version = project.version as String
 
-        /**
-         * browser()
-         * It sets the JavaScript target execution environment as browser.
-         * It provides a Gradle task—jsBrowserTest that runs all js tests inside the browser using karma and webpack.
-         */
         browser {
             testTask {
                 useMocha()
             }
         }
-        /**
-         * nodejs()
-         * It sets the JavaScript target execution environment as nodejs.
-         * It provides a Gradle task—jsNodeTest that runs all js tests inside nodejs using the built-in test framework.
-         */
         nodejs()
-        /**
-         * binaries.library()
-         * It tells the Kotlin compiler to produce Kotlin/JS code as a distributable node library.
-         * Depending on which target you've used along with this,
-         * you would get Gradle tasks to generate library distribution files
-         */
-        binaries.library()
-        /**
-         * binaries.executable()
-         * it tells the Kotlin compiler to produce Kotlin/JS code as webpack executable .js files.
-         */
+        //binaries.library()
         binaries.executable()
+        generateTypeScriptDefinitions()
     }
 
     sourceSets {
@@ -437,7 +418,7 @@ testlogger {
 }
 
 tasks.register<Copy>("copyTestReportToPublish") {
-    from("${buildDir}/reports/tests")
+    from("${layout.buildDirectory}/reports/tests")
     into("${rootDir}/public/tests/${project.name}/")
 }
 
@@ -445,7 +426,7 @@ tasks.register<Copy>("copyTestReportToPublish") {
 tasks.register("createCoverageBadge") {
     doLast {
 
-        val report = buildDir.resolve("reports/kover/report.xml")
+        val report = layout.buildDirectory.file("reports/kover/report.xml").get().asFile
         val coverage = if (report.exists()) {
             val node = (XmlParser().parse(report)
                 .children()
@@ -477,7 +458,7 @@ tasks.register("createCoverageBadge") {
                 createDirectory()
         }
         download(
-            "https://img.shields.io/badge/coverage-${coverage?.toString().plus("%25") ?: "unknown"}-$badgeColor",
+            "https://img.shields.io/badge/coverage-${coverage?.toString()?.plus("%25") ?: "unknown"}-$badgeColor",
             koverDir.resolve("badge.svg").path
         )
     }
@@ -488,6 +469,8 @@ tasks.findByName("koverXmlReport")?.apply {
     finalizedBy("createCoverageBadge")
 }
 
+tasks.findByName("jsBrowserProductionLibraryDistribution")?.dependsOn("jsProductionExecutableCompileSync")
+tasks.findByName("jsNodeProductionLibraryDistribution")?.dependsOn("jsProductionExecutableCompileSync")
 
 fun String.execute(): Process = ProcessGroovyMethods.execute(this)
 fun Process.text(): String = ProcessGroovyMethods.getText(this)
