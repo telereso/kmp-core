@@ -181,38 +181,19 @@ kotlin {
      * for KKM Library.
      *
      */
-    js(IR) {
+    js {
         moduleName = "@$scope/${project.name}"
         version = project.version as String
 
-        /**
-         * browser()
-         * It sets the JavaScript target execution environment as browser.
-         * It provides a Gradle task—jsBrowserTest that runs all js tests inside the browser using karma and webpack.
-         */
         browser {
             testTask {
                 useMocha()
             }
         }
-        /**
-         * nodejs()
-         * It sets the JavaScript target execution environment as nodejs.
-         * It provides a Gradle task—jsNodeTest that runs all js tests inside nodejs using the built-in test framework.
-         */
         nodejs()
-        /**
-         * binaries.library()
-         * It tells the Kotlin compiler to produce Kotlin/JS code as a distributable node library.
-         * Depending on which target you've used along with this,
-         * you would get Gradle tasks to generate library distribution files
-         */
-        binaries.library()
-        /**
-         * binaries.executable()
-         * it tells the Kotlin compiler to produce Kotlin/JS code as webpack executable .js files.
-         */
+        //binaries.library()
         binaries.executable()
+        generateTypeScriptDefinitions()
     }
 
     sourceSets {
@@ -273,7 +254,6 @@ kotlin {
         }
 
         val jvmTest by getting {
-            dependsOn(commonTest)
             dependencies {
                 implementation(kmpLibs.sqldelight.sqlite.driver)
             }
@@ -288,27 +268,13 @@ kotlin {
             }
         }
         val androidUnitTest by getting {
-            dependsOn(commonTest)
             dependencies {
                 implementation(kmpLibs.sqldelight.sqlite.driver)
             }
         }
 
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
 
-        /**
-         * By using the by creating scope, we ensure the rest of the Darwin targets
-         * pick dependecies from the iOSMain.
-         * Note using this actual implementations should only exist in the iosMain else
-         * the project will complain.
-         */
-        val iosMain by creating {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
+        iosMain {
             dependencies {
                 /**
                  * For iOS, we add the ktor-client-darwin dependency
@@ -319,25 +285,11 @@ kotlin {
                 implementation(kmpLibs.sqldelight.native.driver)
             }
         }
-        val iosX64Test by getting
-        val iosArm64Test by getting
-        val iosSimulatorArm64Test by getting {
-            dependsOn(commonTest)
-        }
-        val iosTest by creating {
-            dependsOn(commonTest)
-            iosX64Test.dependsOn(this)
-            iosArm64Test.dependsOn(this)
-            /**
-             * TO runs tests for iOS the simulator should not depend on ioSTEst to avoid duplication.
-             */
-            //iosSimulatorArm64Test.dependsOn(this)
-        }
 
         /**
          * Adding main and test for JS.
          */
-        val jsMain by getting {
+        jsMain {
             dependencies {
                 /**
                  * Engines are used to process network requests. Note that a specific platform may require a specific engine that processes network requests.
@@ -349,8 +301,7 @@ kotlin {
                 implementation(npm("sql.js", kmpLibs.versions.sqlJs.get()))
             }
         }
-        val jsTest by getting {
-            dependsOn(commonTest)
+        jsTest  {
             dependencies {
                 implementation(kmpLibs.sqldelight.sqljs.driver)
             }
@@ -467,7 +418,7 @@ testlogger {
 }
 
 tasks.register<Copy>("copyTestReportToPublish") {
-    from("${buildDir}/reports/tests")
+    from("${layout.buildDirectory}/reports/tests")
     into("${rootDir}/public/tests/${project.name}/")
 }
 
@@ -475,7 +426,7 @@ tasks.register<Copy>("copyTestReportToPublish") {
 tasks.register("createCoverageBadge") {
     doLast {
 
-        val report = buildDir.resolve("reports/kover/report.xml")
+        val report = layout.buildDirectory.file("reports/kover/report.xml").get().asFile
         val coverage = if (report.exists()) {
             val node = (XmlParser().parse(report)
                 .children()
@@ -507,7 +458,7 @@ tasks.register("createCoverageBadge") {
                 createDirectory()
         }
         download(
-            "https://img.shields.io/badge/coverage-${coverage?.toString().plus("%25") ?: "unknown"}-$badgeColor",
+            "https://img.shields.io/badge/coverage-${coverage?.toString()?.plus("%25") ?: "unknown"}-$badgeColor",
             koverDir.resolve("badge.svg").path
         )
     }
@@ -518,6 +469,8 @@ tasks.findByName("koverXmlReport")?.apply {
     finalizedBy("createCoverageBadge")
 }
 
+tasks.findByName("jsBrowserProductionLibraryDistribution")?.dependsOn("jsProductionExecutableCompileSync")
+tasks.findByName("jsNodeProductionLibraryDistribution")?.dependsOn("jsProductionExecutableCompileSync")
 
 fun String.execute(): Process = ProcessGroovyMethods.execute(this)
 fun Process.text(): String = ProcessGroovyMethods.getText(this)
