@@ -5,7 +5,7 @@ plugins {
 }
 
 group = rootProject.group
-version = "1.7-alpha"
+version = "1.8-wasm-alpha"
 
 
 catalog {
@@ -24,7 +24,6 @@ catalog {
             "detekt" to kmpLibs.versions.detekt.get(),
 
             // Compose
-            "compose-compiler" to kmpLibs.versions.compose.compiler.get(),
             "compose-wasm" to kmpLibs.versions.compose.wasm.get(),
             "compose-navigation" to kmpLibs.versions.compose.navigation.get(),
             "coil3" to kmpLibs.versions.coil3.get(),
@@ -162,11 +161,12 @@ catalog {
             Triple("kotlin.parcelize", kmpLibs.plugins.kotlin.parcelize.get(), "kotlin"),
             Triple("kotlin.multiplatform", kmpLibs.plugins.kotlin.multiplatform.get(), "kotlin"),
             Triple("kotlin.native.cocoapods", kmpLibs.plugins.kotlin.native.cocoapods.get(), "kotlin"),
+            Triple("compose-compiler", kmpLibs.plugins.compose.compiler.get(), "kotlin"),
             Triple("kotlinx.kover", kmpLibs.plugins.kotlinx.kover.get(), "kover"),
             Triple("dokka", kmpLibs.plugins.dokka.get(), "dokka"),
             Triple("ksp", kmpLibs.plugins.ksp.get(), "ksp"),
             Triple("detekt", kmpLibs.plugins.detekt.get(), "detekt"),
-            Triple("compose", kmpLibs.plugins.compose.get(), "compose-wasm"),
+            Triple("compose", kmpLibs.plugins.compose.asProvider().get(), "compose-wasm"),
 
             // Android
             Triple("android.library", kmpLibs.plugins.android.library.get(), "agp"),

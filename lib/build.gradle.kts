@@ -176,7 +176,13 @@ kotlin {
         }
     }
 
-    wasmJs()
+    wasmJs {
+        browser {
+            testTask {
+                useMocha()
+            }
+        }
+    }
 
     /**
      * Adding JS target to this lib. initially when creating this project, on Android studio the JS option is missing

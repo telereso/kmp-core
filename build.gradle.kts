@@ -12,6 +12,7 @@ plugins {
     alias(kmpLibs.plugins.kotlin.native.cocoapods) apply false
     alias(kmpLibs.plugins.sqldelight) apply false
     alias(kmpLibs.plugins.detekt) apply false
+    alias(kmpLibs.plugins.compose.compiler) apply false
 
 }
 

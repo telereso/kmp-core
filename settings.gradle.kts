@@ -18,13 +18,6 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven { url = uri("https://s01.oss.sonatype.org/content/groups/staging") }
-        maven(url = "https://pkgs.dev.azure.com/burnoo/maven/_packaging/public/maven/v1") {
-            content {
-                includeVersionByRegex(".*", ".*", ".*-beap[0-9]+")
-            }
-        }
-        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-        maven("https://maven.pkg.jetbrains.space/kotlin/p/wasm/experimental")
     }
     versionCatalogs {
         create("kmpLibs") {
