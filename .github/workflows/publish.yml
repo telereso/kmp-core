@@ -81,8 +81,9 @@ jobs:
         bucket="gs://telereso-docs/docs"
         projectDocs="$bucket/projects/${{ github.repository_id }}/public/docs"
         mkdir -p public/docs
-        gsutil -o "GSUtil:parallel_process_count=1" cp "${projectDocs}.zip" docs.zip && unzip -q docs.zip -d public/docs || gsutil -m -o "GSUtil:parallel_process_count=1" rsync -d -r "$projectDocs" public/docs
+        gsutil -o "GSUtil:parallel_process_count=1" cp "${projectDocs}.zip" docs.zip && unzip -q docs.zip -d public/ || gsutil -m -o "GSUtil:parallel_process_count=1" rsync -d -r "$projectDocs" public/docs
         rm -rf docs.zip
+        rm -rf public/docs/__MACOSX
 
     - name: Set flavored version
       run: |
