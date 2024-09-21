@@ -9,6 +9,11 @@ kover = "0.7.4"
 dokka = "1.9.10"
 detekt = "1.23.5"
 
+#Compose
+compose = "1.6.11"
+compose-navigation = "2.7.0-alpha06"
+coil3 = "3.0.0-alpha10"
+
 #Android
 agp = "8.2.2"
 buildTools = "31.0.0"
@@ -22,11 +27,12 @@ androidx-core = "1.12.0"
 test-iphone-device = "iPhone 15 Pro"
 
 #Others
-ktor = "2.3.12"
+ktor = "3.0.0-rc-1"
+ktor-swagger-ui = "2.7.1"
 sqldelight = "1.5.5"
 sqlJs = "1.8.0"
 js-joda-core = "3.2.0"
-coroutines = "1.9.0-RC.2"
+coroutines = "1.9.0"
 datetime = "0.5.0"
 serializationJson = "1.6.2"
 buildkonfig = "0.15.1"
@@ -35,7 +41,7 @@ napier = "2.7.1"
 multiplatformSettings = "1.2.0"
 
 #Telereso
-teleresoCore = "0.2.0"
+teleresoCore = "0.2.1-alpha"
 teleresoKmp = "0.2.0"
 
 #Test
@@ -62,6 +68,9 @@ ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serializatio
 ktor-client-darwin = { group = "io.ktor", name = "ktor-client-darwin", version.ref = "ktor" }
 ktor-client-js = { group = "io.ktor", name = "ktor-client-js", version.ref = "ktor" }
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor" }
+ktor-utils = { group = "io.ktor", name = "ktor-utils", version.ref = "ktor" }
+ktor-swagger-ui = { module = "io.github.smiley4:ktor-swagger-ui", version.ref = "ktor-swagger-ui" }
 test-ktor-client-mock = { group = "io.ktor", name = "ktor-client-mock", version.ref = "ktor" }
 
 #okhttp
@@ -79,6 +88,7 @@ sqldelight-sqlite-driver = { group = "com.squareup.sqldelight", name = "sqlite-d
 
 
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "coroutines" }
 test-kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "datetime" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serializationJson" }
@@ -86,6 +96,16 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 napier = { group = "io.github.aakira", name = "napier", version.ref = "napier" }
 multiplatform-settings = { group = "com.russhwolf", name = "multiplatform-settings-no-arg", version.ref = "multiplatformSettings" }
 multiplatform-settings-coroutines = { group = "com.russhwolf", name = "multiplatform-settings-coroutines", version.ref = "multiplatformSettings" }
+
+#Compose
+compose-navigation = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref = "compose-navigation" }
+coil3-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil3" }
+coil3-compose-core = { module = "io.coil-kt.coil3:coil-compose-core", version.ref = "coil3" }
+coil3-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil3" }
+coil3-svg = { module = "io.coil-kt.coil3:coil-svg", version.ref = "coil3" }
+coil3-mp = { module = "io.coil-kt.coil3:coil", version.ref = "coil3" }
+
+
 
 #Test
 test-kotest-framework-engine = { group = "io.kotest", name = "kotest-framework-engine", version.ref = "kotest" }
@@ -126,6 +146,10 @@ detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 
 #Telreso
 telereso-kmp = { id = "io.telereso.kmp", version.ref = "teleresoKmp" }
+
+#Compose
+compose = { id = "org.jetbrains.compose", version.ref = "compose" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
 #Others
 sqldelight = { id = "com.squareup.sqldelight", version.ref = "sqldelight" }

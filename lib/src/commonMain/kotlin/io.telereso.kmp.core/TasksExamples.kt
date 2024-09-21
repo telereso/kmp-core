@@ -206,8 +206,10 @@ object TasksExamples {
                     })
                 }))
                 onUpload { bytesSentTotal, contentLength ->
-                    val progress = (bytesSentTotal * 100L / contentLength).toInt()
-                    file.progress(progress)
+                    contentLength?.let {
+                        val progress = (bytesSentTotal * 100L / contentLength).toInt()
+                        file.progress(progress)
+                    }
                 }
             }
             res.body<JsonObject>()["data"]?.jsonObject?.get("url")?.jsonPrimitive?.content ?: ""
