@@ -5,7 +5,7 @@ plugins {
 }
 
 group = rootProject.group
-version = "1.8-alpha"
+version = "1.13-alpha"
 
 
 catalog {
@@ -33,6 +33,8 @@ catalog {
             "compileSdk" to kmpLibs.versions.compileSdk.get(),
             "buildTools" to kmpLibs.versions.buildTools.get(),
             "minSdk" to kmpLibs.versions.minSdk.get(),
+            "androidx-lifecycle" to kmpLibs.versions.androidx.lifecycle.get(),
+            "androidx-activity-compose" to kmpLibs.versions.androidx.activity.compose.get(),
 
             //iOS
             "test-iphone-device" to kmpLibs.versions.test.iphone.device.get(),
@@ -70,6 +72,10 @@ catalog {
             Triple("kotlinx.serialization.json", kmpLibs.kotlinx.serialization.json.get(), "serializationJson"),
             Triple("test.kotlinx.coroutines.test", kmpLibs.test.kotlinx.coroutines.test.get(), "coroutines"),
             Triple("ksp", kmpLibs.ksp.get(), "ksp"),
+
+            // Android
+            Triple("androidx-activity-compose", kmpLibs.androidx.activity.compose.get(), "androidx-activity-compose"),
+            Triple("androidx-lifecycle-viewmodel", kmpLibs.androidx.lifecycle.viewmodel.get(), "androidx-lifecycle"),
 
             // Ktor
             Triple("ktor.client.core", kmpLibs.ktor.client.core.get(), "ktor"),
