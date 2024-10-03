@@ -22,14 +22,11 @@
  * SOFTWARE.
  */
 
-package io.telereso.kmp.core
+package io.telereso.kmp.core.test
 
-import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
-import app.cash.sqldelight.db.SqlSchema
-import app.cash.sqldelight.driver.native.ConnectionWrapper
-import app.cash.sqldelight.driver.native.NativeSqliteDriver
 import app.cash.sqldelight.driver.native.inMemoryDriver
+import io.telereso.kmp.core.SqlDriverFactory
 import kotlinx.cinterop.*
 import platform.posix.*
 
@@ -53,10 +50,14 @@ actual class Resource actual constructor(actual val name: String) {
             tmp.toKString()
         }
     }
+
+    actual suspend fun writeText(text:String) {}
 }
 
-actual class TestSqlDriverFactory actual constructor(val sqlDriverFactory: SqlDriverFactory) :
-    SqlDriverFactory(sqlDriverFactory.databaseName) {
+actual class TestSqlDriverFactory actual constructor(
+    val sqlDriverFactory: SqlDriverFactory,
+    overrideName: Boolean
+) : SqlDriverFactory(sqlDriverFactory.databaseName(overrideName)) {
     actual override fun getAsyncSchema() = sqlDriverFactory.getAsyncSchema()
     actual override fun getSchema() = sqlDriverFactory.getSchema()
     actual override suspend fun createDriver(): SqlDriver = inMemoryDriver(getSchema()!!)

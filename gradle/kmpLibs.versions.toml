@@ -1,6 +1,6 @@
 [versions]
 # catalog
-catalog = "1.8.3-alpha"
+catalog = "1.8.6-alpha"
 
 #Java
 java = "17"
@@ -39,7 +39,7 @@ napier = "2.7.1"
 multiplatformSettings = "1.2.0"
 
 #Telereso
-teleresoCore = "0.3.2-alpha"
+teleresoCore = "0.3.5-alpha"
 teleresoKmp = "0.2.1"
 
 #Test
