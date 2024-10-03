@@ -24,6 +24,10 @@
 
 package io.telereso.kmp.core
 
+import app.cash.sqldelight.db.QueryResult
+import app.cash.sqldelight.db.SqlDriver
+import app.cash.sqldelight.db.SqlSchema
+import app.cash.sqldelight.driver.native.NativeSqliteDriver
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
@@ -151,4 +155,10 @@ fun ClientException.toNSError(): NSError {
 
     // Create and return the NSError object with the appropriate information.
     return NSError(domain = this::class.simpleName, code = (httpStatusCode ?: 0).convert(), userInfo = userInfoMap)
+}
+
+actual abstract class SqlDriverFactory actual constructor(actual val databaseName: String) {
+    actual abstract fun getAsyncSchema(): SqlSchema<QueryResult.AsyncValue<Unit>>
+    actual open fun getSchema(): SqlSchema<QueryResult.Value<Unit>>? = null
+    actual open suspend fun createDriver(): SqlDriver = NativeSqliteDriver(getSchema()!!, databaseName)
 }

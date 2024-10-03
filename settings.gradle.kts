@@ -29,6 +29,7 @@ dependencyResolutionManagement {
 rootProject.name = "core"
 include(":lib")
 project(":lib").name = rootProject.name
+include(":core-test")
 include(":catalog")
 include(":androidApp")
 include(":jvmApi")
