@@ -24,6 +24,10 @@
 
 package io.telereso.kmp.core
 
+import app.cash.sqldelight.db.QueryResult
+import app.cash.sqldelight.db.SqlDriver
+import app.cash.sqldelight.db.SqlSchema
+import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.okhttp.OkHttp
@@ -106,4 +110,11 @@ actual fun httpClient(
             connectTimeout(0, TimeUnit.SECONDS)
         }
     }
+}
+
+actual abstract class SqlDriverFactory actual constructor(actual val databaseName: String) {
+    actual abstract fun getAsyncSchema(): SqlSchema<QueryResult.AsyncValue<Unit>>
+    actual open fun getSchema(): SqlSchema<QueryResult.Value<Unit>>? = null
+    actual open suspend fun createDriver(): SqlDriver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
+        .also { getAsyncSchema().create(it).await() }
 }

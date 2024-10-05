@@ -24,7 +24,12 @@
 
 package io.telereso.kmp.core
 
+import android.content.Context
 import android.os.Build
+import app.cash.sqldelight.db.QueryResult
+import app.cash.sqldelight.db.SqlDriver
+import app.cash.sqldelight.db.SqlSchema
+import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
@@ -126,4 +131,17 @@ actual fun httpClient(
 )
 fun initLogger() {
     Napier.base(DebugAntilog())
+}
+
+actual abstract class SqlDriverFactory actual constructor(actual val databaseName: String) {
+    private var context: Context? = null
+
+    constructor(databaseName: String, context: Context?) : this(databaseName) {
+        this.context = context
+    }
+
+    actual abstract fun getAsyncSchema(): SqlSchema<QueryResult.AsyncValue<Unit>>
+    actual open fun getSchema(): SqlSchema<QueryResult.Value<Unit>>? = null
+    actual open suspend fun createDriver(): SqlDriver =
+        AndroidSqliteDriver(getSchema()!!, context!!, databaseName)
 }

@@ -22,22 +22,16 @@
  * SOFTWARE.
  */
 
-import groovy.util.Node
-import groovy.xml.XmlParser
 import org.gradle.configurationcache.extensions.capitalized
-import org.codehaus.groovy.runtime.ProcessGroovyMethods
-import org.jetbrains.kotlin.incremental.createDirectory
-import java.text.DecimalFormat
-import java.math.RoundingMode
 
 plugins {
     alias(kmpLibs.plugins.android.library)
     alias(kmpLibs.plugins.kotlin.multiplatform)
     alias(kmpLibs.plugins.kotlin.serialization)
-    alias(kmpLibs.plugins.kotlinx.kover)
     alias(kmpLibs.plugins.test.logger)
     alias(kmpLibs.plugins.dokka)
     alias(kmpLibs.plugins.telereso.kmp)
+    alias(kmpLibs.plugins.sqldelight)
 
     id("maven-publish")
     id("convention.publication")
@@ -100,49 +94,22 @@ tasks.dokkaHtml.configure {
 
             // Do not create index pages for empty packages
             skipEmptyPackages.set(true)
-
-            // This name will be shown in the final output
-            // displayName.set("JVM")
-
-            // Platform used for code analysis. See the "Platforms" section of this readme
-            // platform.set(org.jetbrains.dokka.Platform.jvm)
-
-
-            // Allows to customize documentation generation options on a per-package basis
-            // Repeat for multiple packageOptions
-            // If multiple packages match the same matchingRegex, the longuest matchingRegex will be used
-//            perPackageOption {
-//                matchingRegex.set("kotlin($|\\.).*") // will match kotlin and all sub-packages of it
-//                // All options are optional, default values are below:
-//                skipDeprecated.set(false)
-//                reportUndocumented.set(true) // Emit warnings about not documented members
-//                includeNonPublic.set(false)
-//            }
-            // Suppress a package
-//            perPackageOption {
-//                matchingRegex.set(""".*\.internal.*""") // will match all .internal packages and sub-packages
-//                suppress.set(true)
-//            }
-
-            // Include generated files in documentation
-            // By default Dokka will omit all files in folder named generated that is a child of buildDir
-            //  suppressGeneratedFiles.set(false)
         }
     }
 }
 
 tasks.register("copyLatestVersionDocs") {
-    val docs = rootDir.resolve("public").resolve("docs").resolve("core")
+    val docs = rootDir.resolve("public").resolve("docs").resolve("core-test")
     doFirst {
         delete {
-            delete(docs.resolve("latest"))
+            delete(docs.resolve("latest-test"))
         }
     }
 
     doLast {
         copy {
             from(docs.resolve(rootProject.version.toString()))
-            into(docs.resolve("latest"))
+            into(docs.resolve("latest-test"))
         }
     }
 }
@@ -154,44 +121,21 @@ kotlin {
         publishLibraryVariants("release")
     }
 
-
     listOf(
         iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach {
         it.binaries.framework {
-            baseName = "core"
+            baseName = "core-test"
             linkerOpts += "-lsqlite3"
             isStatic = false // this is needed for now
         }
     }
 
-    jvm {
-        testRuns["test"].executionTask.configure {
-            useJUnitPlatform()
-        }
-    }
+    jvm()
 
-    /**
-     * Adding JS target to this lib. initially when creating this project, on Android studio the JS option is missing
-     * for KKM Library.
-     *
-     */
-    js {
-        moduleName = "@$scope/${project.name}"
-        version = project.version as String
-
-        browser {
-            testTask {
-                useMocha()
-            }
-        }
-        nodejs()
-        //binaries.library()
-        binaries.executable()
-        generateTypeScriptDefinitions()
-    }
+    js()
 
     sourceSets {
 
@@ -206,28 +150,22 @@ kotlin {
             languageSettings.optIn("kotlin.js.ExperimentalJsExport")
         }
 
-        val commonMain by getting {
+        val androidMain by getting {
             dependencies {
-                implementation(kmpLibs.bundles.kotlinx)
-                /**
-                 * Add Ktor dependencies
-                 * To use the Ktor client in common code, add the dependency to ktor-client-core to the commonMain
-                 */
-                implementation(kmpLibs.bundles.ktor)
-
-                implementation(kmpLibs.napier)
-
-                // Multiplatform settings for Shared Preference
-                implementation(kmpLibs.multiplatform.settings )
-
-                // Multiplatform settings for observing and collecting settings flows
-                implementation(kmpLibs.multiplatform.settings.coroutines)
-
-                implementation(kmpLibs.sqldelight.runtime)
+                implementation(kmpLibs.test.mockk)
+                implementation(kmpLibs.sqldelight.android.driver)
+                implementation(kmpLibs.sqldelight.sqlite.driver)
             }
         }
-        val commonTest by getting {
+
+        val commonMain by getting {
             dependencies {
+                implementation(project(":core"))
+
+                implementation(kmpLibs.bundles.kotlinx)
+                implementation(kmpLibs.sqldelight.runtime)
+
+                // test
                 implementation(kotlin("test"))
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
@@ -242,6 +180,7 @@ kotlin {
                 implementation(kmpLibs.test.turbine)
             }
         }
+
         val jvmMain by getting {
             dependencies {
                 implementation(kmpLibs.ktor.client.okhttp)
@@ -251,42 +190,29 @@ kotlin {
             }
         }
 
-        val jvmTest by getting {
-            dependencies {
-                implementation(kmpLibs.sqldelight.sqlite.driver)
-            }
-        }
-        val androidMain by getting {
-            dependencies {
-                implementation(kmpLibs.ktor.client.okhttp)
-                implementation(kmpLibs.okhttp.logging)
-                implementation(kmpLibs.sqldelight.android.driver)
-                implementation(kmpLibs.androidx.core)
-                implementation(kmpLibs.androidx.lifecycle.process)
-            }
-        }
-        val androidUnitTest by getting {
-            dependencies {
-                implementation(kmpLibs.sqldelight.sqlite.driver)
-            }
-        }
+        val iosX64Main by getting
+        val iosArm64Main by getting
 
-
-        iosMain {
+        val iosSimulatorArm64Main by getting {
+            dependsOn(commonMain)
             dependencies {
-                /**
-                 * For iOS, we add the ktor-client-darwin dependency
-                 * Engines are used to process network requests. Note that a specific platform may require a specific engine that processes network requests.
-                 */
                 implementation(kmpLibs.ktor.client.darwin)
 
                 implementation(kmpLibs.sqldelight.native.driver)
             }
         }
 
-        /**
-         * Adding main and test for JS.
-         */
+        val iosMain by creating {
+            dependsOn(commonMain)
+            iosX64Main.dependsOn(this)
+            iosArm64Main.dependsOn(this)
+            dependencies {
+                implementation(kmpLibs.ktor.client.darwin)
+
+                implementation(kmpLibs.sqldelight.native.driver)
+            }
+        }
+
         jsMain {
             dependencies {
                 /**
@@ -296,11 +222,9 @@ kotlin {
 
                 implementation(kmpLibs.sqldelight.web.worker.driver)
                 implementation(devNpm("copy-webpack-plugin", kmpLibs.versions.copy.webpack.plugin.get()))
-
                 implementation(npm("sql.js", kmpLibs.versions.sqlJs.get()))
             }
         }
-        jsTest  {}
     }
 }
 
@@ -332,7 +256,7 @@ tasks.named(
 
 
 android {
-    namespace = "$group.${project.name}"
+    namespace = "$group.${project.name.replace("-",".")}"
     compileSdk = kmpLibs.versions.compileSdk.get().toInt()
     buildFeatures {
         buildConfig = false
@@ -346,134 +270,5 @@ android {
     }
 }
 
-// We can filter out some classes in the generated report
-koverReport {
-    filters {
-        excludes {
-            classes(listOf("*.*Test*"))
-        }
-    }
-    // The koverVerify currently only supports line counter values.
-    // we can also configure this to run after the unit tests task.
-    verify {
-        // Add VMs in the includes [list]. VMs added,their coverage % will be tracked.
-        filters {
-            excludes {
-                classes(listOf("*.*Test*"))
-            }
-        }
-        // Enforce Test Coverage
-        rule("Minimal line coverage rate in percent") {
-            bound {
-                minValue = 50
-            }
-        }
-    }
+tasks.findByName("androidDebugSourcesJar")?.dependsOn("kspCommonMainKotlinMetadata")
 
-    defaults {
-        html {
-            setReportDir(rootDir.resolve("public/tests/kover"))
-        }
-    }
-}
-
-testlogger {
-
-    theme =
-        com.adarshr.gradle.testlogger.theme.ThemeType.MOCHA // pick a theme - mocha, standard or plain
-    showExceptions = true // show detailed failure logs
-    showStackTraces = true
-    showFullStackTraces =
-        false // shows full exception stack traces,  useful to see the entirety of the stack trace.
-    showCauses = true
-
-    /**
-     * sets threshold in milliseconds to highlight slow tests,
-     * any tests that take longer than 0.5 seconds to run would have their durations logged using a warning style
-     * and those that take longer than 1 seconds to run using an error style.
-     */
-    slowThreshold = 1000
-
-    showSummary =
-        true // displays a breakdown of passes, failures and skips along with total duration
-    showSimpleNames = false
-    showPassed = true
-    showSkipped = true
-    showFailed = true
-    showOnlySlow = false
-    /**
-     * filter the log output based on the type of the test result.
-     */
-    showStandardStreams = true
-    showPassedStandardStreams = true
-    showSkippedStandardStreams = true
-    showFailedStandardStreams = true
-
-    logLevel = LogLevel.LIFECYCLE
-}
-
-tasks.register<Copy>("copyTestReportToPublish") {
-    from("${layout.buildDirectory}/reports/tests")
-    into("${rootDir}/public/tests/${project.name}/")
-}
-
-
-tasks.register("createCoverageBadge") {
-    doLast {
-
-        val report = layout.buildDirectory.file("reports/kover/report.xml").get().asFile
-        val coverage = if (report.exists()) {
-            val node = (XmlParser().parse(report)
-                .children()
-                .first { (it as Node).attribute("type") == "LINE" } as Node)
-
-            val missed = node.attribute("missed").toString().toDouble()
-            val covered = node.attribute("covered").toString().toDouble()
-            val total = missed + covered
-            val coverage = DecimalFormat("#.#").apply {
-                roundingMode = RoundingMode.UP
-            }.format((covered * 100) / total)
-            coverage.toDouble()
-        } else {
-            null
-        }
-
-        val badgeColor = when {
-            coverage == null -> "inactive"
-            coverage >= 90 -> "brightgreen"
-            coverage >= 65 -> "green"
-            coverage >= 50 -> "yellowgreen"
-            coverage >= 35 -> "yellow"
-            coverage >= 20 -> "orange"
-            else -> "red"
-        }
-
-        val koverDir = rootDir.resolve("public/tests/kover").apply {
-            if (!exists())
-                createDirectory()
-        }
-        download(
-            "https://img.shields.io/badge/coverage-${coverage?.toString()?.plus("%25") ?: "unknown"}-$badgeColor",
-            koverDir.resolve("badge.svg").path
-        )
-    }
-}
-
-tasks.findByName("koverXmlReport")?.apply {
-    finalizedBy("copyTestReportToPublish")
-    finalizedBy("createCoverageBadge")
-}
-
-tasks.findByName("jsBrowserProductionLibraryDistribution")?.dependsOn("jsProductionExecutableCompileSync")
-tasks.findByName("jsNodeProductionLibraryDistribution")?.dependsOn("jsProductionExecutableCompileSync")
-
-fun String.execute(): Process = ProcessGroovyMethods.execute(this)
-fun Process.text(): String = ProcessGroovyMethods.getText(this)
-
-
-fun download(url: String, path: String) {
-    val destFile = File(path)
-    if (!destFile.exists())
-        destFile.createNewFile()
-    ant.invokeMethod("get", mapOf("src" to url, "dest" to destFile))
-}

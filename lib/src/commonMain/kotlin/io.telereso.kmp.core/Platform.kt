@@ -24,6 +24,9 @@
 
 package io.telereso.kmp.core
 
+import app.cash.sqldelight.db.QueryResult
+import app.cash.sqldelight.db.SqlDriver
+import app.cash.sqldelight.db.SqlSchema
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import kotlin.js.JsExport
@@ -72,3 +75,10 @@ expect fun httpClient(
     userAgent: String? = null,
     config: HttpClientConfig<*>.() -> Unit = {}
 ): HttpClient
+
+expect abstract class SqlDriverFactory(databaseName: String) {
+    val databaseName: String
+    abstract fun getAsyncSchema(): SqlSchema<QueryResult.AsyncValue<Unit>>
+    open fun getSchema(): SqlSchema<QueryResult.Value<Unit>>?
+    open suspend fun createDriver(): SqlDriver
+}
