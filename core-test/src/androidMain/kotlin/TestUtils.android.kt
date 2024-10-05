@@ -40,7 +40,18 @@ actual class Resource actual constructor(actual val name: String) {
     actual suspend fun writeText(text: String) = file.writeText(text)
 }
 
-
+/**
+ * A wrapper class of [SqlDriverFactory]
+ * It will make sure to use InMemory databases for the platforms that are persistence such as android and ios
+ * To avoid test cases from conflicting
+ * Also creates a new database for each use case by overriding the db name everytime a new factory is created
+ *
+ * @constructor Creates an instance of `TestSqlDriverFactory` with the provided SQL driver factory and
+ * optional database name override.
+ *
+ * @param sqlDriverFactory main driver factory to be wrapper with in memory test drivers
+ * @param overrideName if true it will add prefix to the database name to make sure every new driver is using a unique database to avoid conflicts, eg dbName: my-client.db will be 1-my-client.db, 2-my-client.db
+ */
 actual class TestSqlDriverFactory actual constructor(
     val sqlDriverFactory: SqlDriverFactory,
     overrideName: Boolean
