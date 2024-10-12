@@ -3,6 +3,7 @@ package io.telereso.kmp.core.app
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -12,6 +13,7 @@ import io.telereso.kmp.core.Log.logError
 import io.telereso.kmp.core.app.databinding.ActivityMainBinding
 import io.telereso.kmp.core.models.FileRequest
 import io.telereso.kmp.core.models.JwtPayload
+import io.telereso.kmp.core.ui.preview.CorePreview
 import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity() {
@@ -22,8 +24,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this)[SampleViewModel::class.java]
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+
+        setContent {
+            CorePreview()
+        }
+//        setContentView(binding.root)
 
         logDebug(getPlatform().userAgent)
 

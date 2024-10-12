@@ -30,6 +30,8 @@ rootProject.name = "core"
 include(":lib")
 project(":lib").name = rootProject.name
 include(":core-test")
+include(":core-ui")
+include(":jsonCompare")
 include(":catalog")
 include(":androidApp")
 include(":jvmApi")

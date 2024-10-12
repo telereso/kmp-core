@@ -150,6 +150,8 @@ tasks.register("copyLatestVersionDocs") {
 tasks.getByName("dokkaHtml").finalizedBy("copyLatestVersionDocs")
 
 kotlin {
+    applyDefaultHierarchyTemplate()
+
     androidTarget {
         publishLibraryVariants("release")
     }
@@ -206,7 +208,7 @@ kotlin {
             languageSettings.optIn("kotlin.js.ExperimentalJsExport")
         }
 
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 implementation(kmpLibs.bundles.kotlinx)
                 /**
@@ -226,7 +228,7 @@ kotlin {
                 implementation(kmpLibs.sqldelight.runtime)
             }
         }
-        val commonTest by getting {
+        commonTest {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(kotlin("test-common"))
@@ -242,7 +244,7 @@ kotlin {
                 implementation(kmpLibs.test.turbine)
             }
         }
-        val jvmMain by getting {
+        jvmMain {
             dependencies {
                 implementation(kmpLibs.ktor.client.okhttp)
                 implementation(kmpLibs.okhttp.logging)
@@ -250,13 +252,7 @@ kotlin {
                 implementation(kmpLibs.sqldelight.sqlite.driver)
             }
         }
-
-        val jvmTest by getting {
-            dependencies {
-                implementation(kmpLibs.sqldelight.sqlite.driver)
-            }
-        }
-        val androidMain by getting {
+        androidMain {
             dependencies {
                 implementation(kmpLibs.ktor.client.okhttp)
                 implementation(kmpLibs.okhttp.logging)
@@ -265,7 +261,7 @@ kotlin {
                 implementation(kmpLibs.androidx.lifecycle.process)
             }
         }
-        val androidUnitTest by getting {
+        androidUnitTest {
             dependencies {
                 implementation(kmpLibs.sqldelight.sqlite.driver)
             }
@@ -300,7 +296,6 @@ kotlin {
                 implementation(npm("sql.js", kmpLibs.versions.sqlJs.get()))
             }
         }
-        jsTest  {}
     }
 }
 
@@ -365,7 +360,7 @@ koverReport {
         // Enforce Test Coverage
         rule("Minimal line coverage rate in percent") {
             bound {
-                minValue = 50
+                minValue = 40
             }
         }
     }

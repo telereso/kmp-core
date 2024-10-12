@@ -129,7 +129,7 @@ object TasksExamples {
                     "27:CD:DF:48:77:3E:9B:CF:FA:A4:6D:44:BF:8A:FC:23:96:F0:2F:71:C5:79:5C:C9:A0:1B:63:C6:BD:B1:05:6A"
                 )
             )
-            add(ios("orgIdentifier.iosApp"))
+            add(ios("io.telereso.kmp.core.app"))
             add(website("localhost:*"))
         })
     }
@@ -206,8 +206,10 @@ object TasksExamples {
                     })
                 }))
                 onUpload { bytesSentTotal, contentLength ->
-                    val progress = (bytesSentTotal * 100L / contentLength).toInt()
-                    file.progress(progress)
+                    contentLength?.let {
+                        val progress = (bytesSentTotal * 100L / contentLength).toInt()
+                        file.progress(progress)
+                    }
                 }
             }
             res.body<JsonObject>()["data"]?.jsonObject?.get("url")?.jsonPrimitive?.content ?: ""

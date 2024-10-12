@@ -1,11 +1,12 @@
 import SwiftUI
-import core
+import TeleresoUI
 
 struct ContentView: View {
     @ObservedObject private(set) var viewModel: ViewModel
 
     var body: some View {
         VStack {
+            CorePreview()
             Text("🚀 Total Rockets Launched: " + String("test"))
         }
                 .padding()
@@ -93,4 +94,22 @@ extension ContentView {
 
     }
 
+}
+
+
+struct CorePreview: View {
+    var body: some View {
+        CorePreviewViewController()
+                .ignoresSafeArea(.keyboard) // Compose has its own keyboard handler
+//    VStack{}
+    }
+}
+
+struct CorePreviewViewController: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> UIViewController {
+        return TeleresoUI.shared.CorePreviewIos()
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
+    }
 }

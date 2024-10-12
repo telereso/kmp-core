@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    alias(kmpLibs.plugins.compose)
+    alias(kmpLibs.plugins.compose.compiler)
 }
 
 android {
@@ -33,6 +35,7 @@ android {
 
     buildFeatures {
         viewBinding true
+        compose true
     }
 }
 
@@ -54,7 +57,7 @@ dependencies {
 
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
 
-    implementation project(":core")
+    implementation project(":core-ui")
 
 //    ksp 'io.telereso.kmp:processor:0.0.1'
 }

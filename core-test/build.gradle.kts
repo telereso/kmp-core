@@ -117,6 +117,8 @@ tasks.register("copyLatestVersionDocs") {
 tasks.getByName("dokkaHtml").finalizedBy("copyLatestVersionDocs")
 
 kotlin {
+    applyDefaultHierarchyTemplate()
+
     androidTarget {
         publishLibraryVariants("release")
     }
@@ -135,7 +137,10 @@ kotlin {
 
     jvm()
 
-    js()
+    js {
+        browser()
+        nodejs()
+    }
 
     sourceSets {
 
@@ -150,7 +155,7 @@ kotlin {
             languageSettings.optIn("kotlin.js.ExperimentalJsExport")
         }
 
-        val androidMain by getting {
+        androidMain {
             dependencies {
                 implementation(kmpLibs.test.mockk)
                 implementation(kmpLibs.sqldelight.android.driver)
@@ -158,7 +163,7 @@ kotlin {
             }
         }
 
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 implementation(project(":core"))
 
@@ -181,7 +186,7 @@ kotlin {
             }
         }
 
-        val jvmMain by getting {
+        jvmMain {
             dependencies {
                 implementation(kmpLibs.ktor.client.okhttp)
                 implementation(kmpLibs.okhttp.logging)
@@ -190,22 +195,7 @@ kotlin {
             }
         }
 
-        val iosX64Main by getting
-        val iosArm64Main by getting
-
-        val iosSimulatorArm64Main by getting {
-            dependsOn(commonMain)
-            dependencies {
-                implementation(kmpLibs.ktor.client.darwin)
-
-                implementation(kmpLibs.sqldelight.native.driver)
-            }
-        }
-
-        val iosMain by creating {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
+        iosMain {
             dependencies {
                 implementation(kmpLibs.ktor.client.darwin)
 

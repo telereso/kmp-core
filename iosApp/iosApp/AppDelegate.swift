@@ -5,7 +5,7 @@
 
 import Foundation
 import UIKit
-import core
+import TeleresoUI
 import netfox
 
 class AppDelegate: NSObject, UIApplicationDelegate {
