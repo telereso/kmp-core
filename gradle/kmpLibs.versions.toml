@@ -1,6 +1,6 @@
 [versions]
 # catalog
-catalog = "1.9-wasm.1"
+catalog = "1.10-wasm.1"
 
 #Java
 java = "17"
@@ -15,7 +15,7 @@ detekt = "1.23.5"
 #Compose
 compose = "1.6.11"
 compose-navigation = "2.7.0-alpha07"
-coil3 = "3.0.0-alpha10"
+coil3 = "3.0.0-rc01"
 compose-webview = "1.9.20"
 
 #Android
@@ -46,7 +46,7 @@ napier = "2.7.1"
 multiplatformSettings = "1.2.0"
 
 #Telereso
-teleresoCore = "0.3.0"
+teleresoCore = "0.5.0-wasm.1"
 teleresoKmp = "0.3.0-wasm.1"
 
 #Test

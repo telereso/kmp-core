@@ -118,7 +118,7 @@ kotlin {
     jvm()
 
     js {
-        moduleName = "@$scope/${project.name}"
+        moduleName = "teleresoUI"
         version = project.version as String
 
         browser()
@@ -128,7 +128,9 @@ kotlin {
     }
 
     wasmJs {
+        moduleName = "teleresoUI"
         browser()
+        binaries.executable()
     }
 
     sourceSets {
@@ -165,11 +167,11 @@ kotlin {
 
                 implementation(kmpLibs.sqldelight.runtime)
 
-//                implementation(kmpLibs.coil3.compose.core)
-//                implementation(kmpLibs.coil3.compose)
-//                implementation(kmpLibs.coil3.mp)
-//                implementation(kmpLibs.coil3.network.ktor)
-//                implementation(kmpLibs.coil3.svg)
+                implementation(kmpLibs.coil3.compose.core)
+                implementation(kmpLibs.coil3.compose)
+                implementation(kmpLibs.coil3.mp)
+                implementation(kmpLibs.coil3.network.ktor)
+                implementation(kmpLibs.coil3.svg)
 
                 implementation(compose.runtime)
                 implementation(compose.foundation)
