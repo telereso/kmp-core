@@ -22,4 +22,33 @@
  * SOFTWARE.
  */
 
-package io.telereso.kmp.core
+package io.telereso.kmp.core.test
+
+import io.telereso.kmp.core.SqlDriverFactory
+import kotlinx.browser.window
+import kotlinx.coroutines.await
+import org.w3c.fetch.Response
+
+actual class Resource actual constructor(actual val name: String) {
+
+    private val path = name
+
+    suspend fun loadJsonFile(filePath: String): String? {
+        return runCatching { window.fetch(filePath).await<Response>().text().await<String>() }.getOrNull()
+    }
+
+    actual suspend fun exists(): Boolean = loadJsonFile(path) != null
+
+    actual suspend fun readText(): String = loadJsonFile(path) ?: ""
+
+    actual suspend fun writeText(text:String) {}
+}
+
+actual class TestSqlDriverFactory actual constructor(
+    val sqlDriverFactory: SqlDriverFactory,
+    overrideName: Boolean
+) : SqlDriverFactory(sqlDriverFactory.databaseName(overrideName)) {
+    actual override fun getAsyncSchema() = sqlDriverFactory.getAsyncSchema()
+    actual override fun getSchema() = sqlDriverFactory.getSchema()
+    actual override suspend fun createDriver() = sqlDriverFactory.createDriver()
+}

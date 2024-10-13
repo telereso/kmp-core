@@ -25,31 +25,16 @@
 package io.telereso.kmp.core
 
 import io.telereso.kmp.core.models.ClientException
-import io.telereso.kmp.core.models.asClientException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.promise
 
 
-/**
- * Another way to consume common flows for JS ,
- * @param stream the flow data
- * @param error in case an issue happen while collecting data this call back will be invoked
- */
-@JsExport
-fun <T> CommonFlow<T>.watch(
-    stream: (T) -> Unit,
-    error: (ClientException) -> Unit,
-    scope: CoroutineScope = ContextScope.get(DispatchersProvider.Default)
-): CommonFlow.Job {
-    scope.promise {
-        try {
-            collect {
-                stream(it)
-            }
-        } catch (exception: Throwable) {
-            error(exception.asClientException())
-        }
+internal actual class InternalTask<ResultT> actual constructor(_task: Task<ResultT>) {
+    internal actual val task: Task<ResultT> = _task
+
+    actual fun get(): ResultT {
+        throw ClientException("Use async instead for blocking calls")
     }
-    return CommonFlow.Job(scope.coroutineContext[Job]!!)
+
+    actual fun getOrNull(): ResultT? {
+        throw ClientException("Use async instead for blocking calls")
+    }
 }

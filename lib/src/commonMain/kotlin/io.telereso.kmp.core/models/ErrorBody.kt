@@ -28,7 +28,7 @@ package io.telereso.kmp.core.models
 import io.telereso.kmp.annotations.Builder
 import io.telereso.kmp.annotations.SwiftOverloads
 import kotlinx.serialization.Serializable
-import kotlin.js.JsExport
+import io.telereso.kmp.annotations.JsOnlyExport
 
 /**
  * A data class used to generate a proper Api Error body, by default, each API will return a code and message on failure.
@@ -36,7 +36,7 @@ import kotlin.js.JsExport
  * @param message The message about the error from API.
  */
 @Serializable
-@JsExport
+@JsOnlyExport
 @Builder
 @SwiftOverloads
 data class ErrorBody(

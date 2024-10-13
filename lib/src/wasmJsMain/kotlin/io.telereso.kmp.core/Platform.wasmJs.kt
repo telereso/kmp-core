@@ -27,7 +27,6 @@ package io.telereso.kmp.core
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
-import app.cash.sqldelight.driver.worker.WebWorkerDriver
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
@@ -42,6 +41,7 @@ import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.browser.window
 import org.w3c.dom.Worker
+import io.telereso.kmp.annotations.JsOnlyExport
 
 /**
  * A class we define platform specific  or actual implementations for JS Target
@@ -96,7 +96,7 @@ internal fun debugLoggerInternal(){
 /**
  * Called from the client to initialize Napier logger
  */
-@JsExport
+@JsOnlyExport
 fun debugLogger() {
     debugLoggerInternal()
 }
@@ -105,10 +105,6 @@ actual abstract class SqlDriverFactory actual constructor(actual val databaseNam
     actual abstract fun getAsyncSchema(): SqlSchema<QueryResult.AsyncValue<Unit>>
     actual open fun getSchema(): SqlSchema<QueryResult.Value<Unit>>? = null
     actual open suspend fun createDriver(): SqlDriver {
-        return WebWorkerDriver(
-            Worker(
-                js("""new URL("@cashapp/sqldelight-sqljs-worker/sqljs.worker.js", import.meta.url)""")
-            )
-        ).also { getAsyncSchema().create(it).await() }
+        return TODO()
     }
 }

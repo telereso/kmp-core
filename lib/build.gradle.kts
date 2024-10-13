@@ -175,6 +175,14 @@ kotlin {
         }
     }
 
+    wasmJs {
+        browser {
+            testTask {
+                useMocha()
+            }
+        }
+    }
+
     /**
      * Adding JS target to this lib. initially when creating this project, on Android studio the JS option is missing
      * for KKM Library.
@@ -193,6 +201,10 @@ kotlin {
         //binaries.library()
         binaries.executable()
         generateTypeScriptDefinitions()
+    }
+
+    wasmJs {
+        browser()
     }
 
     sourceSets {
@@ -280,9 +292,6 @@ kotlin {
             }
         }
 
-        /**
-         * Adding main and test for JS.
-         */
         jsMain {
             dependencies {
                 /**
@@ -292,7 +301,19 @@ kotlin {
 
                 implementation(kmpLibs.sqldelight.web.worker.driver)
                 implementation(devNpm("copy-webpack-plugin", kmpLibs.versions.copy.webpack.plugin.get()))
+                implementation(npm("sql.js", kmpLibs.versions.sqlJs.get()))
+            }
+        }
 
+        wasmJsMain {
+            dependencies {
+                /**
+                 * Engines are used to process network requests. Note that a specific platform may require a specific engine that processes network requests.
+                 */
+                implementation(kmpLibs.ktor.client.js)
+
+                implementation(kmpLibs.sqldelight.web.worker.driver)
+                implementation(devNpm("copy-webpack-plugin", kmpLibs.versions.copy.webpack.plugin.get()))
                 implementation(npm("sql.js", kmpLibs.versions.sqlJs.get()))
             }
         }

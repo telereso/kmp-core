@@ -29,11 +29,11 @@ import io.ktor.http.fromFileExtension
 import kotlinx.serialization.Serializable
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
-import kotlin.js.JsExport
+import io.telereso.kmp.annotations.JsOnlyExport
 import kotlin.js.JsName
 
 @Serializable
-@JsExport
+@JsOnlyExport
 data class FileRequest(
     /**
      *  Base64 encoding of file
