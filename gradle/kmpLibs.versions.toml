@@ -1,6 +1,6 @@
 [versions]
 # catalog
-catalog = "1.10-wasm.1"
+catalog = "1.10-wasm.2"
 
 #Java
 java = "17"
@@ -34,7 +34,7 @@ test-iphone-device = "iPhone 15 Pro"
 #Others
 ktor = "3.0.0"
 ktor-swagger-ui = "2.7.1"
-sqldelight = "2.1.0-wasm-no-op.3"
+sqldelight = "2.1.0-wasm-no-op.4"
 sqlJs = "1.8.0"
 js-joda-core = "3.2.0"
 coroutines = "1.9.0"
