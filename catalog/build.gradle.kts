@@ -138,6 +138,7 @@ catalog {
             Triple("sqldelight.coroutines.extensions", kmpLibs.sqldelight.coroutines.extensions.get(), "sqldelight"),
 
             Triple("telereso.core", kmpLibs.telereso.core.asProvider().get(), "teleresoCore"),
+            Triple("telereso.core.ui", kmpLibs.telereso.core.ui.get(), "teleresoCore"),
             Triple("telereso.core.jvm", kmpLibs.telereso.core.jvm.get(), "teleresoCore"),
             Triple("telereso.core.android", kmpLibs.telereso.core.android.get(), "teleresoCore"),
 

@@ -46,6 +46,7 @@ import kotlinx.cinterop.convert
 import platform.Foundation.NSError
 import platform.Foundation.NSLocalizedDescriptionKey
 import platform.Foundation.NSLocalizedFailureReasonErrorKey
+import platform.Foundation.NSProcessInfo
 import platform.Foundation.NSURLErrorFailingURLErrorKey
 import platform.UIKit.UIDevice
 
@@ -63,6 +64,12 @@ class IOSPlatform : Platform() {
      */
     override val userAgent: String =
         "${UIDevice.currentDevice.systemName()}/${UIDevice.currentDevice.systemVersion} ${UIDevice.currentDevice.name}"
+
+
+}
+
+fun Platform.isSimulator(): Boolean {
+    return NSProcessInfo.processInfo.environment["SIMULATOR_DEVICE_NAME"] != null
 }
 
 /**

@@ -111,6 +111,8 @@ fun JsonEditor(state: MutableState<String>, jsonSearchResultState: JsonSearchRes
                 onLoading = {},
                 onError = { },
                 initialState = TreeState.EXPANDED,
+                showIndices = true,
+                showItemCount = true,
                 modifier = Modifier.fillMaxSize()
             )
         }

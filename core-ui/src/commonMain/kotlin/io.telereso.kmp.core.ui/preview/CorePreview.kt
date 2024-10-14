@@ -26,10 +26,16 @@ package io.telereso.kmp.core.ui.preview
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import coil3.compose.AsyncImage
 
 @Composable
 fun CorePreview() {
     Text("test")
+
+    AsyncImage(
+        model = "https://i.imgur.com/fHyEMsl.jpg",
+        contentDescription = null,
+    )
 }
 
 val example = """

@@ -24,43 +24,69 @@
 
 package io.telereso.kmp.core
 
-import io.github.aakira.napier.DebugAntilog
-import io.github.aakira.napier.Napier
 import io.telereso.kmp.core.models.ClientException
+import kotlinx.browser.window
 
+@JsExport
 actual class CoreClient {
     actual companion object {
+        private val instant: CoreClient by lazy {
+            CoreClient()
+        }
+
         /**
          * Called from the client to initialize Napier logger
          */
-        @JvmStatic
         actual fun debugLogger() {
-            Napier.base(DebugAntilog())
+            debugLoggerInternal()
+        }
+
+        fun get(): CoreClient {
+            return instant
         }
     }
 
-    @JvmOverloads
+    fun debugLogger() {
+        CoreClient.debugLogger()
+    }
+
     actual fun isAppInstalled(
         packageName: String,
         fingerprint: String?,
         alg: String
     ): Boolean {
-        return false
+        throw ClientException("Android/iOS only functionally ")
     }
 
     /**
      * This is to be used by a sdk only,
-     * In Jvm currently we can't verify
+     * Verify that the current application is allowed to use the calling library
+     * @param allowed a list of [Consumer] depending on the sdk platforms
      */
     actual fun verifyConsumer(allowed: List<Consumer>) {
-        // in Jvm currently we can't verify
+        if (!allowed.any {
+                it.platform == Platform.Type.BROWSER && it.appId.replace("*", ".*").toRegex()
+                    .matches(window.location.host)
+            }) {
+            throw ClientException("Website (${window.location.host}) not allowed to use this sdk")
+        }
     }
 
     /**
      * This is to be used by a sdk only,
-     * In Jvm currently we can't verify
+     * Verify that the current application is allowed to use the calling library
+     * @param allowed a list of [Consumer] depending on the sdk platforms
      */
+    @JsName("verifyCurrentConsumer")
     actual fun verifyConsumer(vararg allowed: Consumer) {
-        // in Jvm currently we can't verify
+        verifyConsumer(allowed.toList())
     }
+}
+
+/**
+ * Return Singleton CoreClient
+ */
+@JsExport
+fun get(): CoreClient {
+    return CoreClient.get()
 }

@@ -23,3 +23,18 @@
  */
 
 package io.telereso.kmp.core
+
+import kotlinx.coroutines.runBlocking
+
+
+internal actual class InternalTask<ResultT> actual constructor(_task: Task<ResultT>) {
+    internal actual val task: Task<ResultT> = _task
+
+    actual fun get(): ResultT {
+        return runBlocking { task.await() }
+    }
+
+    actual fun getOrNull(): ResultT? {
+        return runBlocking { task.awaitOrNull() }
+    }
+}

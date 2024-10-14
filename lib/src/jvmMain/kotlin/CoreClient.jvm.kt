@@ -24,19 +24,42 @@
 
 package io.telereso.kmp.core
 
-import io.telereso.kmp.core.models.ClientException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.runBlocking
+import io.github.aakira.napier.DebugAntilog
+import io.github.aakira.napier.Napier
 
-
-internal actual class InternalTask<ResultT> actual constructor(_task: Task<ResultT>) {
-    internal actual val task: Task<ResultT> = _task
-
-    actual fun get(): ResultT {
-        return runBlocking { task.await() }
+actual class CoreClient {
+    actual companion object {
+        /**
+         * Called from the client to initialize Napier logger
+         */
+        @JvmStatic
+        actual fun debugLogger() {
+            Napier.base(DebugAntilog())
+        }
     }
 
-    actual fun getOrNull(): ResultT? {
-        return runBlocking { task.awaitOrNull() }
+    @JvmOverloads
+    actual fun isAppInstalled(
+        packageName: String,
+        fingerprint: String?,
+        alg: String
+    ): Boolean {
+        return false
+    }
+
+    /**
+     * This is to be used by a sdk only,
+     * In Jvm currently we can't verify
+     */
+    actual fun verifyConsumer(allowed: List<Consumer>) {
+        // in Jvm currently we can't verify
+    }
+
+    /**
+     * This is to be used by a sdk only,
+     * In Jvm currently we can't verify
+     */
+    actual fun verifyConsumer(vararg allowed: Consumer) {
+        // in Jvm currently we can't verify
     }
 }
