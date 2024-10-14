@@ -28,6 +28,7 @@ import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import io.telereso.kmp.core.models.ClientException
 import platform.Foundation.NSBundle
+import platform.Foundation.NSProcessInfo
 import platform.Foundation.NSURL
 import platform.UIKit.UIApplication
 
