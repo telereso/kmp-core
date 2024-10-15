@@ -28,6 +28,8 @@ package io.telereso.kmp.core.test
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.native.inMemoryDriver
 import io.telereso.kmp.core.SqlDriverFactory
+import io.telereso.kmp.core.getPlatform
+import io.telereso.kmp.core.isSimulator
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.allocArray
 import kotlinx.cinterop.convert
@@ -42,11 +44,16 @@ import platform.posix.ftell
 import platform.posix.rewind
 import kotlinx.cinterop.*
 import platform.posix.*
+import platform.Foundation.NSBundle
 
 
 @OptIn(ExperimentalForeignApi::class)
 actual class Resource actual constructor(actual val name: String) {
-    private val file: CPointer<FILE>? = fopen("${TestUtils.RESOURCE_PATH}/$name", "r")
+
+    private val pathParts = name.split("[.|/]".toRegex())
+    private val path get()  = NSBundle.mainBundle.pathForResource("resources/${pathParts[0]}", pathParts[1])
+
+    private val file: CPointer<FILE>? = fopen(if (getPlatform().isSimulator()) path else "${TestUtils.RESOURCE_PATH}/$name", "r")
 
     actual suspend fun exists(): Boolean = file != null
 
