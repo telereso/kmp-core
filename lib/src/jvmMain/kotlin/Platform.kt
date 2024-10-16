@@ -24,6 +24,7 @@
 
 package io.telereso.kmp.core
 
+import app.cash.sqldelight.db.AfterVersion
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
@@ -34,6 +35,8 @@ import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
+import io.telereso.kmp.core.extensions.destructiveMigration
+import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
@@ -118,3 +121,29 @@ actual abstract class SqlDriverFactory actual constructor(actual val databaseNam
     actual open suspend fun createDriver(): SqlDriver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
         .also { getAsyncSchema().create(it).await() }
 }
+
+fun SqlSchema<QueryResult.AsyncValue<Unit>>.destructiveMigrationSynchronous() =
+    object : SqlSchema<QueryResult.Value<Unit>> {
+        override val version = this@destructiveMigrationSynchronous.version
+
+        override fun create(driver: SqlDriver) = QueryResult.Value(
+            runBlocking {
+                this@destructiveMigrationSynchronous.create(driver).await()
+            },
+        )
+
+        override fun migrate(
+            driver: SqlDriver,
+            oldVersion: Long,
+            newVersion: Long,
+            vararg callbacks: AfterVersion,
+        ) = QueryResult.Value(
+            runBlocking {
+                Log.i(
+                    "SqlDriverFactory",
+                    "Database version changed ($oldVersion -> $newVersion), performing destructive migration"
+                )
+                destructiveMigration(driver).await()
+            },
+        )
+    }

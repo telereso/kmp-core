@@ -24,9 +24,11 @@
 
 package io.telereso.kmp.core.extensions
 
+import app.cash.sqldelight.db.AfterVersion
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
+import io.telereso.kmp.core.Log
 
 /**
  * Performs a destructive migration on the provided SQL driver.
@@ -64,21 +66,7 @@ import app.cash.sqldelight.db.SqlSchema
  *
  */
 fun SqlSchema<QueryResult.AsyncValue<Unit>>.destructiveMigration(driver: SqlDriver): QueryResult.AsyncValue<Unit> {
-    val tables = driver.executeQuery(
-        identifier = null,
-        sql = "SELECT name FROM sqlite_master WHERE type='table';",
-        parameters = 0,
-        mapper = { cursor ->
-            QueryResult.Value(buildList {
-                while (cursor.next().value) {
-                    val name = cursor.getString(0)!!
-                    if (name != "sqlite_sequence" && name != "android_metadata") {
-                        add(name)
-                    }
-                }
-            })
-        }
-    ).value
+    val tables = driver.getTables()
 
     for (table in tables) {
         driver.execute(identifier = null, sql = "DROP TABLE $table", parameters = 0)
@@ -86,3 +74,24 @@ fun SqlSchema<QueryResult.AsyncValue<Unit>>.destructiveMigration(driver: SqlDriv
 
     return create(driver)
 }
+
+fun SqlSchema<QueryResult.AsyncValue<Unit>>.destructiveMigration() =
+    object : SqlSchema<QueryResult.AsyncValue<Unit>> {
+        override val version = this@destructiveMigration.version
+
+        override fun create(driver: SqlDriver): QueryResult.AsyncValue<Unit> =
+            this@destructiveMigration.create(driver)
+
+        override fun migrate(
+            driver: SqlDriver,
+            oldVersion: Long,
+            newVersion: Long,
+            vararg callbacks: AfterVersion,
+        ) = run {
+            Log.i(
+                "SqlDriverFactory",
+                "Database version changed ($oldVersion -> $newVersion), performing destructive migration"
+            )
+            destructiveMigration(driver)
+        }
+    }
