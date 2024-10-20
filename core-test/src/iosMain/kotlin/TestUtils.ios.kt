@@ -68,8 +68,7 @@ actual class Resource actual constructor(actual val name: String) {
 actual class TestSqlDriverFactory actual constructor(
     val sqlDriverFactory: SqlDriverFactory,
     overrideName: Boolean
-) : SqlDriverFactory(sqlDriverFactory.databaseName(overrideName)) {
-    actual override fun getAsyncSchema() = sqlDriverFactory.getAsyncSchema()
+) : SqlDriverFactory(sqlDriverFactory.databaseName(overrideName), sqlDriverFactory.asyncSchema) {
     actual override fun getSchema() = sqlDriverFactory.getSchema()
     actual override suspend fun createDriver(): SqlDriver = inMemoryDriver(getSchema()!!)
 }

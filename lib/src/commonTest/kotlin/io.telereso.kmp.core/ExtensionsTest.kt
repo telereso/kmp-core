@@ -22,27 +22,35 @@
  * SOFTWARE.
  */
 
-package io.telereso.kmp.core.test
+package io.telereso.kmp.core
 
-import io.telereso.kmp.core.SqlDriverFactory
-import java.io.File
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.telereso.kmp.core.extensions.isFalse
+import io.telereso.kmp.core.extensions.isNull
+import io.telereso.kmp.core.extensions.isTrue
+import kotlin.test.Test
 
+class ExtensionsTest {
 
-actual class Resource actual constructor(actual val name: String) {
-    private val file = File("${TestUtils.RESOURCE_PATH}/$name")
+    @Test
+    fun testBoolean(){
+        var b :Boolean? = null
 
-    actual suspend fun exists(): Boolean = file.exists()
+        b.isNull().shouldBeTrue()
+        b.isFalse().shouldBeFalse()
+        b.isTrue().shouldBeFalse()
 
-    actual suspend fun readText(): String = file.readText()
+        b = false
 
-    actual suspend fun writeText(text: String) = file.writeText(text)
+        b.isNull().shouldBeFalse()
+        b.isFalse().shouldBeTrue()
+        b.isTrue().shouldBeFalse()
 
-}
+        b = true
 
-actual class TestSqlDriverFactory actual constructor(
-    val sqlDriverFactory: SqlDriverFactory,
-    overrideName: Boolean
-) : SqlDriverFactory(sqlDriverFactory.databaseName(overrideName), sqlDriverFactory.asyncSchema) {
-    actual override fun getSchema() = sqlDriverFactory.getSchema()
-    actual override suspend fun createDriver() = sqlDriverFactory.createDriver()
+        b.isNull().shouldBeFalse()
+        b.isFalse().shouldBeFalse()
+        b.isTrue().shouldBeTrue()
+    }
 }

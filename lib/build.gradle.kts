@@ -412,6 +412,10 @@ testlogger {
     logLevel = LogLevel.LIFECYCLE
 }
 
+dependencies {
+    kover(project(":core-test"))
+}
+
 tasks.register<Copy>("copyTestReportToPublish") {
     from("${layout.buildDirectory}/reports/tests")
     into("${rootDir}/public/tests/${project.name}/")

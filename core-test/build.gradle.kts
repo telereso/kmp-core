@@ -32,6 +32,7 @@ plugins {
     alias(kmpLibs.plugins.dokka)
     alias(kmpLibs.plugins.telereso.kmp)
     alias(kmpLibs.plugins.sqldelight)
+    alias(kmpLibs.plugins.kotlinx.kover)
 
     id("maven-publish")
     id("convention.publication")
@@ -158,6 +159,23 @@ kotlin {
             }
         }
 
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
+                implementation(kmpLibs.test.kotlinx.coroutines.test)
+                implementation(kmpLibs.test.kotest.framework.engine)
+                implementation(kmpLibs.test.kotest.assertions.core)
+
+                // Ktor Server Mock
+                implementation(kmpLibs.test.ktor.client.mock)
+
+                implementation(kmpLibs.test.multiplatform.settings.test)
+                implementation(kmpLibs.test.turbine)
+            }
+        }
+
         val commonMain by getting {
             dependencies {
                 implementation(project(":core"))
@@ -228,6 +246,17 @@ kotlin {
     }
 }
 
+sqldelight {
+    databases {
+        create("CoreClientTestDatabase") {
+            packageName = "io.telereso.kmp.core.test.cache"
+            schemaOutputDirectory = file("src/commonMain/sqldelight/io/telereso/kmp/core/test/cache")
+            verifyMigrations = false
+            generateAsync.set(true)
+        }
+    }
+}
+
 tasks.named<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile>("compileKotlinJs").configure {
     dependsOn("jsCleanLibraryDistribution")
     kotlinOptions.moduleKind = "umd"
@@ -272,3 +301,8 @@ android {
 
 tasks.findByName("androidDebugSourcesJar")?.dependsOn("kspCommonMainKotlinMetadata")
 
+tasks.matching {
+    it.name.startsWith("linkReleaseFrameworkIos") || it.name.startsWith("linkDebugFrameworkIos")
+}.configureEach {
+    enabled = false
+}

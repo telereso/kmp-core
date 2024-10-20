@@ -44,6 +44,7 @@ import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.serialization.kotlinx.json.json
 import io.telereso.kmp.core.extensions.destructiveMigration
 import io.telereso.kmp.core.extensions.getTables
+import io.telereso.kmp.core.extensions.sync
 import io.telereso.kmp.core.models.ClientException
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
@@ -164,10 +165,12 @@ fun ClientException.toNSError(): NSError {
     return NSError(domain = this::class.simpleName, code = (httpStatusCode ?: 0).convert(), userInfo = userInfoMap)
 }
 
-actual abstract class SqlDriverFactory actual constructor(actual val databaseName: String) {
+actual open class SqlDriverFactory actual constructor(
+    actual val databaseName: String,
+    actual val asyncSchema: SqlSchema<QueryResult.AsyncValue<Unit>>
+) {
     private val mutex = Mutex()
-    actual abstract fun getAsyncSchema(): SqlSchema<QueryResult.AsyncValue<Unit>>
-    actual open fun getSchema(): SqlSchema<QueryResult.Value<Unit>>? = null
+    actual open fun getSchema(): SqlSchema<QueryResult.Value<Unit>>? = asyncSchema.sync()
     actual open suspend fun createDriver(): SqlDriver {
         val schema = getSchema()!!
         var sqlDriver = NativeSqliteDriver(schema, databaseName)

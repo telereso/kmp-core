@@ -29,6 +29,8 @@ import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
 import io.telereso.kmp.core.Log
+import io.telereso.kmp.core.RunBlocking
+import io.telereso.kmp.core.Task
 
 /**
  * Performs a destructive migration on the provided SQL driver.
@@ -73,6 +75,25 @@ fun SqlSchema<QueryResult.AsyncValue<Unit>>.destructiveMigration(driver: SqlDriv
     }
 
     return create(driver)
+}
+
+fun SqlSchema<QueryResult.AsyncValue<Unit>>.sync() = object : SqlSchema<QueryResult.Value<Unit>> {
+    override val version = this@sync.version
+
+    @OptIn(RunBlocking::class)
+    override fun create(driver: SqlDriver) = QueryResult.Value(
+        Task.execute { this@sync.create(driver).await() }.get()
+    )
+
+    @OptIn(RunBlocking::class)
+    override fun migrate(
+        driver: SqlDriver,
+        oldVersion: Long,
+        newVersion: Long,
+        vararg callbacks: AfterVersion,
+    ) = QueryResult.Value(
+        Task.execute { this@sync.migrate(driver, oldVersion, newVersion, *callbacks).await() }.get(),
+    )
 }
 
 fun SqlSchema<QueryResult.AsyncValue<Unit>>.destructiveMigration() =

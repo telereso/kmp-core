@@ -48,7 +48,6 @@ expect class TestSqlDriverFactory(
     sqlDriverFactory: SqlDriverFactory,
     overrideName: Boolean = true
 ) : SqlDriverFactory {
-    override fun getAsyncSchema(): SqlSchema<QueryResult.AsyncValue<Unit>>
     override fun getSchema(): SqlSchema<QueryResult.Value<Unit>>?
     override suspend fun createDriver(): SqlDriver
 }

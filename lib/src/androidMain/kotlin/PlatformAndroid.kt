@@ -41,6 +41,7 @@ import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
 import io.telereso.kmp.core.extensions.destructiveMigration
+import io.telereso.kmp.core.extensions.sync
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.logging.HttpLoggingInterceptor
@@ -137,16 +138,21 @@ fun initLogger() {
     Napier.base(DebugAntilog())
 }
 
-actual abstract class SqlDriverFactory actual constructor(actual val databaseName: String) {
+actual open class SqlDriverFactory actual constructor(
+    actual val databaseName: String,
+    actual val asyncSchema: SqlSchema<QueryResult.AsyncValue<Unit>>
+    ) {
     private var context: Context? = null
     private var sqlDriver: SqlDriver? = null
 
-    constructor(databaseName: String, context: Context?) : this(databaseName) {
+    constructor(
+        databaseName: String, context: Context?,
+        asyncSchema: SqlSchema<QueryResult.AsyncValue<Unit>>
+    ) : this(databaseName, asyncSchema) {
         this.context = context
     }
 
-    actual abstract fun getAsyncSchema(): SqlSchema<QueryResult.AsyncValue<Unit>>
-    actual open fun getSchema(): SqlSchema<QueryResult.Value<Unit>>? = null
+    actual open fun getSchema(): SqlSchema<QueryResult.Value<Unit>>? = asyncSchema.sync()
     actual open suspend fun createDriver(): SqlDriver {
         val schema = getSchema()!!
         return AndroidSqliteDriver(schema, context!!, databaseName,

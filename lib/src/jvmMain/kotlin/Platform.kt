@@ -36,6 +36,7 @@ import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
 import io.telereso.kmp.core.extensions.destructiveMigration
+import io.telereso.kmp.core.extensions.sync
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.logging.HttpLoggingInterceptor
@@ -115,11 +116,13 @@ actual fun httpClient(
     }
 }
 
-actual abstract class SqlDriverFactory actual constructor(actual val databaseName: String) {
-    actual abstract fun getAsyncSchema(): SqlSchema<QueryResult.AsyncValue<Unit>>
-    actual open fun getSchema(): SqlSchema<QueryResult.Value<Unit>>? = null
+actual open class SqlDriverFactory actual constructor(
+    actual val databaseName: String,
+    actual val asyncSchema: SqlSchema<QueryResult.AsyncValue<Unit>>
+) {
+    actual open fun getSchema(): SqlSchema<QueryResult.Value<Unit>>? = asyncSchema.sync()
     actual open suspend fun createDriver(): SqlDriver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
-        .also { getAsyncSchema().create(it).await() }
+        .also { asyncSchema.create(it).await() }
 }
 
 fun SqlSchema<QueryResult.AsyncValue<Unit>>.destructiveMigrationSynchronous() =
