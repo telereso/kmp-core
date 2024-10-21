@@ -146,7 +146,8 @@ actual open class SqlDriverFactory actual constructor(
     private var sqlDriver: SqlDriver? = null
 
     constructor(
-        databaseName: String, context: Context?,
+        context: Context?,
+        databaseName: String,
         asyncSchema: SqlSchema<QueryResult.AsyncValue<Unit>>
     ) : this(databaseName, asyncSchema) {
         this.context = context
@@ -195,3 +196,5 @@ fun SqlSchema<QueryResult.AsyncValue<Unit>>.destructiveMigrationSynchronous() =
             },
         )
     }
+
+
