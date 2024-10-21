@@ -156,18 +156,9 @@ kotlin {
         publishLibraryVariants("release")
     }
 
-
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach {
-        it.binaries.framework {
-            baseName = "core"
-            linkerOpts += "-lsqlite3"
-            isStatic = false // this is needed for now
-        }
-    }
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
     jvm {
         testRuns["test"].executionTask.configure {
@@ -305,8 +296,8 @@ tasks.named<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile>("compileKotlinJs").
 }
 
 tasks.register<Copy>("copyiOSTestResources") {
-    from("${rootDir}/lib/src/commonTest/resources")
-    into("${rootDir}/lib/build/bin/iosSimulatorArm64/debugTest/resources")
+    from("${projectDir}/src/commonTest/resources")
+    into("${projectDir}/build/bin/iosSimulatorArm64/debugTest/resources")
 }
 tasks.findByName("iosSimulatorArm64Test")?.dependsOn("copyiOSTestResources")
 
@@ -405,6 +396,10 @@ testlogger {
     showFailedStandardStreams = true
 
     logLevel = LogLevel.LIFECYCLE
+}
+
+dependencies {
+    kover(project(":core-test"))
 }
 
 tasks.register<Copy>("copyTestReportToPublish") {

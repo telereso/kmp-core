@@ -36,7 +36,7 @@ actual class Resource actual constructor(actual val name: String) {
         return runCatching { window.fetch(filePath).await().text().await() }.getOrNull()
     }
 
-    actual suspend fun exists(): Boolean = loadJsonFile(path) != null
+    actual suspend fun exists(): Boolean = !loadJsonFile(path).isNullOrEmpty()
 
     actual suspend fun readText(): String = loadJsonFile(path) ?: ""
 
@@ -46,8 +46,7 @@ actual class Resource actual constructor(actual val name: String) {
 actual class TestSqlDriverFactory actual constructor(
     val sqlDriverFactory: SqlDriverFactory,
     overrideName: Boolean
-) : SqlDriverFactory(sqlDriverFactory.databaseName(overrideName)) {
-    actual override fun getAsyncSchema() = sqlDriverFactory.getAsyncSchema()
+) : SqlDriverFactory(sqlDriverFactory.databaseName(overrideName), sqlDriverFactory.asyncSchema) {
     actual override fun getSchema() = sqlDriverFactory.getSchema()
     actual override suspend fun createDriver() = sqlDriverFactory.createDriver()
 }

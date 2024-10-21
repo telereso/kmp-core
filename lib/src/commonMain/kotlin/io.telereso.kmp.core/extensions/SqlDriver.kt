@@ -22,27 +22,26 @@
  * SOFTWARE.
  */
 
-package io.telereso.kmp.core.test
+package io.telereso.kmp.core.extensions
 
-import io.telereso.kmp.core.SqlDriverFactory
-import java.io.File
+import app.cash.sqldelight.db.QueryResult
+import app.cash.sqldelight.db.SqlDriver
 
 
-actual class Resource actual constructor(actual val name: String) {
-    private val file = File("${TestUtils.RESOURCE_PATH}/$name")
-
-    actual suspend fun exists(): Boolean = file.exists()
-
-    actual suspend fun readText(): String = file.readText()
-
-    actual suspend fun writeText(text: String) = file.writeText(text)
-
-}
-
-actual class TestSqlDriverFactory actual constructor(
-    val sqlDriverFactory: SqlDriverFactory,
-    overrideName: Boolean
-) : SqlDriverFactory(sqlDriverFactory.databaseName(overrideName), sqlDriverFactory.asyncSchema) {
-    actual override fun getSchema() = sqlDriverFactory.getSchema()
-    actual override suspend fun createDriver() = sqlDriverFactory.createDriver()
+suspend fun SqlDriver.getTables(): List<String> {
+    return executeQuery(
+        identifier = null,
+        sql = "SELECT name FROM sqlite_master WHERE type='table';",
+        parameters = 0,
+        mapper = { cursor ->
+            QueryResult.Value(buildList {
+                while (cursor.next().value) {
+                    val name = cursor.getString(0)!!
+                    if (name != "sqlite_sequence" && name != "android_metadata") {
+                        add(name)
+                    }
+                }
+            })
+        }
+    ).await()
 }

@@ -1,0 +1,13 @@
+import kotlin.Int;
+
+CREATE TABLE users (
+  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL
+);
+
+insertUser:
+INSERT INTO users (name) VALUES (?);
+
+selectAll:
+SELECT *
+FROM users;

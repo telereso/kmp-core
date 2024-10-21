@@ -32,6 +32,7 @@ plugins {
     alias(kmpLibs.plugins.dokka)
     alias(kmpLibs.plugins.telereso.kmp)
     alias(kmpLibs.plugins.sqldelight)
+    alias(kmpLibs.plugins.kotlinx.kover)
 
     id("maven-publish")
     id("convention.publication")
@@ -123,23 +124,14 @@ kotlin {
         publishLibraryVariants("release")
     }
 
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach {
-        it.binaries.framework {
-            baseName = "core-test"
-            linkerOpts += "-lsqlite3"
-            isStatic = false // this is needed for now
-        }
-    }
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
     jvm()
 
     js {
         browser()
-        nodejs()
     }
 
     sourceSets {
@@ -186,6 +178,23 @@ kotlin {
             }
         }
 
+        commonTest {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
+                implementation(kmpLibs.test.kotlinx.coroutines.test)
+                implementation(kmpLibs.test.kotest.framework.engine)
+                implementation(kmpLibs.test.kotest.assertions.core)
+
+                // Ktor Server Mock
+                implementation(kmpLibs.test.ktor.client.mock)
+
+                implementation(kmpLibs.test.multiplatform.settings.test)
+                implementation(kmpLibs.test.turbine)
+            }
+        }
+
         jvmMain {
             dependencies {
                 implementation(kmpLibs.ktor.client.okhttp)
@@ -211,9 +220,21 @@ kotlin {
                 implementation(kmpLibs.ktor.client.js)
 
                 implementation(kmpLibs.sqldelight.web.worker.driver)
+                implementation(npm("@cashapp/sqldelight-sqljs-worker", "2.0.2"))
                 implementation(devNpm("copy-webpack-plugin", kmpLibs.versions.copy.webpack.plugin.get()))
                 implementation(npm("sql.js", kmpLibs.versions.sqlJs.get()))
             }
+        }
+    }
+}
+
+sqldelight {
+    databases {
+        create("CoreClientTestDatabase") {
+            packageName = "io.telereso.kmp.core.test.cache"
+            schemaOutputDirectory = file("src/commonMain/sqldelight/io/telereso/kmp/core/test/cache")
+            verifyMigrations = false
+            generateAsync.set(true)
         }
     }
 }
@@ -224,8 +245,8 @@ tasks.named<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile>("compileKotlinJs").
 }
 
 tasks.register<Copy>("copyiOSTestResources") {
-    from("${rootDir}/lib/src/commonTest/resources")
-    into("${rootDir}/lib/build/bin/iosSimulatorArm64/debugTest/resources")
+    from("${projectDir}/src/commonTest/resources")
+    into("${projectDir}/build/bin/iosSimulatorArm64/debugTest/resources")
 }
 tasks.findByName("iosSimulatorArm64Test")?.dependsOn("copyiOSTestResources")
 
@@ -261,4 +282,3 @@ android {
 }
 
 tasks.findByName("androidDebugSourcesJar")?.dependsOn("kspCommonMainKotlinMetadata")
-

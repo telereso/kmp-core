@@ -24,10 +24,12 @@
 
 package io.telereso.kmp.core
 
+import app.cash.sqldelight.db.AfterVersion
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
 import app.cash.sqldelight.driver.native.NativeSqliteDriver
+import co.touchlab.sqliter.DatabaseFileContext
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
@@ -40,9 +42,15 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.serialization.kotlinx.json.json
+import io.telereso.kmp.core.extensions.destructiveMigration
+import io.telereso.kmp.core.extensions.getTables
+import io.telereso.kmp.core.extensions.sync
 import io.telereso.kmp.core.models.ClientException
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import platform.Foundation.NSError
 import platform.Foundation.NSLocalizedDescriptionKey
 import platform.Foundation.NSLocalizedFailureReasonErrorKey
@@ -164,8 +172,56 @@ fun ClientException.toNSError(): NSError {
     return NSError(domain = this::class.simpleName, code = (httpStatusCode ?: 0).convert(), userInfo = userInfoMap)
 }
 
-actual abstract class SqlDriverFactory actual constructor(actual val databaseName: String) {
-    actual abstract fun getAsyncSchema(): SqlSchema<QueryResult.AsyncValue<Unit>>
-    actual open fun getSchema(): SqlSchema<QueryResult.Value<Unit>>? = null
-    actual open suspend fun createDriver(): SqlDriver = NativeSqliteDriver(getSchema()!!, databaseName)
+actual open class SqlDriverFactory actual constructor(
+    actual val databaseName: String,
+    actual val asyncSchema: SqlSchema<QueryResult.AsyncValue<Unit>>
+) {
+    private val mutex = Mutex()
+    actual open fun getSchema(): SqlSchema<QueryResult.Value<Unit>>? = asyncSchema.sync()
+    actual open suspend fun createDriver(): SqlDriver {
+        val schema = getSchema()!!
+        var sqlDriver = NativeSqliteDriver(schema, databaseName)
+        return mutex.withLock {
+            runCatching {
+                sqlDriver.getTables()
+                sqlDriver
+            }.getOrElse {
+                Log.i(
+                    "SqlDriverFactory",
+                    "Failed to create NativeSqliteDriver for $databaseName!, deleting database files and trying again"
+                )
+                DatabaseFileContext.deleteDatabase(databaseName)
+                sqlDriver = NativeSqliteDriver(schema, databaseName)
+                Log.i("SqlDriverFactory", "Database ($databaseName) after clean, Tables: ${sqlDriver.getTables()}")
+                sqlDriver
+            }
+        }
+    }
 }
+
+fun SqlSchema<QueryResult.AsyncValue<Unit>>.destructiveMigrationSynchronous() =
+    object : SqlSchema<QueryResult.Value<Unit>> {
+        override val version = this@destructiveMigrationSynchronous.version
+
+
+        override fun create(driver: SqlDriver) = QueryResult.Value(
+            runBlocking {
+                this@destructiveMigrationSynchronous.create(driver).await()
+            },
+        )
+
+        override fun migrate(
+            driver: SqlDriver,
+            oldVersion: Long,
+            newVersion: Long,
+            vararg callbacks: AfterVersion,
+        ) = QueryResult.Value(
+            runBlocking {
+                Log.i(
+                    "SqlDriverFactory",
+                    "Database version changed ($oldVersion -> $newVersion), performing destructive migration"
+                )
+                destructiveMigration(driver).await()
+            },
+        )
+    }

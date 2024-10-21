@@ -26,6 +26,8 @@ package io.telereso.kmp.core
 
 import android.content.Context
 import android.os.Build
+import androidx.sqlite.db.SupportSQLiteDatabase
+import app.cash.sqldelight.db.AfterVersion
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
@@ -38,6 +40,9 @@ import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
+import io.telereso.kmp.core.extensions.destructiveMigration
+import io.telereso.kmp.core.extensions.sync
+import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
@@ -133,15 +138,60 @@ fun initLogger() {
     Napier.base(DebugAntilog())
 }
 
-actual abstract class SqlDriverFactory actual constructor(actual val databaseName: String) {
+actual open class SqlDriverFactory actual constructor(
+    actual val databaseName: String,
+    actual val asyncSchema: SqlSchema<QueryResult.AsyncValue<Unit>>
+    ) {
     private var context: Context? = null
+    private var sqlDriver: SqlDriver? = null
 
-    constructor(databaseName: String, context: Context?) : this(databaseName) {
+    constructor(
+        databaseName: String, context: Context?,
+        asyncSchema: SqlSchema<QueryResult.AsyncValue<Unit>>
+    ) : this(databaseName, asyncSchema) {
         this.context = context
     }
 
-    actual abstract fun getAsyncSchema(): SqlSchema<QueryResult.AsyncValue<Unit>>
-    actual open fun getSchema(): SqlSchema<QueryResult.Value<Unit>>? = null
-    actual open suspend fun createDriver(): SqlDriver =
-        AndroidSqliteDriver(getSchema()!!, context!!, databaseName)
+    actual open fun getSchema(): SqlSchema<QueryResult.Value<Unit>>? = asyncSchema.sync()
+    actual open suspend fun createDriver(): SqlDriver {
+        val schema = getSchema()!!
+        return AndroidSqliteDriver(schema, context!!, databaseName,
+            callback = object : AndroidSqliteDriver.Callback(getSchema()!!) {
+                override fun onDowngrade(
+                    db: SupportSQLiteDatabase, oldVersion: Int, newVersion: Int
+                ) {
+                    sqlDriver?.let {
+                        schema.migrate(
+                            AndroidSqliteDriver(db, cacheSize = 1),
+                            oldVersion.toLong(),
+                            newVersion.toLong()
+                        )
+                    }
+                }
+            }).apply { sqlDriver = this }
+    }
 }
+
+fun SqlSchema<QueryResult.AsyncValue<Unit>>.destructiveMigrationSynchronous() =
+    object : SqlSchema<QueryResult.Value<Unit>> {
+        override val version = this@destructiveMigrationSynchronous.version
+
+        override fun create(driver: SqlDriver) = QueryResult.Value(
+            runBlocking { this@destructiveMigrationSynchronous.create(driver).await() },
+        )
+
+        override fun migrate(
+            driver: SqlDriver,
+            oldVersion: Long,
+            newVersion: Long,
+            vararg callbacks: AfterVersion,
+        ) = QueryResult.Value(
+            runBlocking {
+                Log.i(
+                    "SqlDriverFactory",
+                    "Database version changed ($oldVersion -> $newVersion), performing destructive migration"
+                )
+                destructiveMigration(driver).await()
+            },
+        )
+    }

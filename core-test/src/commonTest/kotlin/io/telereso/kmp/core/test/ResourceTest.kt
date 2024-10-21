@@ -22,16 +22,34 @@
  * SOFTWARE.
  */
 
-package io.telereso.kmp.core.ui.compontents
+package io.telereso.kmp.core.test
 
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import io.kotest.matchers.shouldBe
+import io.telereso.kmp.core.await
+import kotlinx.coroutines.test.runTest
+import kotlin.test.Test
 
-@Composable
- fun WebView(modifier: Modifier, url: String?, html: String?) {
-//    val state = rememberWebViewState(url)
-//
-//    com.multiplatform.webview.web.WebView(state)
-    Text("WebView not available  for desktop yet")
+class ResourceTest {
+
+    @Test
+    fun testResource() = runTest {
+        val r = Resource("test.json")
+
+        r.readText().shouldBe("""{"test":"test"}""".trimIndent())
+
+        r.writeText("""{"test":"test"}""".trimIndent())
+
+        r.readText().shouldBe("""{"test":"test"}""".trimIndent())
+
+        Resource("test.json").readTextTask().await().shouldBe("""{"test":"test"}""".trimIndent())
+
+
+        Resource("test.json").exists().shouldBe(true)
+        Resource("test.json").existsTask().await().shouldBe(true)
+
+        Resource("testNotFound.json").exists().shouldBe(false)
+        Resource("testNotFound.json").existsTask().await().shouldBe(false)
+
+    }
+
 }

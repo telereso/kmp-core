@@ -302,8 +302,8 @@ compose.desktop {
 //}
 
 tasks.register<Copy>("copyiOSTestResources") {
-    from("${rootDir}/core-ui/src/commonTest/resources")
-    into("${rootDir}/core-ui/build/bin/iosSimulatorArm64/debugTest/resources")
+    from("${projectDir}/src/commonTest/resources")
+    into("${projectDir}/build/bin/iosSimulatorArm64/debugTest/resources")
 }
 tasks.findByName("iosSimulatorArm64Test")?.dependsOn("copyiOSTestResources")
 

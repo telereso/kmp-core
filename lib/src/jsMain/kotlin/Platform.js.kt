@@ -101,14 +101,16 @@ fun debugLogger() {
     debugLoggerInternal()
 }
 
-actual abstract class SqlDriverFactory actual constructor(actual val databaseName: String) {
-    actual abstract fun getAsyncSchema(): SqlSchema<QueryResult.AsyncValue<Unit>>
+actual open class SqlDriverFactory actual constructor(
+    actual val databaseName: String,
+    actual val asyncSchema: SqlSchema<QueryResult.AsyncValue<Unit>>
+) {
     actual open fun getSchema(): SqlSchema<QueryResult.Value<Unit>>? = null
     actual open suspend fun createDriver(): SqlDriver {
         return WebWorkerDriver(
             Worker(
                 js("""new URL("@cashapp/sqldelight-sqljs-worker/sqljs.worker.js", import.meta.url)""")
             )
-        ).also { getAsyncSchema().create(it).await() }
+        ).also { asyncSchema.create(it).await() }
     }
 }
