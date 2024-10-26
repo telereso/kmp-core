@@ -25,10 +25,10 @@
 package io.telereso.kmp.core.models
 
 import kotlinx.serialization.Serializable
-import kotlin.js.JsExport
+import io.telereso.kmp.annotations.JsOnlyExport
 
 @Serializable
-@JsExport
+@JsOnlyExport
 /**
  * A value with expiration date in epoch second format
  */

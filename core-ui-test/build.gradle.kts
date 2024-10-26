@@ -137,6 +137,10 @@ kotlin {
         browser()
     }
 
+    wasmJs {
+        browser()
+    }
+
     sourceSets {
 
         /**

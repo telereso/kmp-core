@@ -2,6 +2,19 @@ val teleresoKmpCatalog: String by settings
 
 pluginManagement {
     repositories {
+        maven {
+            url = uri("https://maven.pkg.github.com/edna-aa/sqldelight")
+            credentials {
+                username = "edna-aa"
+                password = ""
+            }
+            // Restrict this repository to specific versions containing "-wasm"
+            content {
+                includeGroup("app.cash.sqldelight") // Restrict to the group
+                includeVersionByRegex("app.cash.sqldelight", ".*", ".*-wasm.*") // Match any artifact in the group with versions containing "-wasm"
+            }
+        }
+
         mavenLocal()
         google()
         gradlePluginPortal()
@@ -9,15 +22,30 @@ pluginManagement {
         maven { url = uri("https://repo.spring.io/milestone") }
         maven { url = uri("https://repo.spring.io/snapshot") }
         maven { url = uri("https://s01.oss.sonatype.org/content/groups/staging") }
+
     }
 }
 
 dependencyResolutionManagement {
     repositories {
+        maven {
+            url = uri("https://maven.pkg.github.com/edna-aa/sqldelight")
+            credentials {
+                username = "edna-aa"
+                password = ""
+            }
+            // Restrict this repository to specific versions containing "-wasm"
+            content {
+                includeGroup("app.cash.sqldelight") // Restrict to the group
+                includeVersionByRegex("app.cash.sqldelight", ".*", ".*-wasm.*") // Match any artifact in the group with versions containing "-wasm"
+            }
+        }
+
         mavenLocal()
         google()
         mavenCentral()
         maven { url = uri("https://s01.oss.sonatype.org/content/groups/staging") }
+        
     }
     versionCatalogs {
         create("kmpLibs") {

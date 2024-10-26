@@ -25,11 +25,11 @@
 package io.telereso.kmp.core.models
 
 import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
+import io.telereso.kmp.annotations.JsOnlyExport
 
 @kotlinx.serialization.Serializable
 @OptIn(ExperimentalJsExport::class)
-@JsExport
+@JsOnlyExport
 data class JwtPayload(
     val iss: String? = null,
     val exp: Long? = null,

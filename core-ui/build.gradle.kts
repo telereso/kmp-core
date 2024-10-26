@@ -133,6 +133,12 @@ kotlin {
         generateTypeScriptDefinitions()
     }
 
+    wasmJs {
+        moduleName = "teleresoUI"
+        browser()
+        binaries.executable()
+    }
+
     sourceSets {
 
         /**
@@ -229,6 +235,11 @@ kotlin {
             }
         }
 
+        val jsWasmMain by creating {
+            dependsOn(noneAndroidMain)
+            dependsOn(commonMain.get())
+        }
+
         jvmMain {
             dependsOn(noneAndroidMain)
             dependencies {
@@ -269,6 +280,8 @@ kotlin {
 
         jsMain {
             dependsOn(noneAndroidMain)
+            dependsOn(commonMain.get())
+
             dependencies {
                 implementation(kmpLibs.ktor.client.js)
 
@@ -277,6 +290,8 @@ kotlin {
                 implementation(npm("sql.js", kmpLibs.versions.sqlJs.get()))
             }
         }
+        jsMain.get().dependsOn(jsWasmMain)
+        wasmJsMain.get().dependsOn(jsWasmMain)
     }
 }
 
@@ -450,3 +465,7 @@ tasks.findByName("jsBrowserProductionLibraryDistribution")
 tasks.findByName("jsNodeProductionLibraryDistribution")
     ?.dependsOn("jsProductionExecutableCompileSync")
 tasks.findByName("compileKotlinDesktop")?.dependsOn("kspCommonMainKotlinMetadata")
+tasks.findByName("jsBrowserProductionWebpack")
+    ?.dependsOn("wasmJsProductionExecutableCompileSync")
+tasks.findByName("wasmJsBrowserProductionWebpack")
+    ?.dependsOn("jsProductionExecutableCompileSync")
