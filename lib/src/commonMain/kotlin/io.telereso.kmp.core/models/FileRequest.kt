@@ -32,11 +32,11 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
-import kotlin.js.JsExport
+import io.telereso.kmp.annotations.JsOnlyExport
 import kotlin.js.JsName
 
 @Serializable
-@JsExport
+@JsOnlyExport
 @OptIn(ExperimentalSerializationApi::class)
 data class FileRequest constructor(
     /**

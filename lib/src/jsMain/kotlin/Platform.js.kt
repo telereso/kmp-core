@@ -42,6 +42,7 @@ import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.browser.window
 import org.w3c.dom.Worker
+import io.telereso.kmp.annotations.JsOnlyExport
 
 /**
  * A class we define platform specific  or actual implementations for JS Target
@@ -96,7 +97,7 @@ internal fun debugLoggerInternal(){
 /**
  * Called from the client to initialize Napier logger
  */
-@JsExport
+@JsOnlyExport
 fun debugLogger() {
     debugLoggerInternal()
 }
