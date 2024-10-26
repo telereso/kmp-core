@@ -166,6 +166,10 @@ kotlin {
         }
     }
 
+    wasmJs {
+        browser()
+    }
+
     /**
      * Adding JS target to this lib. initially when creating this project, on Android studio the JS option is missing
      * for KKM Library.

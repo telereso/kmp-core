@@ -127,6 +127,12 @@ kotlin {
         generateTypeScriptDefinitions()
     }
 
+    wasmJs {
+        moduleName = "teleresoUI"
+        browser()
+        binaries.executable()
+    }
+
     sourceSets {
 
         /**
@@ -251,7 +257,9 @@ kotlin {
             }
         }
 
-        jsMain {
+        val jsWasmMain by creating {
+            dependsOn(commonMain.get())
+
             dependencies {
                 /**
                  * Engines are used to process network requests. Note that a specific platform may require a specific engine that processes network requests.
@@ -263,6 +271,8 @@ kotlin {
                 implementation(npm("sql.js", kmpLibs.versions.sqlJs.get()))
             }
         }
+        jsMain.get().dependsOn(jsWasmMain)
+        wasmJsMain.get().dependsOn(jsWasmMain)
     }
 }
 
@@ -425,3 +435,7 @@ tasks.findByName("jsBrowserProductionLibraryDistribution")
 tasks.findByName("jsNodeProductionLibraryDistribution")
     ?.dependsOn("jsProductionExecutableCompileSync")
 tasks.findByName("compileKotlinDesktop")?.dependsOn("kspCommonMainKotlinMetadata")
+tasks.findByName("jsBrowserProductionWebpack")
+    ?.dependsOn("wasmJsProductionExecutableCompileSync")
+tasks.findByName("wasmJsBrowserProductionWebpack")
+    ?.dependsOn("jsProductionExecutableCompileSync")

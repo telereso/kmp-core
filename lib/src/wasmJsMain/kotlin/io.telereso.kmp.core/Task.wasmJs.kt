@@ -24,20 +24,17 @@
 
 package io.telereso.kmp.core
 
-import io.telereso.kmp.annotations.JsOnlyExport
+import io.telereso.kmp.core.models.ClientException
 
-/**
- * Defines the different Environments the sdk support.
- * this is usually passed to the SDK via the [Config] builder.
- */
-@JsOnlyExport
-enum class Environment {
-    /**
-     * staging environment value
-     */
-    STAGING,
-    /**
-     * production environment value
-     */
-    PRODUCTION,
+
+internal actual class InternalTask<ResultT> actual constructor(_task: Task<ResultT>) {
+    internal actual val task: Task<ResultT> = _task
+
+    actual fun get(): ResultT {
+        throw ClientException("Use async instead for blocking calls")
+    }
+
+    actual fun getOrNull(): ResultT? {
+        throw ClientException("Use async instead for blocking calls")
+    }
 }

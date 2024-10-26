@@ -24,6 +24,7 @@
 
 package io.telereso.kmp.core
 
+import io.telereso.kmp.annotations.JsOnlyExport
 import io.telereso.kmp.core.models.ClientException
 import io.telereso.kmp.core.models.asClientException
 import kotlinx.coroutines.CoroutineScope
@@ -36,7 +37,7 @@ import kotlinx.coroutines.promise
  * @param stream the flow data
  * @param error in case an issue happen while collecting data this call back will be invoked
  */
-@JsExport
+@JsOnlyExport
 fun <T> CommonFlow<T>.watch(
     stream: (T) -> Unit,
     error: (ClientException) -> Unit,

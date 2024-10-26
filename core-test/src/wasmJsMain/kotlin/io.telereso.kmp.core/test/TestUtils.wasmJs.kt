@@ -22,22 +22,31 @@
  * SOFTWARE.
  */
 
-package io.telereso.kmp.core
+package io.telereso.kmp.core.test
 
-import io.telereso.kmp.annotations.JsOnlyExport
+import io.telereso.kmp.core.SqlDriverFactory
+import kotlinx.browser.window
+import kotlinx.coroutines.await
 
-/**
- * Defines the different Environments the sdk support.
- * this is usually passed to the SDK via the [Config] builder.
- */
-@JsOnlyExport
-enum class Environment {
-    /**
-     * staging environment value
-     */
-    STAGING,
-    /**
-     * production environment value
-     */
-    PRODUCTION,
+actual class TestSqlDriverFactory actual constructor(
+    val sqlDriverFactory: SqlDriverFactory,
+    overrideName: Boolean
+) : SqlDriverFactory(sqlDriverFactory.databaseName(overrideName), sqlDriverFactory.asyncSchema) {
+    actual override fun getSchema() = sqlDriverFactory.getSchema()
+    actual override suspend fun createDriver() = sqlDriverFactory.createDriver()
+}
+
+actual class Resource actual constructor(actual val name: String) {
+
+    private val path = name
+
+    suspend fun loadJsonFile(filePath: String): String? {
+        return runCatching { window.fetch(filePath).await<String>() }.getOrNull()
+    }
+
+    actual suspend fun exists(): Boolean = !loadJsonFile(path).isNullOrEmpty()
+
+    actual suspend fun readText(): String = loadJsonFile(path) ?: ""
+
+    actual suspend fun writeText(text:String) {}
 }

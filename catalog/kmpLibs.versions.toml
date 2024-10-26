@@ -1,6 +1,6 @@
 [versions]
 # catalog
-catalog = "1.12"
+catalog = "1.13-wasm.1"
 
 #Java
 java = "21"
@@ -33,7 +33,7 @@ test-iphone-device = "iPhone 15 Pro"
 
 #Others
 ktor = "3.0.1"
-sqldelight = "2.0.2"
+sqldelight = "2.1.0-wasm-no-op.4"
 sqlJs = "1.8.0"
 js-joda-core = "3.2.0"
 coroutines = "1.9.0"
@@ -45,8 +45,8 @@ napier = "2.7.1"
 multiplatformSettings = "1.2.0"
 
 #Telereso
-teleresoCore = "0.5.1"
-teleresoKmp = "0.2.1"
+teleresoCore = "0.6.0-wasm.1"
+teleresoKmp = "0.3.0-wasm.1"
 
 #Test
 test-logger = "3.2.0"
@@ -92,13 +92,13 @@ okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor",
 
 
 #SqlDelight
-sqldelight-runtime = { group = "app.cash.sqldelight", name = "runtime", version.ref = "sqldelight" }
-sqldelight-coroutines-extensions = { group = "app.cash.sqldelight", name = "coroutines-extensions", version.ref = "sqldelight" }
-sqldelight-android-driver = { group = "app.cash.sqldelight", name = "android-driver", version.ref = "sqldelight" }
-sqldelight-native-driver = { group = "app.cash.sqldelight", name = "native-driver", version.ref = "sqldelight" }
-sqldelight-runtime-jvm = { group = "app.cash.sqldelight", name = "runtime-jvm", version.ref = "sqldelight" }
-sqldelight-web-worker-driver = { group = "app.cash.sqldelight", name = "web-worker-driver", version.ref = "sqldelight" }
-sqldelight-sqlite-driver = { group = "app.cash.sqldelight", name = "sqlite-driver", version.ref = "sqldelight" }
+sqldelight-runtime = { group = "io.telereso.kmp.sqldelight", name = "runtime", version.ref = "sqldelight" }
+sqldelight-coroutines-extensions = { group = "io.telereso.kmp.sqldelight", name = "coroutines-extensions", version.ref = "sqldelight" }
+sqldelight-android-driver = { group = "io.telereso.kmp.sqldelight", name = "android-driver", version.ref = "sqldelight" }
+sqldelight-native-driver = { group = "io.telereso.kmp.sqldelight", name = "native-driver", version.ref = "sqldelight" }
+sqldelight-runtime-jvm = { group = "io.telereso.kmp.sqldelight", name = "runtime-jvm", version.ref = "sqldelight" }
+sqldelight-web-worker-driver = { group = "io.telereso.kmp.sqldelight", name = "web-worker-driver", version.ref = "sqldelight" }
+sqldelight-sqlite-driver = { group = "io.telereso.kmp.sqldelight", name = "sqlite-driver", version.ref = "sqldelight" }
 
 
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
@@ -168,7 +168,7 @@ compose = { id = "org.jetbrains.compose", version.ref = "compose" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
 #Others
-sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
+sqldelight = { id = "io.telereso.kmp.sqldelight", version.ref = "sqldelight" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildkonfig" }
 

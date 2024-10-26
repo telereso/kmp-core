@@ -24,11 +24,9 @@
 
 package io.telereso.kmp.core
 
-import io.telereso.kmp.annotations.JsOnlyExport
 import io.telereso.kmp.core.models.ClientException
 import kotlinx.browser.window
 
-@JsOnlyExport
 actual class CoreClient {
     actual companion object {
         private val instant: CoreClient by lazy {
@@ -82,12 +80,4 @@ actual class CoreClient {
     actual fun verifyConsumer(vararg allowed: Consumer) {
         verifyConsumer(allowed.toList())
     }
-}
-
-/**
- * Return Singleton CoreClient
- */
-@JsExport
-fun get(): CoreClient {
-    return CoreClient.get()
 }
