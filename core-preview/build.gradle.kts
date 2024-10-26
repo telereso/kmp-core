@@ -56,6 +56,12 @@ kotlin {
         }
     }
 
+    wasmJs {
+        moduleName = "teleresoCorePreview"
+        browser()
+        binaries.executable()
+    }
+
     sourceSets {
         commonMain.dependencies {
             //put your multiplatform dependencies here

@@ -22,12 +22,13 @@
  * SOFTWARE.
  */
 
+import io.telereso.kmp.annotations.JsOnlyExport
 import io.telereso.kmp.core.Task
 import io.telereso.kmp.core.TaskConfig
 import kotlinx.coroutines.asDeferred
 import kotlin.js.Promise
 
-@JsExport
+@JsOnlyExport
 object Tasks {
     fun <ResultT> Task<ResultT>.async(): Promise<ResultT> {
         return Promise { success: (ResultT) -> Unit, failure: (Throwable) -> Unit ->

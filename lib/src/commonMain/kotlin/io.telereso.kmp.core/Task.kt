@@ -30,7 +30,7 @@ import io.telereso.kmp.core.models.ClientException
 import io.telereso.kmp.core.models.toClientException
 import kotlinx.coroutines.*
 import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
+import io.telereso.kmp.annotations.JsOnlyExport
 import kotlin.js.JsName
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
@@ -41,7 +41,7 @@ import kotlin.jvm.JvmStatic
  * @param scope a CoroutineScope defaulted to Default can provide your own scope as well, ensure its testable by injecting the provider.
  */
 @ExperimentalJsExport
-@JsExport
+@JsOnlyExport
 class Task<ResultT> private constructor(
     private val scope: CoroutineScope,
     private val config: TaskConfig? = TaskConfig(),
@@ -581,7 +581,7 @@ suspend fun <ResultT> Array<Task<ResultT>>.awaitAll() = map { it.await() }
 suspend fun <ResultT> Array<Task<ResultT>>.awaitOrNullAll() = map { it.awaitOrNull() }
 
 @Builder
-@JsExport
+@JsOnlyExport
 data class TaskConfig(
     /**
      * If set will try to rerun the task if it fails with the set amount ,

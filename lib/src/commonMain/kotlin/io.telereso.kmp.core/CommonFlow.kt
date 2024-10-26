@@ -33,7 +33,7 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlin.js.JsExport
+import io.telereso.kmp.annotations.JsOnlyExport
 import kotlin.jvm.JvmStatic
 
 /**
@@ -56,7 +56,7 @@ import kotlin.jvm.JvmStatic
  * and on iOS adn web we are able to get a error value with readable Exception of what went wrong.
  *
  */
-@JsExport
+@JsOnlyExport
 class CommonFlow<T>(private val origin: Flow<T>) : Flow<T> by origin {
 
     class Job internal constructor(private val collectJob: kotlinx.coroutines.Job) {

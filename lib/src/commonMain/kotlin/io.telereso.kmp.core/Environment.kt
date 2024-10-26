@@ -24,13 +24,13 @@
 
 package io.telereso.kmp.core
 
-import kotlin.js.JsExport
+import io.telereso.kmp.annotations.JsOnlyExport
 
 /**
  * Defines the different Environments the sdk support.
  * this is usually passed to the SDK via the [Config] builder.
  */
-@JsExport
+@JsOnlyExport
 enum class Environment {
     /**
      * staging environment value
