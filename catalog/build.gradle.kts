@@ -69,8 +69,7 @@ catalog {
             "teleresoKmp" to kmpLibs.versions.teleresoKmp.get(),
 
             // Others
-            "ktor" to kmpLibs.versions.ktor.asProvider().get(),
-            "ktor-swagger-ui" to kmpLibs.versions.ktor.swagger.ui.get(),
+            "ktor" to kmpLibs.versions.ktor.get(),
             "okhttp" to kmpLibs.versions.okhttp.get(),
             "napier" to kmpLibs.versions.napier.get(),
             "multiplatformSettings" to kmpLibs.versions.multiplatformSettings.get(),
@@ -115,7 +114,7 @@ catalog {
             Triple("ktor.client.okhttp", kmpLibs.ktor.client.okhttp.get(), "ktor"),
             Triple("ktor-client-cio", kmpLibs.ktor.client.cio.get(), "ktor"),
             Triple("ktor-utils", kmpLibs.ktor.utils.get(), "ktor"),
-            Triple("ktor-swagger-ui", kmpLibs.ktor.swagger.ui.get(), "ktor-swagger-ui"),
+            Triple("ktor-server-swagger", kmpLibs.ktor.server.swagger.get(), "ktor"),
             Triple("test.ktor.client.mock", kmpLibs.test.ktor.client.mock.get(), "ktor"),
 
             // Compose
