@@ -26,7 +26,10 @@ package io.telereso.kmp.core.models
 
 import io.ktor.http.ContentType
 import io.ktor.http.fromFileExtension
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.js.JsExport
@@ -34,7 +37,8 @@ import kotlin.js.JsName
 
 @Serializable
 @JsExport
-data class FileRequest(
+@OptIn(ExperimentalSerializationApi::class)
+data class FileRequest constructor(
     /**
      *  Base64 encoding of file
      */
@@ -47,10 +51,12 @@ data class FileRequest(
      * The file content type, eg "image/png", for full list of type you can check [ContentType]
      * ByDefault
      */
+    @EncodeDefault
     val contentType: String = name.contentType().toString(),
     /**
      * Upload progress call back, make sure to invoke and calculate with ktor's onUpload
      */
+    @Transient
     val progress: ((percentage: Int) -> Unit) = {}
 ) {
 

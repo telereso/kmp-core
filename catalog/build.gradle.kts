@@ -47,11 +47,18 @@ catalog {
             "ksp" to kmpLibs.versions.ksp.get(),
             "detekt" to kmpLibs.versions.detekt.get(),
 
+            // Compose
+            "compose" to kmpLibs.versions.compose.asProvider().get(),
+            "compose-navigation" to kmpLibs.versions.compose.navigation.get(),
+            "coil3" to kmpLibs.versions.coil3.get(),
+
             // Android
             "agp" to kmpLibs.versions.agp.get(),
             "compileSdk" to kmpLibs.versions.compileSdk.get(),
             "buildTools" to kmpLibs.versions.buildTools.get(),
             "minSdk" to kmpLibs.versions.minSdk.get(),
+            "androidx-lifecycle" to kmpLibs.versions.androidx.lifecycle.get(),
+            "androidx-activity-compose" to kmpLibs.versions.androidx.activity.compose.get(),
 
             //iOS
             "test-iphone-device" to kmpLibs.versions.test.iphone.device.get(),
@@ -62,8 +69,7 @@ catalog {
             "teleresoKmp" to kmpLibs.versions.teleresoKmp.get(),
 
             // Others
-            "ktor" to kmpLibs.versions.ktor.asProvider().get(),
-            "ktor-swagger-ui" to kmpLibs.versions.ktor.swagger.ui.get(),
+            "ktor" to kmpLibs.versions.ktor.get(),
             "okhttp" to kmpLibs.versions.okhttp.get(),
             "napier" to kmpLibs.versions.napier.get(),
             "multiplatformSettings" to kmpLibs.versions.multiplatformSettings.get(),
@@ -93,6 +99,10 @@ catalog {
             Triple("test.kotlinx.coroutines.test", kmpLibs.test.kotlinx.coroutines.test.get(), "coroutines"),
             Triple("ksp", kmpLibs.ksp.get(), "ksp"),
 
+            // Android
+            Triple("androidx-activity-compose", kmpLibs.androidx.activity.compose.get(), "androidx-activity-compose"),
+            Triple("androidx-lifecycle-viewmodel", kmpLibs.androidx.lifecycle.viewmodel.get(), "androidx-lifecycle"),
+
             // Ktor
             Triple("ktor.client.core", kmpLibs.ktor.client.core.get(), "ktor"),
             Triple("ktor.client.auth", kmpLibs.ktor.client.auth.get(), "ktor"),
@@ -104,8 +114,16 @@ catalog {
             Triple("ktor.client.okhttp", kmpLibs.ktor.client.okhttp.get(), "ktor"),
             Triple("ktor-client-cio", kmpLibs.ktor.client.cio.get(), "ktor"),
             Triple("ktor-utils", kmpLibs.ktor.utils.get(), "ktor"),
-            Triple("ktor-swagger-ui", kmpLibs.ktor.swagger.ui.get(), "ktor-swagger-ui"),
+            Triple("ktor-server-swagger", kmpLibs.ktor.server.swagger.get(), "ktor"),
             Triple("test.ktor.client.mock", kmpLibs.test.ktor.client.mock.get(), "ktor"),
+
+            // Compose
+            Triple("compose-navigation", kmpLibs.compose.navigation.get(), "compose-navigation"),
+            Triple("coil3-compose", kmpLibs.coil3.compose.asProvider().get(), "coil3"),
+            Triple("coil3-compose-core", kmpLibs.coil3.compose.core.get(), "coil3"),
+            Triple("coil3-network-ktor", kmpLibs.coil3.network.ktor.get(), "coil3"),
+            Triple("coil3-svg", kmpLibs.coil3.svg.get(), "coil3"),
+            Triple("coil3-mp", kmpLibs.coil3.mp.get(), "coil3"),
 
             // Others
             Triple("okhttp.logging", kmpLibs.okhttp.logging.get(), "okhttp"),
@@ -119,6 +137,7 @@ catalog {
             Triple("sqldelight.coroutines.extensions", kmpLibs.sqldelight.coroutines.extensions.get(), "sqldelight"),
 
             Triple("telereso.core", kmpLibs.telereso.core.asProvider().get(), "teleresoCore"),
+            Triple("telereso.core.ui", kmpLibs.telereso.core.ui.get(), "teleresoCore"),
             Triple("telereso.core.jvm", kmpLibs.telereso.core.jvm.get(), "teleresoCore"),
             Triple("telereso.core.android", kmpLibs.telereso.core.android.get(), "teleresoCore"),
 
@@ -177,10 +196,12 @@ catalog {
             Triple("kotlin.parcelize", kmpLibs.plugins.kotlin.parcelize.get(), "kotlin"),
             Triple("kotlin.multiplatform", kmpLibs.plugins.kotlin.multiplatform.get(), "kotlin"),
             Triple("kotlin.native.cocoapods", kmpLibs.plugins.kotlin.native.cocoapods.get(), "kotlin"),
+            Triple("compose-compiler", kmpLibs.plugins.compose.compiler.get(), "kotlin"),
             Triple("kotlinx.kover", kmpLibs.plugins.kotlinx.kover.get(), "kover"),
             Triple("dokka", kmpLibs.plugins.dokka.get(), "dokka"),
             Triple("ksp", kmpLibs.plugins.ksp.get(), "ksp"),
             Triple("detekt", kmpLibs.plugins.detekt.get(), "detekt"),
+            Triple("compose", kmpLibs.plugins.compose.asProvider().get(), "compose"),
 
             // Android
             Triple("android.library", kmpLibs.plugins.android.library.get(), "agp"),

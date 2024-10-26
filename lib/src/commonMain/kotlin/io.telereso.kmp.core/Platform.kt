@@ -76,9 +76,12 @@ expect fun httpClient(
     config: HttpClientConfig<*>.() -> Unit = {}
 ): HttpClient
 
-expect abstract class SqlDriverFactory(databaseName: String) {
+expect open class SqlDriverFactory(
+    databaseName: String,
+    asyncSchema: SqlSchema<QueryResult.AsyncValue<Unit>>
+) {
     val databaseName: String
-    abstract fun getAsyncSchema(): SqlSchema<QueryResult.AsyncValue<Unit>>
+    val asyncSchema: SqlSchema<QueryResult.AsyncValue<Unit>>
     open fun getSchema(): SqlSchema<QueryResult.Value<Unit>>?
     open suspend fun createDriver(): SqlDriver
 }
