@@ -43,6 +43,8 @@ import io.ktor.serialization.kotlinx.json.json
 import io.telereso.kmp.core.extensions.destructiveMigration
 import io.telereso.kmp.core.extensions.sync
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import okhttp3.Interceptor
 import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
@@ -153,11 +155,13 @@ actual open class SqlDriverFactory actual constructor(
         this.context = context
     }
 
+    private val mutex = Mutex()
     actual open fun getSchema(): SqlSchema<QueryResult.Value<Unit>>? = asyncSchema.sync()
     actual open suspend fun createDriver(): SqlDriver {
         val schema = getSchema()!!
-        return AndroidSqliteDriver(schema, context!!, databaseName,
-            callback = object : AndroidSqliteDriver.Callback(getSchema()!!) {
+        return mutex.withLock {
+            AndroidSqliteDriver(schema, context!!, databaseName,
+            callback = object : AndroidSqliteDriver.Callback(schema) {
                 override fun onDowngrade(
                     db: SupportSQLiteDatabase, oldVersion: Int, newVersion: Int
                 ) {
@@ -170,6 +174,7 @@ actual open class SqlDriverFactory actual constructor(
                     }
                 }
             }).apply { sqlDriver = this }
+        }
     }
 }
 
