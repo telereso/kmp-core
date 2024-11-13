@@ -137,6 +137,7 @@ catalog {
             Triple("sqldelight.coroutines.extensions", kmpLibs.sqldelight.coroutines.extensions.get(), "sqldelight"),
 
             Triple("telereso.core", kmpLibs.telereso.core.asProvider().get(), "teleresoCore"),
+            Triple("telereso.core.icons", kmpLibs.telereso.core.icons.get(), "teleresoCore"),
             Triple("telereso.core.ui", kmpLibs.telereso.core.ui.get(), "teleresoCore"),
             Triple("telereso.core.jvm", kmpLibs.telereso.core.jvm.get(), "teleresoCore"),
             Triple("telereso.core.android", kmpLibs.telereso.core.android.get(), "teleresoCore"),
@@ -166,6 +167,16 @@ catalog {
                 "ktor-client-content-negotiation",
                 "ktor-serialization-kotlinx-json",
                 "ktor-client-logging",
+            )
+        )
+
+        bundle(
+            "coil3", listOf(
+                "coil3-compose",
+                "coil3-compose-core",
+                "coil3-network-ktor",
+                "coil3-svg",
+                "coil3-mp"
             )
         )
 

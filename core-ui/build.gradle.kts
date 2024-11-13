@@ -118,7 +118,7 @@ kotlin {
     jvm()
 
     js {
-        moduleName = "@$scope/${project.name}"
+        moduleName = "teleresoUI"
         version = project.version as String
 
         browser()
@@ -264,6 +264,12 @@ kotlin {
             }
         }
     }
+}
+
+compose.resources {
+    publicResClass = false
+    packageOfResClass = "io.telereso.kmp.core.ui.resources"
+    generateResClass = auto
 }
 
 compose.desktop {
