@@ -262,10 +262,6 @@ tasks.findByName("jsBrowserProductionLibraryDistribution")
 tasks.findByName("jsNodeProductionLibraryDistribution")
     ?.dependsOn("jsProductionExecutableCompileSync")
 tasks.findByName("compileKotlinDesktop")?.dependsOn("kspCommonMainKotlinMetadata")
-tasks.findByName("jsBrowserProductionWebpack")
-    ?.dependsOn("wasmJsProductionExecutableCompileSync")
-tasks.findByName("wasmJsBrowserProductionWebpack")
-    ?.dependsOn("jsProductionExecutableCompileSync")
 
 
 tasks.create("processMaterialIcons") {
