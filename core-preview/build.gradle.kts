@@ -66,12 +66,9 @@ kotlin {
         commonMain.dependencies {
             //put your multiplatform dependencies here
 
-//            implementation(project(":core"))
-//            implementation(project(":core-ui"))
-//            implementation(project(":core-icons"))
-            implementation("io.telereso.kmp:core:0.5.1")
-            implementation("io.telereso.kmp:core-icons:0.5.1")
-            implementation("io.telereso.kmp:core-ui:0.5.1")
+            implementation(project(":core"))
+            implementation(project(":core-ui"))
+            implementation(project(":core-icons"))
 
             implementation(kmpLibs.kotlin.reflect)
 
