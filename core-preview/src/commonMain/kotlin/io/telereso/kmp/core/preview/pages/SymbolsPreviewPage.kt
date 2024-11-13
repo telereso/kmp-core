@@ -588,7 +588,7 @@ val importSymbols = """
         |kotlin {
         |    sourceSets {
         |        commonMain.dependencies {
-        |            implementation("io.telereso.kmp:core-ui:0.6.0")
+        |            implementation("io.telereso.kmp:core-ui:0.5.0")
         |        }   
         |    }
         |}
@@ -599,7 +599,7 @@ val importIcons = """
         |kotlin {
         |    sourceSets {
         |        commonMain.dependencies {
-        |            implementation("io.telereso.kmp:core-icons:0.6.0")
+        |            implementation("io.telereso.kmp:core-icons:0.5.0")
         |        }   
         |    }
         |}
