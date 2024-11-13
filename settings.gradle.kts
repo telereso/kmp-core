@@ -21,7 +21,7 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         create("kmpLibs") {
-            from(files("gradle/kmpLibs.versions.toml"))
+            from(files("catalog/kmpLibs.versions.toml"))
         }
     }
 }
@@ -31,7 +31,8 @@ include(":lib")
 project(":lib").name = rootProject.name
 include(":core-test")
 include(":core-ui")
-include(":jsonCompare")
+include(":core-icons")
+include(":core-preview")
 include(":catalog")
 include(":androidApp")
 include(":jvmApi")
