@@ -113,12 +113,6 @@ kotlin {
         generateTypeScriptDefinitions()
     }
 
-    wasmJs {
-        moduleName = "teleresoIcons"
-        browser()
-        binaries.executable()
-    }
-
     sourceSets {
 
         /**
