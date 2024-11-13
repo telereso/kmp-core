@@ -181,7 +181,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"$SRCROOT/..\"\n./gradlew :core-ui:embedAndSignAppleFrameworkForXcode\n";
+			shellScript = "cd \"$SRCROOT/..\"\n./gradlew :core-ui:embedAndSignAppleFrameworkForXcode && ./gradlew :core-preview:embedAndSignAppleFrameworkForXcode";
 		};
 		8F888E431B7E1A4709CB7953 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -381,6 +381,9 @@
 					"$(inherited)",
 					"-framework",
 					TeleresoUI,
+					"$(inherited)",
+                    "-framework",
+                    TeleresoCorePreview,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.telereso.kmp.core.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -417,6 +420,9 @@
 					"$(inherited)",
 					"-framework",
 					TeleresoUI,
+					"$(inherited)",
+                    "-framework",
+                    TeleresoCorePreview,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.telereso.kmp.core.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -1,3 +1,8 @@
+import androidx.compose.ui.window.ComposeUIViewController
+import io.telereso.kmp.core.preview.App
+import io.telereso.kmp.core.ui.preview.CorePreview
+import platform.UIKit.UIViewController
+
 /*
  * MIT License
  *
@@ -22,16 +27,10 @@
  * SOFTWARE.
  */
 
-package io.telereso.kmp.core.ui
 
-import androidx.compose.ui.window.ComposeUIViewController
-import io.telereso.kmp.core.ui.preview.CorePreview
-import platform.UIKit.UIViewController
-
-
-object TeleresoUI {
-    fun CorePreviewIos(): UIViewController =
+object CorePreviewApp {
+    fun ios(): UIViewController =
         ComposeUIViewController {
-            CorePreview()
+            App()
         }
 }

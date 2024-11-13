@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.incremental.createDirectory
  */
 
 plugins {
-//    alias(kmpLibs.plugins.android.library)
+    alias(kmpLibs.plugins.android.library)
     alias(kmpLibs.plugins.kotlin.multiplatform)
     alias(kmpLibs.plugins.compose)
     alias(kmpLibs.plugins.compose.compiler)
@@ -35,24 +35,24 @@ plugins {
 kotlin {
     applyDefaultHierarchyTemplate()
 
-//    androidTarget {
-//        compilations.all {
-//            kotlinOptions {
-//                jvmTarget = kmpLibs.versions.java.get()
-//            }
-//        }
-//    }
+    androidTarget {
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = kmpLibs.versions.java.get()
+            }
+        }
+    }
 
-//    listOf(
-//        iosX64(),
-//        iosArm64(),
-//        iosSimulatorArm64()
-//    ).forEach {
-//        it.binaries.framework {
-//            baseName = "TeleresoCorePreview"
-//            isStatic = true
-//        }
-//    }
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach {
+        it.binaries.framework {
+            baseName = "TeleresoCorePreview"
+            isStatic = true
+        }
+    }
 
     jvm("desktop")
 
@@ -94,20 +94,20 @@ compose.resources {
 }
 
 
-//android {
-//    namespace = "io.telereso.kmp.core.preview"
-//    compileSdk = kmpLibs.versions.compileSdk.get().toInt()
-//    buildFeatures {
-//        buildConfig = false
-//    }
-//    defaultConfig {
-//        minSdk = kmpLibs.versions.minSdk.get().toInt()
-//    }
-//    compileOptions {
-//        sourceCompatibility = JavaVersion.valueOf("VERSION_${kmpLibs.versions.java.get()}")
-//        targetCompatibility = JavaVersion.valueOf("VERSION_${kmpLibs.versions.java.get()}")
-//    }
-//}
+android {
+    namespace = "io.telereso.kmp.core.preview"
+    compileSdk = kmpLibs.versions.compileSdk.get().toInt()
+    buildFeatures {
+        buildConfig = false
+    }
+    defaultConfig {
+        minSdk = kmpLibs.versions.minSdk.get().toInt()
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.valueOf("VERSION_${kmpLibs.versions.java.get()}")
+        targetCompatibility = JavaVersion.valueOf("VERSION_${kmpLibs.versions.java.get()}")
+    }
+}
 
 
 compose.desktop {

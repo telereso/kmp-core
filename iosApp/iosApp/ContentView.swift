@@ -1,5 +1,6 @@
 import SwiftUI
 import TeleresoUI
+import TeleresoCorePreview
 
 struct ContentView: View {
     @ObservedObject private(set) var viewModel: ViewModel
@@ -7,6 +8,7 @@ struct ContentView: View {
     var body: some View {
         VStack {
             CorePreview()
+//             TeleresoCorePreviewApp()
             Text("🚀 Total Rockets Launched: " + String("test"))
         }
                 .padding()
@@ -108,6 +110,24 @@ struct CorePreview: View {
 struct CorePreviewViewController: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
         return TeleresoUI.shared.CorePreviewIos()
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
+    }
+}
+
+
+struct TeleresoCorePreviewApp: View {
+    var body: some View {
+        CorePreviewAppViewController()
+                .ignoresSafeArea(.keyboard) // Compose has its own keyboard handler
+//    VStack{}
+    }
+}
+
+struct CorePreviewAppViewController: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> UIViewController {
+        return CorePreviewApp.shared.ios()
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {

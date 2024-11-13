@@ -25,6 +25,17 @@
 package io.telereso.kmp.core.ui
 
 import io.ktor.http.Url
+import androidx.compose.ui.window.ComposeUIViewController
+import io.telereso.kmp.core.ui.preview.CorePreview
+import platform.UIKit.UIViewController
+
+
+object TeleresoUI {
+    fun CorePreviewIos(): UIViewController =
+        ComposeUIViewController {
+            CorePreview()
+        }
+}
 
 actual fun getCurrentDeeplink() : Url = DEFAULT_URL
 

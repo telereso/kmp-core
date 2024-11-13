@@ -60,6 +60,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
 
     implementation project(":core-ui")
+    implementation project(":core-preview")
 
 //    ksp 'io.telereso.kmp:processor:0.0.1'
 }

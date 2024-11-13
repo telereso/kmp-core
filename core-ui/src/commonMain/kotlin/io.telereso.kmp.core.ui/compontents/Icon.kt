@@ -24,6 +24,7 @@
 
 package io.telereso.kmp.core.ui.compontents
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
@@ -51,15 +52,25 @@ fun Icon(
     contentDescription: String? = null
 ) {
     val context = LocalPlatformContext.current
-    AsyncImage(
-        modifier = modifier,
-        colorFilter = ColorFilter.tint(tint),
-        placeholder = placeholder?.let { painterResource(it) },
-        error = error?.let { painterResource(error) },
-        fallback = fallback?.let { painterResource(fallback) },
-        model = ImageRequest.Builder(context).data(url ?: drawableResource)
-            .build(), contentDescription = contentDescription ?: "Icon"
-    )
+
+    if (drawableResource != null) {
+        Image(
+            painter = painterResource(drawableResource),
+            modifier = modifier,
+            colorFilter = ColorFilter.tint(tint),
+            contentDescription = contentDescription ?: "Icon"
+        )
+    } else {
+        AsyncImage(
+            model = ImageRequest.Builder(context).data(url).build(),
+            modifier = modifier,
+            colorFilter = ColorFilter.tint(tint),
+            placeholder = placeholder?.let { painterResource(it) },
+            error = error?.let { painterResource(error) },
+            fallback = fallback?.let { painterResource(fallback) },
+            contentDescription = contentDescription ?: "Icon"
+        )
+    }
 }
 
 @Composable

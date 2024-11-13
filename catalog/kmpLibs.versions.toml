@@ -1,6 +1,6 @@
 [versions]
 # catalog
-catalog = "1.11"
+catalog = "1.12"
 
 #Java
 java = "21"
@@ -45,7 +45,7 @@ napier = "2.7.1"
 multiplatformSettings = "1.2.0"
 
 #Telereso
-teleresoCore = "0.5.0"
+teleresoCore = "0.5.1"
 teleresoKmp = "0.2.1"
 
 #Test
