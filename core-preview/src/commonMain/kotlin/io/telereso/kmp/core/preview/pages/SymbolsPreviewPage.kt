@@ -24,6 +24,7 @@
 
 package io.telereso.kmp.core.preview.pages
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -102,7 +103,8 @@ fun SymbolsPreviewPage() {
 
     var symbols by remember { mutableStateOf<List<MySymbolConfig>>(emptyList()) }
     var selected by remember { mutableStateOf<MySymbolConfig?>(null) }
-    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val leftDrawerState = rememberDrawerState(DrawerValue.Closed)
+    val rightDrawerState = rememberDrawerState(DrawerValue.Closed)
     var codeSnippet by remember { mutableStateOf("") }
 
     val scope = rememberCoroutineScope()
@@ -121,9 +123,9 @@ fun SymbolsPreviewPage() {
 
     LaunchedEffect(selected) {
         if (selected == null) {
-            drawerState.close()
+            rightDrawerState.close()
         } else {
-            drawerState.open()
+            rightDrawerState.open()
 
             fun setSymbolCode() {
                 val s = selected!!
@@ -188,8 +190,7 @@ fun SymbolsPreviewPage() {
     }
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-        ModalNavigationDrawer(drawerState = drawerState, drawerContent = {
-
+        ModalNavigationDrawer(drawerState = rightDrawerState, drawerContent = {
             ModalDrawerSheet {
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                     Column(
@@ -255,28 +256,41 @@ fun SymbolsPreviewPage() {
             }
         }) {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-                Row(modifier = Modifier.fillMaxSize()) {
-                    // Left Panel - Customize Section
-                    Box(
-                        modifier = Modifier.width(250.dp)
-                            .fillMaxHeight()
-                            .padding(16.dp)
-                            .verticalScroll(rememberScrollState())
-                    ) {
-                        CustomizeSection(customization) { newValue ->
-                            customization = newValue
+                ModalNavigationDrawer(drawerState = leftDrawerState, drawerContent = {
+                    ModalDrawerSheet {
+                        Box(
+                            modifier = Modifier.width(250.dp)
+                                .fillMaxHeight()
+                                .padding(16.dp)
+                                .verticalScroll(rememberScrollState())
+                        ) {
+                            CustomizeSection(customization) { newValue ->
+                                customization = newValue
+                            }
                         }
                     }
+                }) {
 
                     // Center Panel - Icons Grid
                     Box(
-                        modifier = Modifier.fillMaxHeight().padding(16.dp).weight(1f)
+                        modifier = Modifier.fillMaxHeight().padding(16.dp)
                     ) {
-                        SymbolGrid(symbols) { symbol ->
+                        SymbolGrid(
+                            symbols,
+                            onShowCustom = {
+                                scope.launch {
+                                    if (leftDrawerState.isOpen)
+                                        leftDrawerState.close()
+                                    else
+                                        leftDrawerState.open()
+                                }
+                            }
+                        ) { symbol ->
                             selected = symbol
                         }
                     }
                 }
+
             }
         }
     }
@@ -440,7 +454,11 @@ fun DropdownMenuSelector(label: String, options: List<String>, onSelected: (Stri
 }
 
 @Composable
-fun SymbolGrid(symbols: List<MySymbolConfig>, onSelected: (MySymbolConfig) -> Unit) {
+fun SymbolGrid(
+    symbols: List<MySymbolConfig>,
+    onShowCustom: () -> Unit = {},
+    onSelected: (MySymbolConfig) -> Unit
+) {
 
     var searchKey by remember { mutableStateOf("") }
     val state = rememberLazyGridState()
@@ -451,18 +469,26 @@ fun SymbolGrid(symbols: List<MySymbolConfig>, onSelected: (MySymbolConfig) -> Un
         else mutableStateOf(symbols.filter { it.name.contains(searchKey, true) })
     }
 
-
     Column {
         TextField(placeholder = { Text("Search Symbols") }, value = searchKey, onValueChange = {
             searchKey = it
         })
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(8.dp))
+
+        TextButton(
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primaryContainer),
+            onClick = onShowCustom
+        ) {
+            Text("Customize")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         LazyVerticalGrid(
             state = state,
             columns = GridCells.Adaptive(minSize = 160.dp), // Adjust minSize for column width
-            contentPadding = PaddingValues(8.dp),
+//            contentPadding = PaddingValues(2.dp),
         ) {
             items(filteredSymbols) { symbol ->
                 Column(horizontalAlignment = Alignment.CenterHorizontally,
