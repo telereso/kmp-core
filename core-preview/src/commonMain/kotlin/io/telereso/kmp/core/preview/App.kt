@@ -114,7 +114,7 @@ fun SidebarNavigationRail(
 
 @Composable
 fun setupApp() {
-    val debug = false
+    val debug = true
     setSingletonImageLoaderFactory { context ->
         ImageLoader.Builder(context)
             .components {
