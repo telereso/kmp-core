@@ -44,16 +44,18 @@ import io.telereso.kmp.core.preview.pages.JsonComparePage
 import io.telereso.kmp.core.preview.pages.SymbolsPreviewPage
 import io.telereso.kmp.core.ui.compontents.Symbol
 import io.telereso.kmp.core.ui.getCurrentDeeplink
+import io.telereso.kmp.core.ui.models.Devices
 import io.telereso.kmp.core.ui.models.SentimentSatisfied
 import io.telereso.kmp.core.ui.models.Symbols
 import io.telereso.kmp.core.ui.models.TextCompare
 import io.telereso.kmp.core.ui.widgets.DeeplinkNavHost
+import io.telereso.kmp.core.ui.widgets.DeviceSimulatorsPage
 import io.telereso.kmp.core.ui.widgets.base
 import io.telereso.kmp.core.ui.widgets.deeplink
 import io.telereso.kmp.core.ui.widgets.route
 
 enum class Pages {
-    Symbols, JsonCompare
+    Symbols, JsonCompare, DeviceSimulator
 }
 
 @Composable
@@ -66,6 +68,7 @@ fun App() {
         modifier = Modifier.fillMaxSize().background(Color(0xFFF0F2F5))
     ) {
         SidebarNavigationRail(navHostController)
+
         DeeplinkNavHost(
             navController = navHostController,
             startDestination = Pages.Symbols.name
@@ -77,6 +80,10 @@ fun App() {
 
             composable(currentUrl.route(Pages.JsonCompare.name)) {
                 JsonComparePage()
+            }
+
+            composable(currentUrl.route(Pages.DeviceSimulator.name)) {
+                DeviceSimulatorsPage()
             }
         }
     }
@@ -94,18 +101,28 @@ fun SidebarNavigationRail(
             .background(Color(0xFFE7EBF0)),
     ) {
         NavigationRailItem(
-            icon = { Symbol(Symbols.SentimentSatisfied, contentDescription = "Icons") },
+            icon = { Symbol(Symbols.SentimentSatisfied, contentDescription = selected.name) },
             selected = selected == Pages.Symbols,
             onClick = {
                 selected = Pages.Symbols
                 navHostController.deeplink(selected.name)
             }
         )
+
         NavigationRailItem(
-            icon = { Symbol(Symbols.TextCompare, contentDescription = "JsonCompare") },
+            icon = { Symbol(Symbols.TextCompare, contentDescription = selected.name) },
             selected = selected == Pages.JsonCompare,
             onClick = {
                 selected = Pages.JsonCompare
+                navHostController.deeplink(selected.name)
+            }
+        )
+
+        NavigationRailItem(
+            icon = { Symbol(Symbols.Devices, contentDescription = selected.name) },
+            selected = selected == Pages.DeviceSimulator,
+            onClick = {
+                selected = Pages.DeviceSimulator
                 navHostController.deeplink(selected.name)
             }
         )
