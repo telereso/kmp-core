@@ -1,6 +1,6 @@
 [versions]
 # catalog
-catalog = "1.13-wasm.2"
+catalog = "1.13-wasm.3"
 
 #Java
 java = "21"
@@ -45,7 +45,7 @@ napier = "2.7.1"
 multiplatformSettings = "1.2.0"
 
 #Telereso
-teleresoCore = "0.6.0-wasm.2"
+teleresoCore = "0.6.0-wasm.3"
 teleresoKmp = "0.3.0-wasm.1"
 
 #Test

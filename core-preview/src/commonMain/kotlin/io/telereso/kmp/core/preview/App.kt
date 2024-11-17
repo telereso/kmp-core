@@ -41,7 +41,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import io.telereso.kmp.core.preview.pages.JsonComparePage
+import io.telereso.kmp.core.preview.pages.LoginPage
 import io.telereso.kmp.core.preview.pages.SymbolsPreviewPage
+import io.telereso.kmp.core.preview.resources.Res
+import io.telereso.kmp.core.preview.resources.login_page_screenshot
 import io.telereso.kmp.core.ui.compontents.Symbol
 import io.telereso.kmp.core.ui.getCurrentDeeplink
 import io.telereso.kmp.core.ui.models.Devices
@@ -49,7 +52,8 @@ import io.telereso.kmp.core.ui.models.SentimentSatisfied
 import io.telereso.kmp.core.ui.models.Symbols
 import io.telereso.kmp.core.ui.models.TextCompare
 import io.telereso.kmp.core.ui.widgets.DeeplinkNavHost
-import io.telereso.kmp.core.ui.widgets.DeviceSimulatorsPage
+import io.telereso.kmp.core.ui.pages.DefaultDevicesMap
+import io.telereso.kmp.core.ui.pages.DeviceSimulatorsPage
 import io.telereso.kmp.core.ui.widgets.base
 import io.telereso.kmp.core.ui.widgets.deeplink
 import io.telereso.kmp.core.ui.widgets.route
@@ -83,7 +87,11 @@ fun App() {
             }
 
             composable(currentUrl.route(Pages.DeviceSimulator.name)) {
-                DeviceSimulatorsPage()
+                DeviceSimulatorsPage(
+                    devicesMap = DefaultDevicesMap(Res.drawable.login_page_screenshot)
+                ) {
+                    LoginPage()
+                }
             }
         }
     }

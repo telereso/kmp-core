@@ -221,7 +221,16 @@ kotlin {
             }
         }
 
+        val noneAndroidMain by creating {
+            dependsOn(commonMain.get())
+
+            dependencies {
+
+            }
+        }
+
         jvmMain {
+            dependsOn(noneAndroidMain)
             dependencies {
 
                 implementation(kmpLibs.ktor.client.okhttp)
@@ -245,6 +254,7 @@ kotlin {
         }
 
         iosMain {
+            dependsOn(noneAndroidMain)
             dependencies {
                 /**
                  * For iOS, we add the ktor-client-darwin dependency
@@ -258,12 +268,10 @@ kotlin {
         }
 
         val jsWasmMain by creating {
+            dependsOn(noneAndroidMain)
             dependsOn(commonMain.get())
 
             dependencies {
-                /**
-                 * Engines are used to process network requests. Note that a specific platform may require a specific engine that processes network requests.
-                 */
                 implementation(kmpLibs.ktor.client.js)
 
                 implementation(kmpLibs.sqldelight.web.worker.driver)

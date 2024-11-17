@@ -32,6 +32,30 @@ actual fun getCurrentDeeplink(): Url {
     return _currentDeeplink.value
 }
 
-actual fun setCurrentPath(newPath: String) {
+actual fun browserSetCurrentPath(newPath: String) {
     window.history.pushState(null, "", "/$newPath")
 }
+
+
+actual fun browserDownloadFile(type: String, filename: String, base64Content: String) {
+    downloadFile(type, filename, base64Content)
+}
+
+private fun downloadFile(type: String, filename: String, base64Content: String) = js(
+    """{
+        const binaryString = atob($base64Content); // Decode base64 string to binary
+        const byteArray = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+            byteArray[i] = binaryString.charCodeAt(i);
+        }
+        const blob = new Blob([byteArray], { type: $type });
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = $filename;
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+        URL.revokeObjectURL(url);
+    }"""
+)

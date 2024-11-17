@@ -23,11 +23,3 @@
  */
 
 package io.telereso.kmp.core.ui
-
-import io.ktor.http.Url
-
-actual fun getCurrentDeeplink(): Url = DEFAULT_URL
-
-actual fun browserSetCurrentPath(newPath: String) {}
-
-actual fun browserDownloadFile(type: String, filename: String, base64Content: String){}

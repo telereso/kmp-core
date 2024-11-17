@@ -24,7 +24,9 @@
 
 package io.telereso.kmp.core.ui
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Modifier
 import io.ktor.http.Url
 
 
@@ -33,4 +35,13 @@ internal var _currentDeeplink = mutableStateOf(DEFAULT_URL)
 
 expect fun getCurrentDeeplink(): Url
 
-expect fun setCurrentPath(newPath: String)
+expect fun browserSetCurrentPath(newPath: String)
+
+expect fun browserDownloadFile(type: String, filename: String, base64Content: String)
+
+@Composable
+expect fun captureComposableAsBitmap(
+    width: Int,
+    height: Int,
+    content: @Composable (Modifier) -> Unit
+): ByteArray?

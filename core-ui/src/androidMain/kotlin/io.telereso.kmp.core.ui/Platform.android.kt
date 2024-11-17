@@ -24,8 +24,42 @@
 
 package io.telereso.kmp.core.ui
 
+import android.graphics.Bitmap
+import android.view.View
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.view.drawToBitmap
 import io.ktor.http.Url
+import java.io.ByteArrayOutputStream
 
 actual fun getCurrentDeeplink() : Url = DEFAULT_URL
 
-actual fun setCurrentPath(newPath: String) {}
+actual fun browserSetCurrentPath(newPath: String) {}
+
+actual fun browserDownloadFile(type: String, filename: String, base64Content: String){}
+
+@Composable
+actual fun captureComposableAsBitmap(
+    width: Int,
+    height: Int,
+    content: @Composable (Modifier) -> Unit
+): ByteArray?{
+    val composeView = ComposeView(LocalContext.current).apply {
+        setContent { content(Modifier) }
+    }
+
+    composeView.measure(
+        View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+        View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY)
+    )
+    composeView.layout(0, 0, width, height)
+
+    val bitmap = composeView.drawToBitmap()
+
+    // Convert Bitmap to ByteArray
+    val outputStream = ByteArrayOutputStream()
+    bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+    return outputStream.toByteArray()
+}

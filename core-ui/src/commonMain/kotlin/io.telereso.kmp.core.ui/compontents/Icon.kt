@@ -80,7 +80,7 @@ fun Symbol(
     fallback: DrawableResource? = null,
     tint: Color = LocalContentColor.current,
     size: Dp = 24.dp,
-    modifier: Modifier = Modifier.size(size),
+    modifier: Modifier = Modifier,
     contentDescription: String? = null
 ) {
     Icon(
@@ -89,7 +89,7 @@ fun Symbol(
         fallback = fallback,
         tint = tint,
         size = symbolConfig.size.name.removePrefix("_").toInt().dp,
-        modifier = modifier,
+        modifier = modifier.size(size),
         contentDescription = contentDescription
     )
 }
