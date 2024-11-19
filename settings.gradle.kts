@@ -31,6 +31,7 @@ include(":lib")
 project(":lib").name = rootProject.name
 include(":core-test")
 include(":core-ui")
+include(":core-ui-test")
 include(":core-icons")
 include(":core-preview")
 include(":catalog")

@@ -72,7 +72,7 @@ actual fun captureComposableAsBitmap(
     val canvas = Canvas(imageBitmap)
 
     // Render the Composable content into the Bitmap
-    scene.render(canvas, Clock.System.now().toEpochMilliseconds() * 1000)
+    scene.render(canvas, (Clock.System.now().toEpochMilliseconds() + 500) * 1000)
 
     // Convert the ImageBitmap to a PNG ByteArray
     val skiaBitmap = imageBitmap.asSkiaBitmap()

@@ -22,25 +22,13 @@
  * SOFTWARE.
  */
 
-package io.telereso.kmp.core.ui
+package io.telereso.kmp.core.ui.test
 
-import io.ktor.http.Url
-import androidx.compose.ui.window.ComposeUIViewController
-import io.telereso.kmp.core.ui.preview.CorePreview
-import platform.UIKit.UIViewController
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import io.telereso.kmp.core.ui.pages.DeviceInfo
 
-
-object TeleresoUI {
-    fun CorePreviewIos(): UIViewController =
-        ComposeUIViewController {
-            CorePreview()
-        }
-}
-
-actual fun getCurrentDeeplink() : Url = DEFAULT_URL
-
-actual fun browserSetCurrentPath(newPath: String) {}
-
-actual suspend fun browserDownloadFile(type: String, filename: String, base64Content: String) {}
-
-actual suspend fun browserZipAndDownloadFiles(filesJson: String) {}
+actual fun runScreenShotTest(
+    deviceInfo: DeviceInfo,
+    block: @Composable (Modifier) -> Unit
+) {}

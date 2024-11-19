@@ -175,9 +175,9 @@ kotlin {
 
                 implementation(compose.runtime)
                 implementation(compose.foundation)
-                implementation(compose.ui)
-                implementation(compose.material3)
-                implementation(compose.components.resources)
+                api(compose.ui)
+                api(compose.material3)
+                api(compose.components.resources)
                 implementation(compose.components.uiToolingPreview)
                 implementation(kmpLibs.compose.navigation)
                 implementation(kmpLibs.androidx.lifecycle.viewmodel)

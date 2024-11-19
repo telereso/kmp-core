@@ -37,7 +37,12 @@ expect fun getCurrentDeeplink(): Url
 
 expect fun browserSetCurrentPath(newPath: String)
 
-expect fun browserDownloadFile(type: String, filename: String, base64Content: String)
+expect suspend fun browserDownloadFile(type: String, filename: String, base64Content: String)
+
+/**
+ * pass a serialised array of files [ {"filename" : "test", "contentBase64": ""}, .....]
+ */
+expect suspend fun browserZipAndDownloadFiles(filesJson:String)
 
 @Composable
 expect fun captureComposableAsBitmap(

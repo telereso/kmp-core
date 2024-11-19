@@ -22,25 +22,41 @@
  * SOFTWARE.
  */
 
-package io.telereso.kmp.core.ui
+package io.telereso.kmp.core.ui.test
 
-import io.ktor.http.Url
-import androidx.compose.ui.window.ComposeUIViewController
-import io.telereso.kmp.core.ui.preview.CorePreview
-import platform.UIKit.UIViewController
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import io.telereso.kmp.core.preview.pages.LoginPage
+import io.telereso.kmp.core.ui.pages.Devices
+import kotlin.test.Test
 
 
-object TeleresoUI {
-    fun CorePreviewIos(): UIViewController =
-        ComposeUIViewController {
-            CorePreview()
+class ScreenShotTest {
+
+    @Test
+    fun testButton() = runScreenShotTest {
+        var text by remember { mutableStateOf("Hello") }
+        Text(
+            text = text,
+            modifier = Modifier.testTag("text")
+        )
+        Button(
+            onClick = { text = "Compose" },
+            modifier = Modifier.testTag("button")
+        ) {
+            Text("Click me")
         }
+    }
+
+    @Test
+    fun testPage() = runScreenShotTest(devices = listOf(Devices.Pixel_3, Devices.Pixel_4_XL)) {
+        LoginPage()
+    }
+
 }
-
-actual fun getCurrentDeeplink() : Url = DEFAULT_URL
-
-actual fun browserSetCurrentPath(newPath: String) {}
-
-actual suspend fun browserDownloadFile(type: String, filename: String, base64Content: String) {}
-
-actual suspend fun browserZipAndDownloadFiles(filesJson: String) {}

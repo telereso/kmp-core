@@ -40,6 +40,7 @@ import coil3.util.DebugLogger
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import io.telereso.kmp.core.CoreClient
 import io.telereso.kmp.core.preview.pages.JsonComparePage
 import io.telereso.kmp.core.preview.pages.LoginPage
 import io.telereso.kmp.core.preview.pages.SymbolsPreviewPage
@@ -53,17 +54,19 @@ import io.telereso.kmp.core.ui.models.Symbols
 import io.telereso.kmp.core.ui.models.TextCompare
 import io.telereso.kmp.core.ui.widgets.DeeplinkNavHost
 import io.telereso.kmp.core.ui.pages.DefaultDevicesMap
-import io.telereso.kmp.core.ui.pages.DeviceSimulatorsPage
+import io.telereso.kmp.core.ui.pages.SimulatorsPage
+import io.telereso.kmp.core.ui.pages.rememberSimulatorsState
 import io.telereso.kmp.core.ui.widgets.base
 import io.telereso.kmp.core.ui.widgets.deeplink
 import io.telereso.kmp.core.ui.widgets.route
 
 enum class Pages {
-    Symbols, JsonCompare, DeviceSimulator
+    Symbols, JsonCompare, Simulators
 }
 
 @Composable
 fun App() {
+//    CoreClient.debugLogger()
     setupApp()
     val navHostController = rememberNavController()
     val currentUrl = getCurrentDeeplink().base()
@@ -86,9 +89,10 @@ fun App() {
                 JsonComparePage()
             }
 
-            composable(currentUrl.route(Pages.DeviceSimulator.name)) {
-                DeviceSimulatorsPage(
-                    devicesMap = DefaultDevicesMap(Res.drawable.login_page_screenshot)
+            composable(currentUrl.route(Pages.Simulators.name)) {
+
+                SimulatorsPage(
+                    state = rememberSimulatorsState(DefaultDevicesMap(Res.drawable.login_page_screenshot))
                 ) {
                     LoginPage()
                 }
@@ -128,9 +132,9 @@ fun SidebarNavigationRail(
 
         NavigationRailItem(
             icon = { Symbol(Symbols.Devices, contentDescription = selected.name) },
-            selected = selected == Pages.DeviceSimulator,
+            selected = selected == Pages.Simulators,
             onClick = {
-                selected = Pages.DeviceSimulator
+                selected = Pages.Simulators
                 navHostController.deeplink(selected.name)
             }
         )
