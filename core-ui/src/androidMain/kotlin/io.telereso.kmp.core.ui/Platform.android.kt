@@ -24,15 +24,22 @@
 
 package io.telereso.kmp.core.ui
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.view.View
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.drawToBitmap
 import io.ktor.http.Url
+import io.telereso.kmp.core.Task
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import java.io.ByteArrayOutputStream
+import kotlin.time.Duration
 
 actual fun getCurrentDeeplink() : Url = DEFAULT_URL
 
@@ -43,12 +50,16 @@ actual suspend fun browserDownloadFile(type: String, filename: String, base64Con
 actual suspend fun browserZipAndDownloadFiles(filesJson: String) {}
 
 @Composable
-actual fun captureComposableAsBitmap(
+actual  fun androidLocalContext(): Any? = LocalContext.current
+
+actual suspend fun captureComposableAsBitmap(
     width: Int,
     height: Int,
+    wait: Duration?,
+    context: Any?,
     content: @Composable (Modifier) -> Unit
 ): ByteArray?{
-    val composeView = ComposeView(LocalContext.current).apply {
+    val composeView = ComposeView(context as Context).apply {
         setContent { content(Modifier) }
     }
 
@@ -57,6 +68,8 @@ actual fun captureComposableAsBitmap(
         View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY)
     )
     composeView.layout(0, 0, width, height)
+
+    wait?.let { runBlocking { delay(it) } }
 
     val bitmap = composeView.drawToBitmap()
 

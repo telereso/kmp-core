@@ -27,8 +27,10 @@ package io.telereso.kmp.core.ui.test
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.telereso.kmp.core.ui.pages.DeviceInfo
+import kotlin.time.Duration
 
 actual fun runScreenShotTest(
-    deviceInfo: DeviceInfo,
+    device: DeviceInfo,
+    wait: Duration?,
     block: @Composable (Modifier) -> Unit
 ) {}

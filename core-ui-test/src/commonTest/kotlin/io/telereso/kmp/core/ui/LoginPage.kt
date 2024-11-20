@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package io.telereso.kmp.core.preview.pages
+package io.telereso.kmp.core.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -46,7 +46,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import io.telereso.kmp.core.ui.compontents.Icon
 import io.telereso.kmp.core.ui.compontents.Symbol
 import io.telereso.kmp.core.ui.models.ArrowBack
 import io.telereso.kmp.core.ui.models.Symbols

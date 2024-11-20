@@ -28,6 +28,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import io.ktor.http.Url
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 
 val DEFAULT_URL = Url("app://host")
@@ -45,8 +48,12 @@ expect suspend fun browserDownloadFile(type: String, filename: String, base64Con
 expect suspend fun browserZipAndDownloadFiles(filesJson:String)
 
 @Composable
-expect fun captureComposableAsBitmap(
+expect fun androidLocalContext(): Any?
+
+expect suspend fun captureComposableAsBitmap(
     width: Int,
     height: Int,
+    wait: Duration? = null,
+    context: Any? = null,
     content: @Composable (Modifier) -> Unit
 ): ByteArray?

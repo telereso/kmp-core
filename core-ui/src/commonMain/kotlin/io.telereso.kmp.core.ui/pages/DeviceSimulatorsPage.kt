@@ -75,6 +75,7 @@ import io.telereso.kmp.core.Http
 import io.telereso.kmp.core.Log
 import io.telereso.kmp.core.Platform
 import io.telereso.kmp.core.getPlatform
+import io.telereso.kmp.core.ui.androidLocalContext
 import io.telereso.kmp.core.ui.browserDownloadFile
 import io.telereso.kmp.core.ui.browserZipAndDownloadFiles
 import io.telereso.kmp.core.ui.captureComposableAsBitmap
@@ -84,6 +85,7 @@ import io.telereso.kmp.core.ui.models.Check
 import io.telereso.kmp.core.ui.models.Code
 import io.telereso.kmp.core.ui.models.Screenshot
 import io.telereso.kmp.core.ui.models.Symbols
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.io.buffered
@@ -94,6 +96,9 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 enum class DeviceBrand {
     Iphone, Pixel, Samsung, OnePlus, Huawei, Xiaomi, Sony
@@ -292,18 +297,13 @@ fun SimulatorsPage(
     }
 ) {
 
+    val context = androidLocalContext()
     var expanded by remember { mutableStateOf(false) }
+    var requestToDownloadScreenShots by remember { mutableStateOf(false) }
 
     val leftDrawerState = rememberDrawerState(DrawerValue.Closed)
 
     val scope = rememberCoroutineScope()
-
-    val screenShotsReady = state.simulatorsStates.all { it.screenShotByteArray != null }
-
-    LaunchedEffect(state.requestToDownloadScreenShots, screenShotsReady) {
-        if (state.requestToDownloadScreenShots && screenShotsReady)
-            state.downloadScreenShots()
-    }
 
     ModalNavigationDrawer(drawerState = leftDrawerState, drawerContent = {
         ModalDrawerSheet {
@@ -373,14 +373,18 @@ fun SimulatorsPage(
 
                 TextButton(
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.primaryContainer),
-                    enabled = !state.requestToDownloadScreenShots,
+                    enabled = !requestToDownloadScreenShots,
                     onClick = {
-                        if (state.alwaysCaptureScreenShots)
-                            scope.launch(DispatchersProvider.Default) {
+                        requestToDownloadScreenShots = true
+                        scope.launch(DispatchersProvider.Default) {
+                            if (state.alwaysCaptureScreenShots)
+                                state.downloadScreenShots()
+                            else {
+                                state.captureScreenShots(context, content)
                                 state.downloadScreenShots()
                             }
-                        else
-                            state.captureAndDownloadScreenShot()
+                            requestToDownloadScreenShots = false
+                        }
                     }
                 ) {
                     Text("Capture Screenshots")
@@ -398,6 +402,7 @@ fun SimulatorsPage(
                 state.selectedSimulatorsStates.forEach {
                         Simulator(
                             state = it,
+                            scope = scope,
                             content = content,
                     )
                 }
@@ -409,9 +414,11 @@ fun SimulatorsPage(
 @Composable
 fun Simulator(
     state: SimulatorState = rememberSimulatorState(),
+    scope: CoroutineScope = rememberCoroutineScope(),
     content: @Composable (Modifier) -> Unit,
 ) {
     var alpha by remember { mutableStateOf(0.5f) }
+    val context = androidLocalContext()
 
     val contentModifier = Modifier
         .alpha(1 - alpha)
@@ -419,19 +426,7 @@ fun Simulator(
 
     LaunchedEffect(Unit) {
         if (state.alwaysCaptureScreenShots)
-            state.captureScreenShot()
-    }
-
-    if (state.capturingScreenShot) {
-        state.captureScreenShot(content)
-    }
-
-    LaunchedEffect(state.requestToDownloadScreenShot, state.screenShotByteArray != null) {
-        if (state.requestToDownloadScreenShot && state.screenShotByteArray != null)
-            withContext(DispatchersProvider.Default) {
-                state.downloadScreenShot()
-            }
-
+            state.captureScreenShot(context, content)
     }
 
     state.deviceInfo.apply {
@@ -455,13 +450,21 @@ fun Simulator(
                     Symbol(
                         Symbols.AddAPhoto,
                         modifier = Modifier.clickable {
-                            state.captureAndDownloadScreenShot()
+                            scope.launch(DispatchersProvider.Default) {
+                                state.captureScreenShot(context, content)
+                                state.downloadScreenShot()
+                            }
                         }
                     )
 
                     Spacer(modifier = Modifier.weight(1f))
 
-                    Symbol(Symbols.Code)
+                    Symbol(
+                        Symbols.Code,
+                        modifier = Modifier.clickable {
+                            alpha = 0f
+                        }
+                    )
 
                     Slider(
                         value = alpha,
@@ -471,7 +474,12 @@ fun Simulator(
                         modifier = Modifier.width(200.dp)
                     )
 
-                    Symbol(Symbols.Screenshot)
+                    Symbol(
+                        Symbols.Screenshot,
+                        modifier = Modifier.clickable {
+                            alpha = 1f
+                        }
+                    )
 
                     Spacer(modifier = Modifier.weight(1f))
                 }
@@ -515,11 +523,13 @@ fun Simulator(
 fun rememberSimulatorState(
     deviceInfo: DeviceInfo = DeviceInfo(DeviceBrand.Pixel, "Pixel 7", 412.dp, 915.dp),
     alwaysCaptureScreenShots: Boolean = false,
+    screenShotWait: Duration? = 500.toDuration(DurationUnit.MILLISECONDS)
 ): SimulatorState {
     return remember {
         SimulatorState(
             deviceInfo = deviceInfo,
-            alwaysCaptureScreenShots = alwaysCaptureScreenShots
+            alwaysCaptureScreenShots = alwaysCaptureScreenShots,
+            screenShotWait = screenShotWait
         )
     }
 }
@@ -527,42 +537,29 @@ fun rememberSimulatorState(
 class SimulatorState constructor(
     val deviceInfo: DeviceInfo,
     val alwaysCaptureScreenShots: Boolean = false,
+    private val screenShotWait: Duration?
 ) {
-    private var _capturingScreenShot by mutableStateOf(false)
-    val capturingScreenShot get() = _capturingScreenShot
 
     private var _screenShotByteArray by mutableStateOf<ByteArray?>(null)
     val screenShotByteArray get() = _screenShotByteArray
 
-    private var _requestToDownloadScreenShot by mutableStateOf(false)
-    val requestToDownloadScreenShot get() = _requestToDownloadScreenShot
-
-    fun captureScreenShot() {
-        _capturingScreenShot = true
-    }
-
-    fun captureAndDownloadScreenShot() {
-        _capturingScreenShot = true
-        _requestToDownloadScreenShot = true
-    }
-
-    @Composable
-    fun captureScreenShot(content: @Composable (Modifier) -> Unit) {
+    suspend fun captureScreenShot(context: Any?, content: @Composable (Modifier) -> Unit): ByteArray? {
         _screenShotByteArray = captureComposableAsBitmap(
             deviceInfo.screenWidth.value.toInt(),
             deviceInfo.screenHeight.value.toInt(),
-            content
+            wait = screenShotWait,
+            context = context,
+            content = content
         )
 
         if (_screenShotByteArray == null)
             Log.e("SimulatorState", Throwable("Failed to take screenshot"))
 
-        _capturingScreenShot = false
+        return _screenShotByteArray
     }
 
     @OptIn(ExperimentalEncodingApi::class)
     suspend fun downloadScreenShot() {
-        _requestToDownloadScreenShot = false
         _screenShotByteArray?.apply {
             when (getPlatform().type) {
                 Platform.Type.BROWSER -> {
@@ -597,12 +594,14 @@ fun rememberSimulatorsState(
         Devices.Xiaomi_Mi_10,
     ),
     alwaysCaptureScreenShots: Boolean = true,
+    screenShotWait: Duration? = 500.toDuration(DurationUnit.MILLISECONDS)
 ): SimulatorsState {
     return remember {
         SimulatorsState(
             initDevicesInfoMap = initDevicesInfoMap,
             initSelectedDevices = initSelectedDevices,
-            alwaysCaptureScreenShots = alwaysCaptureScreenShots
+            alwaysCaptureScreenShots = alwaysCaptureScreenShots,
+            screenShotWait = screenShotWait
         )
     }
 }
@@ -611,41 +610,33 @@ class SimulatorsState(
     val initDevicesInfoMap: Map<DeviceBrand, List<DeviceInfo>>,
     initSelectedDevices: List<DeviceInfo> = listOf(),
     val alwaysCaptureScreenShots: Boolean = false,
+    private val screenShotWait: Duration?,
 ) {
     val simulatorsStates =
         initDevicesInfoMap.flatMap { it.value }
             .map {
                 SimulatorState(
                     deviceInfo = it,
-                    alwaysCaptureScreenShots = alwaysCaptureScreenShots
+                    alwaysCaptureScreenShots = alwaysCaptureScreenShots,
+                    screenShotWait = screenShotWait
                 )
             }
 
     var selectedDevices by mutableStateOf(initSelectedDevices)
-
-    private var _requestToDownloadScreenShots by mutableStateOf(false)
-    val requestToDownloadScreenShots get() = _requestToDownloadScreenShots
-
-    fun captureScreenShots() {
-        simulatorsStates.forEach { it.captureScreenShot() }
-    }
-
-    fun captureAndDownloadScreenShot() {
-        _requestToDownloadScreenShots = true
-        simulatorsStates.forEach {
-            it.captureScreenShot()
-        }
-    }
 
     val selectedSimulatorsStates
         get() = simulatorsStates.filter { i ->
             selectedDevices.any { it.name == i.deviceInfo.name }
         }
 
+    suspend fun captureScreenShots(context: Any?, content: @Composable (Modifier) -> Unit) {
+        selectedSimulatorsStates.forEach {
+            it.captureScreenShot(context, content)
+        }
+    }
+
     @OptIn(ExperimentalEncodingApi::class)
     suspend fun downloadScreenShots() {
-        if (_requestToDownloadScreenShots) return
-        _requestToDownloadScreenShots = true
         runCatching {
             when (getPlatform().type) {
                 Platform.Type.BROWSER -> {
@@ -674,7 +665,5 @@ class SimulatorsState(
         }.getOrElse {
             Log.e("SimulatorState", it)
         }
-        _requestToDownloadScreenShots = false
-
     }
 }

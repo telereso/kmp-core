@@ -160,6 +160,8 @@ kotlin {
                 implementation(project(":core-ui"))
 
                 implementation(kmpLibs.bundles.ktor)
+                implementation(kmpLibs.bundles.coil3)
+                implementation(kmpLibs.coil3.test)
 
                 implementation(compose.runtime)
                 implementation(compose.foundation)

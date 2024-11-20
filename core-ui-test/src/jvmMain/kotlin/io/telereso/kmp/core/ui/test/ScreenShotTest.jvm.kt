@@ -31,21 +31,36 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.InternalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.scene.MultiLayerComposeScene
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runSkikoComposeUiTest
+import io.ktor.utils.io.readText
+import io.telereso.kmp.core.Http
+import io.telereso.kmp.core.Task
+import io.telereso.kmp.core.ui.androidLocalContext
 import io.telereso.kmp.core.ui.pages.DeviceInfo
 import io.telereso.kmp.core.ui.pages.Simulator
 import io.telereso.kmp.core.ui.pages.rememberSimulatorState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.io.RawSource
 import kotlinx.io.buffered
+import kotlinx.io.files.FileSystem
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.readByteArray
+import kotlin.time.Duration
 
 private val screenShotDir = System.getProperty("user.dir").plus("/telereso/screenShots/desktop")
 private val screenShotDirPath = Path(screenShotDir)
+
+private val screenShotConfig = Path(
+    System.getProperty("user.dir").plus("/build/telereso/screenShots/config.json")
+)
 
 private val screenShotDiffDir =
     System.getProperty("user.dir").plus("/build/telereso/screenShots/diff/desktop/")
@@ -56,31 +71,46 @@ private val screenShotReportDirPath = Path(
 )
 
 
-@OptIn(ExperimentalTestApi::class)
+
+@OptIn(ExperimentalTestApi::class, InternalComposeUiApi::class)
 actual fun runScreenShotTest(
     device: DeviceInfo,
+    wait: Duration?,
     block: @Composable (Modifier) -> Unit
 ) {
     val callerName = getCallerName()
     val className = callerName.split(".").let { p -> p[p.lastIndex - 1] }
     val testName = callerName.split(".").let { p -> p[p.lastIndex] }
     val screenShotName = device.fileName().plus("_").plus(callerName)
-    var savingFile = false
-    runSkikoComposeUiTest(
-        size = Size(device.screenWidth.value, device.screenHeight.value)
-    ) {
-        setContent {
-            if (savingFile) return@setContent
+    var error: Throwable? = null
 
+    val scene = MultiLayerComposeScene()
+    scene.setContent {
+        val state = rememberSimulatorState(device, screenShotWait = wait)
             val scope = rememberCoroutineScope()
-            val state = rememberSimulatorState(device)
-            state.captureScreenShot()
-            var byteArrays by remember { mutableStateOf<Pair<ByteArray, ByteArray>?>(null) }
+        val context = androidLocalContext()
 
-            LaunchedEffect(byteArrays) {
-                byteArrays?.apply {
-                    scope.launch {
-                        val byteArray = verify(first, second, 1f)
+        LaunchedEffect(Unit) {
+            scope.launch {
+                val screenShotByteArray = state.captureScreenShot(context, block)
+                    ?: throw IllegalStateException("Screenshot byteArray can't be null, failed to capture screenshot")
+
+
+                val config = SystemFileSystem.sourceOrNull(screenShotConfig)
+                    ?.buffered()
+                    ?.use { it.readText() }
+                    ?: "{}"
+
+                val tolerance = Http
+                    .ktorConfigJson
+                    .decodeFromString<Map<String, String>>(config)["tolerance"]?.toFloat() ?: 1f
+
+                val baseScreenShot = getBaseScreenShot(screenShotName)
+
+                if (baseScreenShot == null) {
+                    saveBaseScreenShot(screenShotName, screenShotByteArray)
+                } else {
+                    val byteArray = verify(baseScreenShot, screenShotByteArray, tolerance)
                         if (byteArray != null) {
                             if (!SystemFileSystem.exists(screenShotDiffDirPath))
                                 SystemFileSystem.createDirectories(screenShotDiffDirPath)
@@ -102,13 +132,13 @@ actual fun runScreenShotTest(
                             SystemFileSystem.sink(basePath)
                                 .buffered()
                                 .use { sink ->
-                                    sink.write(first)
+                                    sink.write(baseScreenShot)
                                 }
 
                             SystemFileSystem.sink(newPath)
                                 .buffered()
                                 .use { sink ->
-                                    sink.write(second)
+                                    sink.write(screenShotByteArray)
                                 }
 
                             SystemFileSystem.sink(deferencePath)
@@ -129,30 +159,29 @@ actual fun runScreenShotTest(
                                     )
                                 }
 
-                            throw AssertionError("Screenshot does not match the expected output for $testName on Device: ${device.name}")
+                            error = AssertionError("Screenshot does not match the expected output for $testName on Device: ${device.name}")
                         }
-
                     }
                 }
             }
 
-            Simulator(
-                state = state,
-                content = block
-            )
-
-            val screenShotByteArray = state.screenShotByteArray
-                ?: throw IllegalStateException("Screenshot byteArray can't be null, failed to capture screenshot")
-
-            val baseScreenShot = getBaseScreenShot(screenShotName)
-            if (baseScreenShot == null) {
-                saveBaseScreenShot(screenShotName, screenShotByteArray)
-            } else {
-                savingFile = true
-                byteArrays = baseScreenShot to screenShotByteArray
-            }
         }
-    }
+
+    scene.calculateContentSize()
+
+    scene.close()
+
+    error?.let { throw it }
+
+//    runSkikoComposeUiTest(
+//        size = Size(device.screenWidth.value, device.screenHeight.value)
+//    ) {
+//
+//    }
+}
+
+private fun FileSystem.sourceOrNull(path: Path): RawSource? {
+    return if (exists(path)) source(path) else null
 }
 
 private fun Path.child(name: String): Path {

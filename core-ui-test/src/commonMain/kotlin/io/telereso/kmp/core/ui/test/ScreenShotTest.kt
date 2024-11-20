@@ -28,19 +28,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.telereso.kmp.core.ui.pages.DeviceInfo
 import io.telereso.kmp.core.ui.pages.Devices
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 expect fun runScreenShotTest(
     device: DeviceInfo = Devices.Pixel_3,
+    wait: Duration? = 500.toDuration(DurationUnit.MILLISECONDS),
     block: @Composable (Modifier) -> Unit
 )
 
 fun runScreenShotTest(
     devices: List<DeviceInfo>,
+    wait: Duration? = 500.toDuration(DurationUnit.MILLISECONDS),
     block: @Composable (Modifier) -> Unit
 ) {
     devices.forEach { device ->
         runScreenShotTest(
             device = device,
+            wait = wait,
             block = block
         )
     }
