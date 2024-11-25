@@ -35,13 +35,7 @@ plugins {
 kotlin {
     applyDefaultHierarchyTemplate()
 
-    androidTarget {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = kmpLibs.versions.java.get()
-            }
-        }
-    }
+    androidTarget()
 
     listOf(
         iosX64(),
@@ -54,7 +48,13 @@ kotlin {
         }
     }
 
-    jvm("desktop")
+    jvm("desktop") {
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = kmpLibs.versions.java.get()
+            }
+        }
+    }
 
     sourceSets {
         commonMain.dependencies {
@@ -106,6 +106,15 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.valueOf("VERSION_${kmpLibs.versions.java.get()}")
         targetCompatibility = JavaVersion.valueOf("VERSION_${kmpLibs.versions.java.get()}")
+    }
+    kotlin {
+        androidTarget {
+            compilations.all {
+                kotlinOptions {
+                    jvmTarget = kmpLibs.versions.java.get()
+                }
+            }
+        }
     }
 }
 

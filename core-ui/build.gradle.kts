@@ -115,7 +115,13 @@ kotlin {
         }
     }
 
-    jvm()
+    jvm {
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = kmpLibs.versions.java.get()
+            }
+        }
+    }
 
     js {
         moduleName = "teleresoUI"
@@ -169,9 +175,9 @@ kotlin {
 
                 implementation(compose.runtime)
                 implementation(compose.foundation)
-                implementation(compose.ui)
-                implementation(compose.material3)
-                implementation(compose.components.resources)
+                api(compose.ui)
+                api(compose.material3)
+                api(compose.components.resources)
                 implementation(compose.components.uiToolingPreview)
                 implementation(kmpLibs.compose.navigation)
                 implementation(kmpLibs.androidx.lifecycle.viewmodel)
@@ -215,7 +221,16 @@ kotlin {
             }
         }
 
+        val noneAndroidMain by creating {
+            dependsOn(commonMain.get())
+
+            dependencies {
+
+            }
+        }
+
         jvmMain {
+            dependsOn(noneAndroidMain)
             dependencies {
 
                 implementation(kmpLibs.ktor.client.okhttp)
@@ -239,6 +254,7 @@ kotlin {
         }
 
         iosMain {
+            dependsOn(noneAndroidMain)
             dependencies {
                 /**
                  * For iOS, we add the ktor-client-darwin dependency
@@ -252,10 +268,8 @@ kotlin {
         }
 
         jsMain {
+            dependsOn(noneAndroidMain)
             dependencies {
-                /**
-                 * Engines are used to process network requests. Note that a specific platform may require a specific engine that processes network requests.
-                 */
                 implementation(kmpLibs.ktor.client.js)
 
                 implementation(kmpLibs.sqldelight.web.worker.driver)
@@ -343,6 +357,17 @@ android {
         sourceCompatibility = JavaVersion.valueOf("VERSION_${kmpLibs.versions.java.get()}")
         targetCompatibility = JavaVersion.valueOf("VERSION_${kmpLibs.versions.java.get()}")
     }
+
+    kotlin {
+        androidTarget {
+            compilations.all {
+                kotlinOptions {
+                    jvmTarget = kmpLibs.versions.java.get()
+                }
+            }
+        }
+    }
+
     dependencies {
         debugImplementation(compose.uiTooling)
     }

@@ -32,7 +32,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavBackStackEntry
@@ -43,8 +42,7 @@ import io.ktor.http.URLBuilder
 import io.ktor.http.Url
 import io.ktor.http.path
 import io.telereso.kmp.core.ui._currentDeeplink
-import io.telereso.kmp.core.ui.getCurrentDeeplink
-import io.telereso.kmp.core.ui.setCurrentPath
+import io.telereso.kmp.core.ui.browserSetCurrentPath
 
 @Composable
 fun DeeplinkNavHost(
@@ -65,7 +63,7 @@ fun DeeplinkNavHost(
 ) {
 
     LaunchedEffect(Unit) {
-        setCurrentPath(startDestination.lowercase())
+        browserSetCurrentPath(startDestination.lowercase())
     }
 
     NavHost(
@@ -106,5 +104,5 @@ fun NavHostController.deeplink(route: String) {
     builder.path(*newSegments.toTypedArray())
     _currentDeeplink.value = builder.build()
     navigate(_currentDeeplink.value.toString())
-    setCurrentPath(route.lowercase())
+    browserSetCurrentPath(route.lowercase())
 }

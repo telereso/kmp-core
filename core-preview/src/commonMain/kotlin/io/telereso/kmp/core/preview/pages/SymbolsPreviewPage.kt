@@ -24,9 +24,14 @@
 
 package io.telereso.kmp.core.preview.pages
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.runtime.Composable
 
 
@@ -37,7 +42,9 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DrawerValue
@@ -63,16 +70,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
 import com.mohamedrejeb.richeditor.annotation.ExperimentalRichTextApi
 import io.telereso.kmp.core.icons.MaterialIcons
 import io.telereso.kmp.core.icons.resources.Check
@@ -84,6 +99,7 @@ import io.telereso.kmp.core.ui.compontents.Icon
 import io.telereso.kmp.core.ui.compontents.Symbol
 import io.telereso.kmp.core.ui.models.Close
 import io.telereso.kmp.core.ui.models.ContentCopy
+import io.telereso.kmp.core.ui.models.QuestionMark
 import io.telereso.kmp.core.ui.models.SymbolConfig
 import io.telereso.kmp.core.ui.models.SymbolConfig.Grade
 import io.telereso.kmp.core.ui.models.SymbolConfig.Size
@@ -102,7 +118,8 @@ fun SymbolsPreviewPage() {
 
     var symbols by remember { mutableStateOf<List<MySymbolConfig>>(emptyList()) }
     var selected by remember { mutableStateOf<MySymbolConfig?>(null) }
-    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val leftDrawerState = rememberDrawerState(DrawerValue.Closed)
+    val rightDrawerState = rememberDrawerState(DrawerValue.Closed)
     var codeSnippet by remember { mutableStateOf("") }
 
     val scope = rememberCoroutineScope()
@@ -121,9 +138,9 @@ fun SymbolsPreviewPage() {
 
     LaunchedEffect(selected) {
         if (selected == null) {
-            drawerState.close()
+            rightDrawerState.close()
         } else {
-            drawerState.open()
+            rightDrawerState.open()
 
             fun setSymbolCode() {
                 val s = selected!!
@@ -188,8 +205,7 @@ fun SymbolsPreviewPage() {
     }
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-        ModalNavigationDrawer(drawerState = drawerState, drawerContent = {
-
+        ModalNavigationDrawer(drawerState = rightDrawerState, drawerContent = {
             ModalDrawerSheet {
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                     Column(
@@ -255,28 +271,41 @@ fun SymbolsPreviewPage() {
             }
         }) {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-                Row(modifier = Modifier.fillMaxSize()) {
-                    // Left Panel - Customize Section
-                    Box(
-                        modifier = Modifier.width(250.dp)
-                            .fillMaxHeight()
-                            .padding(16.dp)
-                            .verticalScroll(rememberScrollState())
-                    ) {
-                        CustomizeSection(customization) { newValue ->
-                            customization = newValue
+                ModalNavigationDrawer(drawerState = leftDrawerState, drawerContent = {
+                    ModalDrawerSheet {
+                        Box(
+                            modifier = Modifier.width(250.dp)
+                                .fillMaxHeight()
+                                .padding(16.dp)
+                                .verticalScroll(rememberScrollState())
+                        ) {
+                            CustomizeSection(customization) { newValue ->
+                                customization = newValue
+                            }
                         }
                     }
+                }) {
 
                     // Center Panel - Icons Grid
                     Box(
-                        modifier = Modifier.fillMaxHeight().padding(16.dp).weight(1f)
+                        modifier = Modifier.fillMaxHeight().padding(16.dp)
                     ) {
-                        SymbolGrid(symbols) { symbol ->
+                        SymbolGrid(
+                            symbols,
+                            onShowCustom = {
+                                scope.launch {
+                                    if (leftDrawerState.isOpen)
+                                        leftDrawerState.close()
+                                    else
+                                        leftDrawerState.open()
+                                }
+                            }
+                        ) { symbol ->
                             selected = symbol
                         }
                     }
                 }
+
             }
         }
     }
@@ -360,7 +389,50 @@ fun CustomizeSection(
                 onChange(customization.copy(type = SymbolConfig.Type.valueOf(it.uppercase())))
             }
 
-            Text("Host", style = MaterialTheme.typography.titleMedium)
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                val interactionSource = remember { MutableInteractionSource() }
+                val isHovered by interactionSource.collectIsHoveredAsState()
+
+                Text("Host", style = MaterialTheme.typography.titleMedium)
+
+                Box(
+                    modifier = Modifier.size(32.dp)
+                        .hoverable(interactionSource)
+                        .padding(10.dp)
+                        .border(
+                            1.dp,
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            shape = CircleShape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Symbol(
+                        Symbols.QuestionMark,
+                        modifier = Modifier.fillMaxSize()
+                    )
+
+                    if (isHovered) {
+                        Popup(
+                            alignment = Alignment.TopCenter,
+                            offset = IntOffset(62, 32)  // Adjust to position above the icon
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .hoverable(interactionSource)
+                                    .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(4.dp))
+                                    .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
+                                    .padding(8.dp)
+                            ) {
+                                HostWithClickableText()
+                            }
+                        }
+                    }
+                }
+
+
+            }
 
             TextField(
                 customization.host,
@@ -378,6 +450,36 @@ fun CustomizeSection(
         }
     }
 
+}
+
+@Composable
+fun HostWithClickableText() {
+    val annotatedString = buildAnnotatedString {
+        append("You can host the symbols at your own CDN\n")
+
+        // Add clickable part with an annotation
+        pushStringAnnotation(tag = "DOWNLOAD", annotation = "download")
+        withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
+            append("Click to download")
+        }
+        pop()  // End of clickable text
+        append(" symbols (~2GB)")
+    }
+
+    // Handle clicks on the annotation
+    val uriHandler = LocalUriHandler.current
+    ClickableText(
+        text = annotatedString,
+        style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurface),
+        modifier = Modifier.pointerHoverIcon(PointerIcon.Hand), // Change cursor to hand on hover
+        onClick = { offset ->
+            annotatedString.getStringAnnotations(tag = "DOWNLOAD", start = offset, end = offset)
+                .firstOrNull()?.let {
+                    // Handle the click here, e.g., open a download link or trigger a download action
+                    uriHandler.openUri("https://storage.googleapis.com/websites.telereso.io/files/symobls.zip") // Replace with actual download URL
+                }
+        }
+    )
 }
 
 @Composable
@@ -440,7 +542,11 @@ fun DropdownMenuSelector(label: String, options: List<String>, onSelected: (Stri
 }
 
 @Composable
-fun SymbolGrid(symbols: List<MySymbolConfig>, onSelected: (MySymbolConfig) -> Unit) {
+fun SymbolGrid(
+    symbols: List<MySymbolConfig>,
+    onShowCustom: () -> Unit = {},
+    onSelected: (MySymbolConfig) -> Unit
+) {
 
     var searchKey by remember { mutableStateOf("") }
     val state = rememberLazyGridState()
@@ -451,18 +557,26 @@ fun SymbolGrid(symbols: List<MySymbolConfig>, onSelected: (MySymbolConfig) -> Un
         else mutableStateOf(symbols.filter { it.name.contains(searchKey, true) })
     }
 
-
     Column {
         TextField(placeholder = { Text("Search Symbols") }, value = searchKey, onValueChange = {
             searchKey = it
         })
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(8.dp))
+
+        TextButton(
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primaryContainer),
+            onClick = onShowCustom
+        ) {
+            Text("Customize")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         LazyVerticalGrid(
             state = state,
             columns = GridCells.Adaptive(minSize = 160.dp), // Adjust minSize for column width
-            contentPadding = PaddingValues(8.dp),
+//            contentPadding = PaddingValues(2.dp),
         ) {
             items(filteredSymbols) { symbol ->
                 Column(horizontalAlignment = Alignment.CenterHorizontally,
@@ -588,7 +702,7 @@ val importSymbols = """
         |kotlin {
         |    sourceSets {
         |        commonMain.dependencies {
-        |            implementation("io.telereso.kmp:core-ui:0.5.0")
+        |            implementation("io.telereso.kmp:core-ui:0.5.1")
         |        }   
         |    }
         |}
@@ -599,7 +713,7 @@ val importIcons = """
         |kotlin {
         |    sourceSets {
         |        commonMain.dependencies {
-        |            implementation("io.telereso.kmp:core-icons:0.5.0")
+        |            implementation("io.telereso.kmp:core-icons:0.5.1")
         |        }   
         |    }
         |}

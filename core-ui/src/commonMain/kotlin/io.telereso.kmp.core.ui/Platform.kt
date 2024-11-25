@@ -24,8 +24,13 @@
 
 package io.telereso.kmp.core.ui
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Modifier
 import io.ktor.http.Url
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 
 val DEFAULT_URL = Url("app://host")
@@ -33,4 +38,22 @@ internal var _currentDeeplink = mutableStateOf(DEFAULT_URL)
 
 expect fun getCurrentDeeplink(): Url
 
-expect fun setCurrentPath(newPath: String)
+expect fun browserSetCurrentPath(newPath: String)
+
+expect suspend fun browserDownloadFile(type: String, filename: String, base64Content: String)
+
+/**
+ * pass a serialised array of files [ {"filename" : "test", "contentBase64": ""}, .....]
+ */
+expect suspend fun browserZipAndDownloadFiles(filesJson:String)
+
+@Composable
+expect fun androidLocalContext(): Any?
+
+expect suspend fun captureComposableAsBitmap(
+    width: Int,
+    height: Int,
+    wait: Duration? = null,
+    context: Any? = null,
+    content: @Composable (Modifier) -> Unit
+): ByteArray?
