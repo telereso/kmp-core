@@ -102,9 +102,12 @@ Highlights changes between the base image and the new screenshot.
 Provides an onion-skin overlay to compare the base and new screenshots visually.
 
 ## CI Integration
-Screenshot testing runs exclusively on the desktop platform (JVM). No additional changes are required for your current CI pipelines.
+Screenshot testing runs exclusively on the desktop platform (JVM). 
+
+No additional changes are required for your current CI pipelines.
 
 ## Platform Support
-Android/iOS: Currently unsupported due to the complexity of managing emulators/simulators and potential flakiness in CI.
 
-Web: Optional support for Kotlin/Wasm is planned for future releases.
+* Desktop (jvm): tests and screenshots will be performed on this target
+* Web: Optional support for Kotlin/Wasm is planned for future releases.
+* Android/iOS: Tests on these targets will be empty (always pass), to avoid the need of providing emulators/simulators and potential flakiness in CI.
