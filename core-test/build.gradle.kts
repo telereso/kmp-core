@@ -128,7 +128,13 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
 
-    jvm()
+    jvm {
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = kmpLibs.versions.java.get()
+            }
+        }
+    }
 
     js {
         browser()
@@ -278,6 +284,15 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.valueOf("VERSION_${kmpLibs.versions.java.get()}")
         targetCompatibility = JavaVersion.valueOf("VERSION_${kmpLibs.versions.java.get()}")
+    }
+    kotlin {
+        androidTarget {
+            compilations.all {
+                kotlinOptions {
+                    jvmTarget = kmpLibs.versions.java.get()
+                }
+            }
+        }
     }
 }
 

@@ -32,6 +32,19 @@ actual fun getCurrentDeeplink(): Url {
     return _currentDeeplink.value
 }
 
-actual fun setCurrentPath(newPath: String) {
+actual fun browserSetCurrentPath(newPath: String) {
     window.history.pushState(null, "", "/$newPath")
 }
+
+
+actual suspend fun browserDownloadFile(type: String, filename: String, base64Content: String) {
+    downloadFile(type, filename, base64Content)
+}
+
+actual suspend fun browserZipAndDownloadFiles(filesJson:String){
+    zipAndDownloadFiles(filesJson)
+}
+
+private fun downloadFile(type: String, filename: String, base64Content: String) {}
+
+private fun zipAndDownloadFiles(filesJson: String) {}

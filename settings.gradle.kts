@@ -22,6 +22,7 @@ dependencyResolutionManagement {
     versionCatalogs {
         create("kmpLibs") {
             from(files("catalog/kmpLibs.versions.toml"))
+//            version("teleresoKmp", "0.0.1-local")
         }
     }
 }
@@ -31,6 +32,7 @@ include(":lib")
 project(":lib").name = rootProject.name
 include(":core-test")
 include(":core-ui")
+include(":core-ui-test")
 include(":core-icons")
 include(":core-preview")
 include(":catalog")

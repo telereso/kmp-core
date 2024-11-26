@@ -151,7 +151,9 @@ catalog {
             Triple("test.kotest.framework.engine", kmpLibs.test.kotest.framework.engine.get(), "kotest"),
             Triple("test.kotest.assertions.core", kmpLibs.test.kotest.assertions.core.get(), "kotest"),
             Triple("test.turbine", kmpLibs.test.turbine.get(), "turbine"),
-            Triple("test.telereso.core", kmpLibs.test.telereso.core.get(), "teleresoCore"),
+            Triple("test.telereso.core", kmpLibs.test.telereso.core.asProvider().get(), "teleresoCore"),
+            Triple("test.telereso.core.ui", kmpLibs.test.telereso.core.ui.get(), "teleresoCore"),
+            Triple("test.coil3", kmpLibs.test.coil3.get(), "coil3"),
             Triple("test.mockk", kmpLibs.test.mockk.get(), "mockk"),
 
             )

@@ -1,9 +1,9 @@
 [versions]
 # catalog
-catalog = "1.12"
+catalog = "1.13"
 
 #Java
-java = "21"
+java = "17"
 
 #Kotlin
 kotlin = "2.0.20"
@@ -15,7 +15,7 @@ detekt = "1.23.5"
 #Compose
 compose = "1.6.11"
 compose-navigation = "2.7.0-alpha07"
-coil3 = "3.0.2"
+coil3 = "3.0.4"
 compose-webview = "1.9.20"
 
 #Android
@@ -45,8 +45,8 @@ napier = "2.7.1"
 multiplatformSettings = "1.2.0"
 
 #Telereso
-teleresoCore = "0.5.1"
-teleresoKmp = "0.2.1"
+teleresoCore = "0.6.0"
+teleresoKmp = "0.3.0"
 
 #Test
 test-logger = "3.2.0"
@@ -126,7 +126,9 @@ test-kotest-assertions-core = { group = "io.kotest", name = "kotest-assertions-c
 test-multiplatform-settings-test = { group = "com.russhwolf", name = "multiplatform-settings-test", version.ref = "multiplatformSettings" }
 test-turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 test-telereso-core = { group = "io.telereso.kmp", name = "core-test", version.ref = "teleresoCore" }
+test-telereso-core-ui = { group = "io.telereso.kmp", name = "core-ui-test", version.ref = "teleresoCore" }
 test-mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+test-coil3 = { module = "io.coil-kt.coil3:coil-test", version.ref = "coil3" }
 
 [bundles]
 ktor = [

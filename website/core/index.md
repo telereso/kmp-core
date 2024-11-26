@@ -30,7 +30,6 @@ commonMain dependencies
 ```kotlin
 val coreVersion = "<latest-version>"
 val commonMain by getting {
-    kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
     dependencies {
         api("io.telereso.kmp:core:$coreVersion")
     }

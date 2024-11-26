@@ -28,4 +28,8 @@ import io.ktor.http.Url
 
 actual fun getCurrentDeeplink(): Url = DEFAULT_URL
 
-actual fun setCurrentPath(newPath: String) {}
+actual fun browserSetCurrentPath(newPath: String) {}
+
+actual suspend fun browserDownloadFile(type: String, filename: String, base64Content: String) {}
+
+actual suspend fun browserZipAndDownloadFiles(filesJson: String) {}
