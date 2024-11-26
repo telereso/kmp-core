@@ -1,6 +1,6 @@
 [versions]
 # catalog
-catalog = "1.13-alpha.9"
+catalog = "1.13"
 
 #Java
 java = "17"
@@ -15,7 +15,7 @@ detekt = "1.23.5"
 #Compose
 compose = "1.6.11"
 compose-navigation = "2.7.0-alpha07"
-coil3 = "3.0.3"
+coil3 = "3.0.4"
 compose-webview = "1.9.20"
 
 #Android
@@ -45,8 +45,8 @@ napier = "2.7.1"
 multiplatformSettings = "1.2.0"
 
 #Telereso
-teleresoCore = "0.6.0-alpha.9"
-teleresoKmp = "0.3.0-alpha.8"
+teleresoCore = "0.6.0"
+teleresoKmp = "0.3.0"
 
 #Test
 test-logger = "3.2.0"
