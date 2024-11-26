@@ -112,7 +112,7 @@ class ScreenShotTest2 {
         devices = listOf(
             Devices.Pixel_3, Devices.Pixel_4_XL
         ),
-        wait = 2.toDuration(DurationUnit.SECONDS)
+        wait = 4.toDuration(DurationUnit.SECONDS)
     ) {
         setup()
         LoginPage()
