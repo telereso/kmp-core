@@ -5,7 +5,7 @@ parent: Core Test
 nav_order: 2
 ---
 
-# [Screenshot Testing](https://kmp.telereso.io/docs/core/latest/-core/io.telereso.kmp.core/-log/index.html){:target="_blank"}
+# [Screenshot Testing](https://kmp.telereso.io/docs/core-ui-test/0.6.1/-core/io.telereso.kmp.core.ui.test/run-screen-shot-test.html){:target="_blank"}
 
 Screenshot testing ensures your components, widgets, and pages maintain consistent visuals. It helps track changes in fonts, colors, or sizes across your composable functions, acting as a visual regression tool.
 

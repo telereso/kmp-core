@@ -5,7 +5,7 @@ parent: Core Test
 nav_order: 1
 ---
 
-# [Resource](https://kmp.telereso.io/docs/core-test/latest/-core/io.telereso.kmp.core/-log/index.html){:target="_blank"}
+# [Resource](https://kmp.telereso.io/docs/core-test/0.6.1/-core/io.telereso.kmp.core.test/-resource/index.html){:target="_blank"}
 
 Efficiently manage and access static content in your tests with the **Resource** class, designed to simplify loading files from resource directories in Kotlin Multiplatform projects.
 
