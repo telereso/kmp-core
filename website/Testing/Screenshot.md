@@ -50,7 +50,10 @@ Wrap your composable code inside runScreenShotTest to capture and verify screens
 
 ```kotlin
 @Test
-fun testButton() = runScreenShotTest {
+fun testButton() = runScreenShotTest(
+    devices = listOf(Devices.Pixel_3), // Set Devices to run tests on
+    wait = 1.toDuration(DurationUnit.SECONDS) // Will wait for animations to finish before taking screenshot
+) {
     var text by remember { mutableStateOf("Hello") }
     Text(
         text = text,
@@ -64,6 +67,10 @@ fun testButton() = runScreenShotTest {
     }
 }
 ```
+
+you can pass options to `runScreenShotTest` to control the devices with screen sizes (each device will have a screenshot)
+
+Also can add a wait (delay) if your UI need to finish running some animation before taking the screenshot
 
 ## Recording Screenshots
 Run the test manually for the first time to generate and save screenshots under:
