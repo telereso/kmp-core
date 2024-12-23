@@ -22,22 +22,5 @@
  * SOFTWARE.
  */
 
-package io.telereso.kmp.core.ui.compontents
+package io.telereso.kmp.core.ui
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-
-@Composable
-actual fun WebView(
-    modifier: Modifier,
-    url: String?,
-    html: String?,
-    state: Any?,
-    captureBackPresses: Boolean,
-    navigator: Any?,
-    webViewJsBridge: Any?,
-    onCreated: () -> Unit,
-    onDispose: () -> Unit,
-    content: (@Composable () -> Unit)?
-) {
-}

@@ -201,7 +201,15 @@ kotlin {
             }
         }
 
+        val mobileMain by creating {
+            dependsOn(commonMain.get())
+            dependencies {
+                api(kmpLibs.compose.webview)
+            }
+        }
+
         androidMain {
+            dependsOn(mobileMain)
             dependencies {
                 implementation(kmpLibs.ktor.client.okhttp)
                 implementation(kmpLibs.okhttp.logging)
@@ -211,7 +219,6 @@ kotlin {
 
                 implementation(compose.preview)
                 api(kmpLibs.androidx.activity.compose)
-//                implementation(kmpLibs.compose.webview)
             }
         }
 
@@ -242,8 +249,6 @@ kotlin {
                 implementation(compose.desktop.common)
                 implementation(kmpLibs.kotlinx.coroutines.swing)
                 implementation(kmpLibs.ktor.client.cio)
-
-//                api(kmpLibs.compose.webview)
             }
         }
 
@@ -254,6 +259,7 @@ kotlin {
         }
 
         iosMain {
+            dependsOn(mobileMain)
             dependsOn(noneAndroidMain)
             dependencies {
                 /**
@@ -263,7 +269,6 @@ kotlin {
                 implementation(kmpLibs.ktor.client.darwin)
 
                 implementation(kmpLibs.sqldelight.native.driver)
-//                implementation(kmpLibs.compose.webview)
             }
         }
 

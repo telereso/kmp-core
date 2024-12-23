@@ -24,18 +24,29 @@
 
 package io.telereso.kmp.core.ui.preview
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import coil3.compose.AsyncImage
+import io.telereso.kmp.core.ui.compontents.WebView
 
 @Composable
 fun CorePreview() {
-    Text("test")
+    Column {
+        Text("test")
 
-    AsyncImage(
-        model = "https://i.imgur.com/fHyEMsl.jpg",
-        contentDescription = null,
-    )
+        AsyncImage(
+            model = "https://i.imgur.com/fHyEMsl.jpg",
+            contentDescription = null,
+        )
+
+        WebView(
+            modifier = Modifier.fillMaxSize(),
+            url = "https://kotlinlang.org/docs/multiplatform.html"
+        )
+    }
 }
 
 val example = """

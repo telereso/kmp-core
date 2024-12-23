@@ -26,6 +26,12 @@ package io.telereso.kmp.core.ui.compontents
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.multiplatform.webview.jsbridge.WebViewJsBridge
+import com.multiplatform.webview.web.WebViewNavigator
+import com.multiplatform.webview.web.WebViewState
+import com.multiplatform.webview.web.rememberWebViewNavigator
+import com.multiplatform.webview.web.rememberWebViewState
+import com.multiplatform.webview.web.rememberWebViewStateWithHTMLData
 
 @Composable
 actual fun WebView(
@@ -40,4 +46,22 @@ actual fun WebView(
     onDispose: () -> Unit,
     content: (@Composable () -> Unit)?
 ) {
+    content?.invoke()?: run {
+        val webViewState = when {
+            state != null -> state as WebViewState
+            url != null -> rememberWebViewState(url)
+            html != null -> rememberWebViewStateWithHTMLData(html)
+            else -> return
+        }
+
+        com.multiplatform.webview.web.WebView(
+            state = webViewState,
+            modifier = modifier,
+            captureBackPresses = captureBackPresses,
+            navigator = (navigator as? WebViewNavigator) ?: rememberWebViewNavigator(),
+            webViewJsBridge = webViewJsBridge as? WebViewJsBridge,
+            onCreated = onCreated,
+            onDispose = onDispose,
+        )
+    }
 }
