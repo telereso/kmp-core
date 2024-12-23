@@ -25,53 +25,20 @@
 package io.telereso.kmp.core.ui.compontents
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.ui.Modifier
 
-const val monacoHtml = """
-    <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monaco Editor Example</title>
-    <style>
-        /* Set up the height for the Monaco Editor */
-        #editor {
-            width: 100%;
-            height: 90vh;
-            border: 1px solid #ccc;
-        }
-    </style>
-</head>
-<body>
-    <h1>Monaco Editor in HTML</h1>
-    <div id="editor"></div>
-
-    <!-- Load Monaco Editor from CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.0/min/vs/loader.min.js"></script>
-
-    <script>
-        require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.0/min/vs' }});
-        
-        require(['vs/editor/editor.main'], function() {
-            monaco.editor.create(document.getElementById('editor'), {
-                value: `function helloMonaco() {
-    console.log('Hello, Monaco Editor!');
-}`,
-                language: 'javascript'
-            });
-        });
-    </script>
-</body>
-</html>
-"""
-
-//@Composable
-//expect fun WebView(
-//    modifier: Modifier = Modifier,
-//    url: String? = null,
-//    html: String? = null
-//)
+@Composable
+expect fun WebView(
+    modifier: Modifier = Modifier,
+    url: String? = null,
+    html: String? = null,
+    state: Any? = null,
+    captureBackPresses: Boolean = true,
+    navigator: Any? = null,
+    webViewJsBridge: Any? = null,
+    onCreated: () -> Unit = {},
+    onDispose: () -> Unit = {},
+    content: (@Composable () -> Unit)? = null,
+)
 
 
