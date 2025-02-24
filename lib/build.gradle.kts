@@ -186,7 +186,7 @@ kotlin {
             }
         }
         nodejs()
-        //binaries.library()
+        binaries.library()
         binaries.executable()
         generateTypeScriptDefinitions()
     }
@@ -297,7 +297,7 @@ kotlin {
 
 tasks.named<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile>("compileKotlinJs").configure {
     dependsOn("jsCleanLibraryDistribution")
-    kotlinOptions.moduleKind = "umd"
+//    kotlinOptions.moduleKind = "umd"
 }
 
 tasks.register<Copy>("copyiOSTestResources") {

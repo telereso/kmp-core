@@ -82,11 +82,3 @@ actual class CoreClient {
         verifyConsumer(allowed.toList())
     }
 }
-
-/**
- * Return Singleton CoreClient
- */
-@JsExport
-fun get(): CoreClient {
-    return CoreClient.get()
-}

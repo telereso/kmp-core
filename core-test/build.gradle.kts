@@ -137,7 +137,14 @@ kotlin {
     }
 
     js {
+        moduleName = "@$scope/${project.name}"
+        version = project.version as String
+
         browser()
+        nodejs()
+        binaries.library()
+        binaries.executable()
+        generateTypeScriptDefinitions()
     }
 
     sourceSets {
