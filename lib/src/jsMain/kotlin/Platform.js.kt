@@ -24,6 +24,7 @@
 
 package io.telereso.kmp.core
 
+import CoreJs
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
@@ -32,7 +33,6 @@ import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
-import io.ktor.client.engine.js.Js
 import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
@@ -70,7 +70,9 @@ actual fun httpClient(
     interceptors: List<Any?>?,
     userAgent: String?,
     config: HttpClientConfig<*>.() -> Unit
-) = HttpClient(Js) {
+) = HttpClient(CoreJs) {
+
+    config(this)
 
     install(UserAgent) {
         agent = userAgent ?: getPlatform().userAgent

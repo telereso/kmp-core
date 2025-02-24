@@ -1,3 +1,18 @@
+import io.telereso.kmp.core.CommonFlow
+import io.telereso.kmp.core.Config
+import io.telereso.kmp.core.ContextScope
+import io.telereso.kmp.core.CoreClient
+import io.telereso.kmp.core.DispatchersProvider
+import io.telereso.kmp.core.Task
+import io.telereso.kmp.core.TaskConfig
+import io.telereso.kmp.core.models.ClientException
+import io.telereso.kmp.core.models.FileRequest
+import io.telereso.kmp.core.models.asClientException
+import io.telereso.kmp.core.models.contentType
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.promise
+
 /*
  * MIT License
  *
@@ -22,14 +37,14 @@
  * SOFTWARE.
  */
 
-package io.telereso.kmp.core
 
-import io.telereso.kmp.core.models.ClientException
-import io.telereso.kmp.core.models.asClientException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.promise
-
+/**
+ * Return Singleton CoreClient
+ */
+@JsExport
+fun getCoreClient(): CoreClient {
+    return CoreClient.get()
+}
 
 /**
  * Another way to consume common flows for JS ,
@@ -53,3 +68,44 @@ fun <T> CommonFlow<T>.watch(
     }
     return CommonFlow.Job(scope.coroutineContext[Job]!!)
 }
+
+// file request
+
+@JsExport
+fun fileRequest(
+    base64: String,
+    name: String,
+    contentType: String,
+    progress: (percentage: Int) -> Unit
+): FileRequest {
+    return FileRequest(base64, name, contentType, progress)
+}
+
+@JsExport
+fun fileRequestWithContentType(base64: String, name: String, contentType: String) =
+    fileRequest(base64, name, contentType, {})
+
+@JsExport
+fun fileRequestWithName(base64: String, name: String) =
+    fileRequest(base64, name, name.contentType().toString(), {})
+
+@JsExport
+fun fileRequestWithProgress(base64: String, name: String, progress: (percentage: Int) -> Unit) =
+    fileRequest(base64, name, name.contentType().toString(), progress)
+
+@JsExport
+val TasksExamples = io.telereso.kmp.core.TasksExamples
+
+// Builders
+
+@JsExport
+fun configBuilder(appName: String, appVersion: String) = Config.builder(appName, appVersion)
+
+@JsExport
+fun taskConfigBuilder() = TaskConfig.builder()
+
+@JsExport
+fun taskBuilder() = Task.Builder()
+
+@JsExport
+fun taskCompanion() = Task.Companion

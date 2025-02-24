@@ -22,24 +22,10 @@
  * SOFTWARE.
  */
 
-package io.telereso.kmp.core
-
-import io.telereso.kmp.core.models.ClientException
+import io.telereso.kmp.core.Task
+import io.telereso.kmp.core.TaskConfig
 import kotlinx.coroutines.asDeferred
 import kotlin.js.Promise
-
-
-internal actual class InternalTask<ResultT> actual constructor(_task: Task<ResultT>) {
-    internal actual val task: Task<ResultT> = _task
-
-    actual fun get(): ResultT {
-        throw ClientException("Use async instead for blocking calls")
-    }
-
-    actual fun getOrNull(): ResultT? {
-        throw ClientException("Use async instead for blocking calls")
-    }
-}
 
 @JsExport
 object Tasks {
@@ -58,7 +44,7 @@ object Tasks {
     }
 
     @JsName("createWithConfig")
-    fun <ResultT> create(config: TaskConfig,action: () -> ResultT): Task<ResultT> {
+    fun <ResultT> create(config: TaskConfig, action: () -> ResultT): Task<ResultT> {
         return Task.execute(config = config) {
             action()
         }
