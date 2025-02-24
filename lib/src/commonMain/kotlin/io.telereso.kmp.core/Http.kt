@@ -24,13 +24,35 @@
 
 package io.telereso.kmp.core
 
+import io.ktor.client.HttpClient
+import io.ktor.client.call.HttpClientCall
+import io.ktor.client.call.body
 import io.ktor.client.plugins.*
+import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.HttpRequestData
+import io.ktor.client.request.delete
+import io.ktor.client.request.forms.FormDataContent
+import io.ktor.client.request.forms.MultiPartFormDataContent
+import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.client.request.put
+import io.ktor.client.request.setBody
 import io.ktor.client.statement.*
+import io.ktor.client.utils.EmptyContent
 import io.ktor.http.*
+import io.ktor.util.date.GMTDate
+import io.ktor.util.toMap
+import io.ktor.utils.io.ByteReadChannel
+import io.ktor.utils.io.InternalAPI
+import io.telereso.kmp.core.Http.ktorConfigJson
 import io.telereso.kmp.core.models.ClientException
 import io.telereso.kmp.core.models.asClientException
 import io.telereso.kmp.core.models.getErrorBody
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlin.coroutines.CoroutineContext
+import kotlin.js.JsExport
 
 /**
  * a singleton class that holds utils common to the Http.
@@ -194,5 +216,143 @@ object Http {
      * @return True if the [HttpResponse] has [HttpStatusCode] value in the range of 200-299 , false otherwise.
      */
     fun HttpResponse.successful() = (this.status.value in 200..299)
+
+    suspend fun post(
+        client: HttpClient,
+        urlString: String? = null,
+        block: (HttpRequestBuilder.() -> Unit),
+    ): HttpResponse {
+        val builder = HttpRequestBuilder().apply(block)
+        return builder.request(urlString)
+            ?: urlString?.let { client.post(urlString, block) }
+            ?: client.post(builder)
+    }
+
+    suspend fun get(
+        client: HttpClient,
+        urlString: String? = null,
+        block: (HttpRequestBuilder.() -> Unit) = {},
+    ): HttpResponse {
+        val builder = HttpRequestBuilder().apply(block)
+        return builder.request(urlString)
+            ?: urlString?.let { client.get(urlString, block) }
+            ?: client.get(builder)
+    }
+
+    suspend fun put(
+        client: HttpClient,
+        urlString: String? = null,
+        block: (HttpRequestBuilder.() -> Unit),
+    ): HttpResponse {
+        val builder = HttpRequestBuilder().apply(block)
+        return builder.request(urlString)
+            ?: urlString?.let { client.put(urlString, block) }
+            ?: client.put(builder)
+    }
+
+    suspend fun delete(
+        client: HttpClient,
+        urlString: String? = null,
+        block: (HttpRequestBuilder.() -> Unit),
+    ): HttpResponse {
+        val builder = HttpRequestBuilder().apply(block)
+        return builder.request(urlString)
+            ?: urlString?.let { client.delete(urlString, block) }
+            ?: client.delete(builder)
+    }
+}
+
+internal suspend fun HttpRequestBuilder.request(u: String? = null): HttpResponse? {
+    return CoreHttpClient
+        .current?.request(
+            this.build()
+        )?.await()
+
+}
+
+interface CoreHttpClient {
+    companion object {
+         var current: CoreHttpClient? = null
+    }
+
+    fun request(
+        requestData: HttpRequestData,
+        multipartBody: FormDataContent? = null // Pass FormData manually for multipart requests
+    ): Task<CoreHttpResponse>{
+        TODO()
+    }
+
+    fun request(
+        url: String,
+        method: String,
+        headers: Map<String,List<String>>,
+        body: String?,
+    ): Task<CoreHttpResponse>{
+        TODO()
+    }
+
+}
+
+data class CoreHttpResponse(
+    val requestTimeUnix: Double,
+    val responseTimeUnix: Double,
+    val httpStatus: Int,
+    val bodyString: String,
+    val httpVersion: String = HttpProtocolVersion.HTTP_1_1.toString(),
+    val singleHeaders: Map<String, String>? = null,
+    val listHeaders: Map<String, List<String>>? = null,
+): HttpResponse() {
+
+    private fun headersArray(): Array<Pair<String, List<String>>> {
+        return mutableListOf<Pair<String, List<String>>>().apply {
+            singleHeaders?.entries?.map { it.key to listOf(it.value) }?.let { addAll(it) }
+            listHeaders?.toList()?.let { addAll(it) }
+        }.toTypedArray()
+    }
+
+    override val headers: Headers
+        get() = headersOf(*headersArray())
+
+    override val requestTime: GMTDate
+        get() = GMTDate(requestTimeUnix.toLong())
+    override val responseTime: GMTDate
+        get() = GMTDate(responseTimeUnix.toLong())
+    override val status: HttpStatusCode
+        get() = HttpStatusCode.fromValue(httpStatus)
+    override val version: HttpProtocolVersion
+        get() = HttpProtocolVersion.parse(httpVersion)
+
+
+    // not used functions
+    override val call: HttpClientCall
+        get() = throw ClientException("CoreHttpResponse should not be using call")
+    override val coroutineContext: CoroutineContext
+        get() = throw ClientException("CoreHttpResponse should not be using coroutineContext")
+
+    @InternalAPI
+    override val rawContent: ByteReadChannel
+        get() = throw ClientException("CoreHttpResponse should not be using rawContent")
+
+}
+
+suspend inline fun <reified T> HttpResponse.parseBody(): T {
+    return when (this) {
+        is CoreHttpResponse -> {
+            ktorConfigJson.decodeFromString<T>(bodyString)
+        }
+
+        else -> body<T>()
+    }
+
+}
+
+suspend fun HttpResponse.textBody(): String {
+    return when (this) {
+        is CoreHttpResponse -> {
+            bodyString
+        }
+
+        else -> bodyAsText()
+    }
 
 }
