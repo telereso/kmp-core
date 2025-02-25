@@ -96,7 +96,7 @@ object TasksExamples {
     fun apiCall(): Task<String> {
         return Task.execute {
             httpClient(shouldLogHttpRequests = true) {
-            }.get("https://run.mocky.io/v3/15bccc9e-06f2-4d01-a0b4-3a35a02118ed") {
+            }.get("https://run.mocky.io/v3/bd5794ef-64dd-4d69-90f1-f820f7f850be") {
                 headers.append(HttpHeaders.Accept, "text/plain")
             }.body<String>()
         }

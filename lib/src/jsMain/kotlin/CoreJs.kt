@@ -31,6 +31,8 @@ import io.ktor.client.engine.callContext
 import io.ktor.client.engine.js.JsClientEngineConfig
 import io.ktor.client.engine.mergeHeaders
 import io.ktor.client.fetch.AbortController
+import io.ktor.client.fetch.ReadableStream
+import io.ktor.client.fetch.ReadableStreamDefaultReader
 import io.ktor.client.fetch.RequestInit
 import io.ktor.client.fetch.fetch
 import io.ktor.client.plugins.HttpTimeoutCapability
@@ -57,6 +59,7 @@ import io.ktor.utils.io.core.buildPacket
 import io.ktor.utils.io.core.writeFully
 import io.ktor.utils.io.readRemaining
 import io.ktor.utils.io.readText
+import io.ktor.utils.io.writeFully
 import io.ktor.utils.io.writer
 import io.ktor.websocket.CloseReason
 import io.ktor.websocket.DefaultWebSocketSession
@@ -65,6 +68,7 @@ import io.ktor.websocket.FrameType
 import io.ktor.websocket.WebSocketExtension
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -92,6 +96,9 @@ import org.w3c.fetch.FOLLOW
 import org.w3c.fetch.MANUAL
 import org.w3c.fetch.RequestRedirect
 import org.w3c.fetch.Response
+import org.w3c.files.Blob
+import org.w3c.files.FileReader
+import org.w3c.files.FileReaderSync
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -150,10 +157,7 @@ internal class CoreJsClientEngine(
 
 
 
-//        val body = CoroutineScope(callContext).readBody(rawResponse)
-        val body = ByteReadChannel(rawResponse.text().await())
-
-
+        val body = CoroutineScope(callContext).readBody(rawResponse)
         val responseBody: Any = data.attributes.getOrNull(ResponseAdapterAttributeKey)
             ?.adapt(data, status, headers, body, data.body, callContext)
             ?: body
@@ -221,6 +225,84 @@ internal class CoreJsClientEngine(
     }
 
 
+}
+
+internal suspend fun CoroutineScope.readBody(
+    response: org.w3c.fetch.Response
+): ByteReadChannel =
+    readBodyBrowser(response)
+
+internal suspend fun CoroutineScope.readBodyBrowser(response: Response): ByteReadChannel {
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
+    val stream: ReadableStream<Uint8Array> = response.body ?: response.blob().await().stream() ?: return ByteReadChannel.Empty
+    return channelFromStream(stream)
+}
+
+
+internal fun CoroutineScope.channelFromStream(
+    stream: ReadableStream<Uint8Array>
+): ByteReadChannel = writer {
+    val reader: ReadableStreamDefaultReader<Uint8Array> = stream.getReader()
+    while (true) {
+        try {
+            val chunk = reader.readChunk() ?: break
+            channel.writeFully(chunk.asByteArray())
+            channel.flush()
+        } catch (cause: Throwable) {
+            reader.cancel(cause)
+            throw cause
+        }
+    }
+}.channel
+
+@Suppress("UnsafeCastFromDynamic")
+internal fun Uint8Array.asByteArray(): ByteArray {
+    return Int8Array(buffer, byteOffset, length).asDynamic()
+}
+
+internal suspend fun ReadableStreamDefaultReader<Uint8Array>.readChunk(): Uint8Array? =
+    suspendCancellableCoroutine { continuation ->
+        read().then {
+            val chunk = it.value
+            val result = if (it.done) null else chunk
+            continuation.resumeWith(Result.success(result))
+        }.catch { cause ->
+            continuation.resumeWithException(cause)
+        }
+    }
+
+suspend fun Blob.stream(): ReadableStream<Uint8Array> {
+    return if (this.asDynamic().stream != undefined) {
+        this.asDynamic().stream() as ReadableStream<Uint8Array>
+    } else {
+        // Fallback: Convert to ArrayBuffer and create a ReadableStream manually
+        val arrayBuffer = this.arrayBuffer()
+        js("""
+            new ReadableStream({
+                start: function(controller) {
+                    controller.enqueue(new Uint8Array(arrayBuffer));
+                    controller.close();
+                }
+            })
+            """
+        ) as ReadableStream<Uint8Array>
+    }
+}
+
+suspend fun Blob.arrayBuffer(): ArrayBuffer {
+    return suspendCancellableCoroutine { continuation ->
+        val fileReader = FileReader()
+
+        fileReader.onload = { event ->
+            continuation.resume(event.target.asDynamic().result as ArrayBuffer)
+        }
+
+        fileReader.onerror = { event ->
+            continuation.resumeWithException(RuntimeException("Failed to read Blob"))
+        }
+
+        fileReader.readAsArrayBuffer(this)
+    }
 }
 
 private suspend fun WebSocket.awaitConnection(): WebSocket = suspendCancellableCoroutine { continuation ->

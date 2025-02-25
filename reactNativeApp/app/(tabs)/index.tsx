@@ -33,15 +33,19 @@ export default function HomeScreen() {
                 // console.log("hi", hi)
                 // setHi(`${hi}`)
 
+                const hi = await Tasks.async(TasksExamples.apiCall())
+                console.log("hi", hi)
+                setHi(`${hi}`)
+
                 const count = await Tasks.async(TasksExamples.testPersistSettings())
                 console.log("count", count)
 
-                watch(TasksExamples.testWebSockets(),(data) => {
-                    console.log(data);
-                    setHi(data)
-                }, (error) => {
-                    console.log(error)
-                })
+                // watch(TasksExamples.testWebSockets(),(data) => {
+                //     console.log(data);
+                //     setHi(data)
+                // }, (error) => {
+                //     console.log(error)
+                // })
 
             } catch (e) {
                 console.error("fetch error",e)
