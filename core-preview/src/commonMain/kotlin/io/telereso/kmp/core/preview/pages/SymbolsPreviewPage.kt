@@ -88,6 +88,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import androidx.compose.ui.zIndex
 import com.mohamedrejeb.richeditor.annotation.ExperimentalRichTextApi
 import io.telereso.kmp.core.icons.MaterialIcons
 import io.telereso.kmp.core.icons.resources.Check
@@ -272,7 +273,9 @@ fun SymbolsPreviewPage() {
         }) {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                 ModalNavigationDrawer(drawerState = leftDrawerState, drawerContent = {
-                    ModalDrawerSheet {
+                    ModalDrawerSheet(
+                        modifier = Modifier.zIndex(1f)
+                    ) {
                         Box(
                             modifier = Modifier.width(250.dp)
                                 .fillMaxHeight()
@@ -285,7 +288,6 @@ fun SymbolsPreviewPage() {
                         }
                     }
                 }) {
-
                     // Center Panel - Icons Grid
                     Box(
                         modifier = Modifier.fillMaxHeight().padding(16.dp)
@@ -305,7 +307,6 @@ fun SymbolsPreviewPage() {
                         }
                     }
                 }
-
             }
         }
     }

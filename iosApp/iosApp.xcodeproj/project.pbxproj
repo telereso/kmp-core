@@ -362,7 +362,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
-				DEVELOPMENT_TEAM = JUDPH33FQJ;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -382,8 +382,8 @@
 					"-framework",
 					TeleresoUI,
 					"$(inherited)",
-                    "-framework",
-                    TeleresoCorePreview,
+					"-framework",
+					TeleresoCorePreview,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.telereso.kmp.core.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -401,7 +401,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
-				DEVELOPMENT_TEAM = JUDPH33FQJ;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -421,8 +421,8 @@
 					"-framework",
 					TeleresoUI,
 					"$(inherited)",
-                    "-framework",
-                    TeleresoCorePreview,
+					"-framework",
+					TeleresoCorePreview,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.telereso.kmp.core.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

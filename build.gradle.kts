@@ -18,7 +18,7 @@ plugins {
 }
 
 group = "io.telereso.kmp"
-version = project.findProperty("publishVersion") ?: "0.0.1"
+version = project.findProperty("publishVersion") ?: "0.0.1-local"
 val scope by extra { "telereso" }
 
 

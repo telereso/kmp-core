@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asSkiaBitmap
+import androidx.compose.ui.scene.CanvasLayersComposeScene
 import androidx.compose.ui.scene.MultiLayerComposeScene
 import androidx.compose.ui.scene.SingleLayerComposeScene
 import androidx.compose.ui.unit.Density
@@ -60,7 +61,7 @@ actual suspend fun captureComposableAsBitmap(
     content: @Composable (Modifier) -> Unit
 ): ByteArray? {
     // Create a ComposeScene to host the Composable content
-    val scene = MultiLayerComposeScene(
+    val scene = CanvasLayersComposeScene(
         density = Density(1f), // Adjust density as per your requirements
         layoutDirection = LayoutDirection.Ltr
     )

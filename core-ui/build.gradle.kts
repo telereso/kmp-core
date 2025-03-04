@@ -379,34 +379,31 @@ android {
 }
 
 // We can filter out some classes in the generated report
-koverReport {
-    filters {
-        excludes {
-            classes(listOf("*.*Test*"))
-        }
-    }
-    // The koverVerify currently only supports line counter values.
-    // we can also configure this to run after the unit tests task.
-    verify {
-        // Add VMs in the includes [list]. VMs added,their coverage % will be tracked.
+kover {
+    reports {
         filters {
             excludes {
                 classes(listOf("*.*Test*"))
             }
         }
-        // Enforce Test Coverage
-        rule("Minimal line coverage rate in percent") {
-            bound {
-                minValue = 0
+        // The koverVerify currently only supports line counter values.
+        // we can also configure this to run after the unit tests task.
+        verify {
+            // Enforce Test Coverage
+            rule("Minimal line coverage rate in percent") {
+                bound {
+                    minValue = 0
+                }
+            }
+        }
+
+        total{
+            html {
+                htmlDir = rootDir.resolve("public/tests/kover")
             }
         }
     }
 
-    defaults {
-        html {
-            setReportDir(rootDir.resolve("public/tests/kover"))
-        }
-    }
 }
 
 testlogger {

@@ -1,5 +1,4 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.incremental.createDirectory
 
 /*
  * MIT License
@@ -157,7 +156,7 @@ tasks.register("processMaterialSymbols") {
     doLast {
         val drawableDir = projectDir.resolve("src/commonMain/composeResources/drawable")
         drawableDir.deleteRecursively()
-        drawableDir.createDirectory()
+        drawableDir.mkdirs()
 
         val modelsDir = rootDir.resolve("core-ui/src/commonMain/kotlin/io.telereso.kmp.core.ui/models/")
         val symbolsClass = modelsDir.resolve("Symbols.kt")
