@@ -23,6 +23,7 @@
  */
 
 import org.gradle.configurationcache.extensions.capitalized
+import org.jetbrains.kotlin.incremental.createDirectory
 
 plugins {
     alias(kmpLibs.plugins.android.library)
@@ -200,31 +201,34 @@ android {
 }
 
 // We can filter out some classes in the generated report
-kover {
-    reports {
+koverReport {
+    filters {
+        excludes {
+            classes(listOf("*.*Test*"))
+        }
+    }
+    // The koverVerify currently only supports line counter values.
+    // we can also configure this to run after the unit tests task.
+    verify {
+        // Add VMs in the includes [list]. VMs added,their coverage % will be tracked.
         filters {
             excludes {
                 classes(listOf("*.*Test*"))
             }
         }
-        // The koverVerify currently only supports line counter values.
-        // we can also configure this to run after the unit tests task.
-        verify {
-            // Enforce Test Coverage
-            rule("Minimal line coverage rate in percent") {
-                bound {
-                    minValue = 0
-                }
-            }
-        }
-
-        total{
-            html {
-                htmlDir = rootDir.resolve("public/tests/kover")
+        // Enforce Test Coverage
+        rule("Minimal line coverage rate in percent") {
+            bound {
+                minValue = 0
             }
         }
     }
 
+    defaults {
+        html {
+            setReportDir(rootDir.resolve("public/tests/kover"))
+        }
+    }
 }
 
 testlogger {
@@ -284,7 +288,7 @@ tasks.create("processMaterialIcons") {
         val previewPage =
             project(":core-preview").projectDir.resolve("src/commonMain/kotlin/io/telereso/kmp/core/preview/pages/SymbolsPreviewPageHelper.g.kt")
         drawableDir.deleteRecursively()
-        drawableDir.mkdirs()
+        drawableDir.createDirectory()
         var counter = 0
         val allParameters = mutableListOf<String>()
 

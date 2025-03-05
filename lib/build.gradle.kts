@@ -26,6 +26,7 @@ import groovy.util.Node
 import groovy.xml.XmlParser
 import org.gradle.configurationcache.extensions.capitalized
 import org.codehaus.groovy.runtime.ProcessGroovyMethods
+import org.jetbrains.kotlin.incremental.createDirectory
 import java.text.DecimalFormat
 import java.math.RoundingMode
 
@@ -346,34 +347,34 @@ android {
 }
 
 // We can filter out some classes in the generated report
-kover {
-    reports {
+koverReport {
+    filters {
+        excludes {
+            classes(listOf("*.*Test*"))
+        }
+    }
+    // The koverVerify currently only supports line counter values.
+    // we can also configure this to run after the unit tests task.
+    verify {
+        // Add VMs in the includes [list]. VMs added,their coverage % will be tracked.
         filters {
             excludes {
                 classes(listOf("*.*Test*"))
             }
         }
-        // The koverVerify currently only supports line counter values.
-        // we can also configure this to run after the unit tests task.
-        verify {
-            // Enforce Test Coverage
-            rule("Minimal line coverage rate in percent") {
-                bound {
-                    minValue = 40
-                }
-            }
-        }
-
-        total{
-            html {
-                title = "Custom HTML title"
-                onCheck = false
-                charset = "UTF-8"
-                htmlDir = rootDir.resolve("public/tests/kover")
+        // Enforce Test Coverage
+        rule("Minimal line coverage rate in percent") {
+            bound {
+                minValue = 40
             }
         }
     }
 
+    defaults {
+        html {
+            setReportDir(rootDir.resolve("public/tests/kover"))
+        }
+    }
 }
 
 testlogger {
@@ -453,7 +454,7 @@ tasks.register("createCoverageBadge") {
 
         val koverDir = rootDir.resolve("public/tests/kover").apply {
             if (!exists())
-                this.mkdirs()
+                createDirectory()
         }
         download(
             "https://img.shields.io/badge/coverage-${coverage?.toString()?.plus("%25") ?: "unknown"}-$badgeColor",

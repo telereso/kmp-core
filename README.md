@@ -1,5 +1,5 @@
 # Core
-![kotlin: 2.1.10](https://img.shields.io/badge/kotlin-2.0.20-blue?logo=kotlin)
+![kotlin: 2.0.20](https://img.shields.io/badge/kotlin-2.0.20-blue?logo=kotlin)
 [![coverage report](https://telereso.github.io/kmp-core/tests/kover/badge.svg)](https://telereso.github.io/kmp-core/tests/kover) 
 
 

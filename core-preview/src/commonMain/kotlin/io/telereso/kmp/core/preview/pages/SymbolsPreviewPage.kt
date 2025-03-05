@@ -288,6 +288,7 @@ fun SymbolsPreviewPage() {
                         }
                     }
                 }) {
+
                     // Center Panel - Icons Grid
                     Box(
                         modifier = Modifier.fillMaxHeight().padding(16.dp)
@@ -307,6 +308,7 @@ fun SymbolsPreviewPage() {
                         }
                     }
                 }
+
             }
         }
     }
