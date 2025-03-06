@@ -153,14 +153,6 @@ kotlin {
             languageSettings.optIn("kotlin.js.ExperimentalJsExport")
         }
 
-        androidMain {
-            dependencies {
-                implementation(kmpLibs.test.mockk)
-                implementation(kmpLibs.sqldelight.android.driver)
-                implementation(kmpLibs.sqldelight.sqlite.driver)
-            }
-        }
-
         commonMain {
             dependencies {
                 implementation(project(":core"))
@@ -198,6 +190,14 @@ kotlin {
 
                 implementation(kmpLibs.test.multiplatform.settings.test)
                 implementation(kmpLibs.test.turbine)
+            }
+        }
+
+        androidMain {
+            dependencies {
+                implementation(kmpLibs.test.mockk)
+                implementation(kmpLibs.sqldelight.android.driver)
+                implementation(kmpLibs.sqldelight.sqlite.driver)
             }
         }
 

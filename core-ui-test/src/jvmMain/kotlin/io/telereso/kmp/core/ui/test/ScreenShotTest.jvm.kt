@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.InternalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.scene.CanvasLayersComposeScene
 import androidx.compose.ui.scene.MultiLayerComposeScene
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runSkikoComposeUiTest
@@ -83,16 +84,17 @@ actual fun runScreenShotTest(
     val screenShotName = device.fileName().plus("_").plus(callerName)
     var error: Throwable? = null
 
-    val scene = MultiLayerComposeScene()
+    val scene = CanvasLayersComposeScene()
 
     try {
         scene.setContent {
-            val state = rememberSimulatorState(device, screenShotWait = wait)
+            val state = rememberSimulatorState(device)
             val scope = rememberCoroutineScope()
             val context = androidLocalContext()
 
             LaunchedEffect(Unit) {
                 scope.launch {
+                    wait?.let { delay(it) }
                     val screenShotByteArray = state.captureScreenShot(context, block)
                         ?: throw IllegalStateException("Screenshot byteArray can't be null, failed to capture screenshot")
 

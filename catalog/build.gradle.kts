@@ -66,7 +66,6 @@ catalog {
             // Telereso
             "teleresoCore" to kmpLibs.versions.teleresoCore.get(),
             "teleresoCoreTest" to kmpLibs.versions.teleresoCore.get(),
-            "teleresoKmp" to kmpLibs.versions.teleresoKmp.get(),
 
             // Others
             "ktor" to kmpLibs.versions.ktor.get(),
@@ -221,7 +220,7 @@ catalog {
             Triple("android.application", kmpLibs.plugins.android.application.get(), "agp"),
 
             // Telereso
-            Triple("telereso.kmp", kmpLibs.plugins.telereso.kmp.get(), "teleresoKmp"),
+            Triple("telereso.kmp", kmpLibs.plugins.telereso.kmp.get(), "teleresoCore"),
 
             // Test
             Triple("test-logger", kmpLibs.plugins.test.logger.get(), "test-logger"),

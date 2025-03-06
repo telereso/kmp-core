@@ -31,6 +31,7 @@ import androidx.compose.material3.NavigationRailItem
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.zIndex
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.memory.MemoryCache
@@ -110,7 +111,8 @@ fun SidebarNavigationRail(
     NavigationRail(
         modifier = Modifier
             .fillMaxHeight()
-            .background(Color(0xFFE7EBF0)),
+            .background(Color(0xFFE7EBF0))
+            .zIndex(2f),
     ) {
         NavigationRailItem(
             icon = { Symbol(Symbols.SentimentSatisfied, contentDescription = selected.name) },

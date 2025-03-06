@@ -1,6 +1,6 @@
 [versions]
 # catalog
-catalog = "1.14-alpha.1"
+catalog = "1.15-alpha.2"
 
 #Java
 java = "17"
@@ -13,10 +13,10 @@ dokka = "1.9.10"
 detekt = "1.23.5"
 
 #Compose
-compose = "1.6.11"
-compose-navigation = "2.7.0-alpha07"
+compose = "1.7.3"
+compose-navigation = "2.8.0-alpha10"
 coil3 = "3.0.4"
-compose-webview = "1.9.20"
+compose-webview = "1.9.40"
 
 #Android
 agp = "8.2.2"
@@ -45,8 +45,7 @@ napier = "2.7.1"
 multiplatformSettings = "1.2.0"
 
 #Telereso
-teleresoCore = "0.7.0-alpha.1"
-teleresoKmp = "0.3.0"
+teleresoCore = "0.8.0-alpha.2"
 
 #Test
 test-logger = "3.2.0"
@@ -163,7 +162,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 
 #Telreso
-telereso-kmp = { id = "io.telereso.kmp", version.ref = "teleresoKmp" }
+telereso-kmp = { id = "io.telereso.kmp", version.ref = "teleresoCore" }
 
 #Compose
 compose = { id = "org.jetbrains.compose", version.ref = "compose" }

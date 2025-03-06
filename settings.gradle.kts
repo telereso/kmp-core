@@ -22,46 +22,35 @@ dependencyResolutionManagement {
     versionCatalogs {
         create("kmpLibs") {
             from(files("catalog/kmpLibs.versions.toml"))
-//            version("teleresoKmp", "0.0.1-local")
         }
     }
 }
 
 rootProject.name = "core"
-include(":lib")
-project(":lib").name = rootProject.name
-include(":core-test")
-include(":core-ui")
-include(":core-ui-test")
-include(":core-icons")
-include(":core-preview")
+
 include(":catalog")
-include(":androidApp")
-include(":jvmApi")
+include(":annotations")
+include(":processor")
+includeBuild("convention-plugins")
 
-// This is used while working with code generation project `kmp-annotations` (https://github.com/telereso/kmp-annotations)
-val localProps = java.util.Properties().apply {
-    File("${rootDir}/local.properties").apply {
-        if (exists())
-            inputStream().use { fis ->
-                load(fis)
-            }
-    }
-}
+val publishGradlePlugin: String by settings
 
-val teleresoKmpDevelopmentPath = localProps["teleresoKmpDevelopmentPath"] as String?
-
-if (!teleresoKmpDevelopmentPath.isNullOrEmpty()) {
-    include(":annotations")
-    project(":annotations").projectDir =
-        file("$teleresoKmpDevelopmentPath/annotations")
-
-    include(":processor")
-    project(":processor").projectDir =
-        file("$teleresoKmpDevelopmentPath/processor")
-
-    includeBuild("$teleresoKmpDevelopmentPath/convention-plugins")
-    includeBuild("$teleresoKmpDevelopmentPath/gradle-plugin")
+if (publishGradlePlugin.toBoolean()) {
+    include("gradle-plugin")
 } else {
-    includeBuild("convention-plugins")
+    includeBuild("gradle-plugin")
+
+    include(":lib")
+    project(":lib").name = rootProject.name
+
+
+    include(":core-icons")
+    include(":core-ui")
+    include(":core-preview")
+    include(":core-test")
+    include(":core-ui-test")
+
+    include(":androidApp")
+    include(":jvmApi")
+
 }

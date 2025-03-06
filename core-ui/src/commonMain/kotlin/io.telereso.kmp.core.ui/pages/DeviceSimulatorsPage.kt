@@ -68,6 +68,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import io.ktor.http.ContentType
 import io.ktor.utils.io.core.toByteArray
 import io.telereso.kmp.core.DispatchersProvider
@@ -306,7 +307,9 @@ fun SimulatorsPage(
     val scope = rememberCoroutineScope()
 
     ModalNavigationDrawer(drawerState = leftDrawerState, drawerContent = {
-        ModalDrawerSheet {
+        ModalDrawerSheet(
+            modifier = Modifier.zIndex(1f)
+        ) {
             Column(
                 modifier = Modifier.width(250.dp)
                     .padding(16.dp)
