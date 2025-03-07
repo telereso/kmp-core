@@ -45,6 +45,8 @@ import coil3.test.FakeImageLoaderEngine
 import coil3.util.DebugLogger
 import io.telereso.kmp.core.ui.LoginPage
 import io.telereso.kmp.core.ui.pages.Devices
+import korlibs.io.async.runBlockingNoJs
+import kotlinx.coroutines.delay
 import kotlin.test.Test
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
@@ -65,7 +67,7 @@ class ScreenShotTest {
             .default(FakeImage(color = 0x00F)) // Blue
             .build()
 
-        val debug = false
+        val debug = true
         setSingletonImageLoaderFactory { context ->
             ImageLoader.Builder(context)
                 .components {
@@ -120,6 +122,7 @@ class ScreenShotTest {
     ) {
         setup()
         LoginPage()
+        runBlockingNoJs { delay(1000) }
     }
 
 }

@@ -150,12 +150,6 @@ kotlin {
             languageSettings.optIn("kotlin.js.ExperimentalJsExport")
         }
 
-        androidMain {
-            dependencies {
-                implementation(kmpLibs.test.mockk)
-            }
-        }
-
         commonMain {
             dependencies {
                 implementation(project(":core-test"))
@@ -180,6 +174,12 @@ kotlin {
 
                 implementation("com.soywiz:korlibs-image:6.0.0")
 
+            }
+
+            androidMain {
+                dependencies {
+                    implementation("org.jetbrains.kotlin:kotlin-test-junit")
+                }
             }
         }
     }
