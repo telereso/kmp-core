@@ -5,6 +5,8 @@ import io.telereso.kmp.core.CoreClient
 import io.telereso.kmp.core.DispatchersProvider
 import io.telereso.kmp.core.Task
 import io.telereso.kmp.core.TaskConfig
+import io.telereso.kmp.core.await
+import io.telereso.kmp.core.isReactNativePlatform
 import io.telereso.kmp.core.models.ClientException
 import io.telereso.kmp.core.models.FileRequest
 import io.telereso.kmp.core.models.asClientException
@@ -46,13 +48,19 @@ fun getCoreClient(): CoreClient {
     return CoreClient.get()
 }
 
+@JsExport
+fun setupReactNative(platform: String? = null) {
+    isReactNativePlatform = true
+    setupStorage(platform)
+}
+
 /**
  * Another way to consume common flows for JS ,
  * @param stream the flow data
  * @param error in case an issue happen while collecting data this call back will be invoked
  */
 @JsExport
-fun <T> CommonFlow<T>.watch(
+fun <T> CommonFlow<T>.collectFlow(
     stream: (T) -> Unit,
     error: (ClientException) -> Unit,
     scope: CoroutineScope = ContextScope.get(DispatchersProvider.Default)
@@ -60,6 +68,24 @@ fun <T> CommonFlow<T>.watch(
     scope.promise {
         try {
             collect {
+                stream(it)
+            }
+        } catch (exception: Throwable) {
+            error(exception.asClientException())
+        }
+    }
+    return CommonFlow.Job(scope.coroutineContext[Job]!!)
+}
+
+@JsExport
+fun <T> Task<CommonFlow<T>>.asyncCollectFlow(
+    stream: (T) -> Unit,
+    error: (ClientException) -> Unit,
+    scope: CoroutineScope = ContextScope.get(DispatchersProvider.Default)
+): CommonFlow.Job {
+    scope.promise {
+        try {
+            await().collect {
                 stream(it)
             }
         } catch (exception: Throwable) {

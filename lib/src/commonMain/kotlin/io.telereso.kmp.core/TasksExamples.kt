@@ -32,6 +32,7 @@ import io.ktor.client.plugins.websocket.webSocket
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.get
+import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
@@ -96,7 +97,7 @@ object TasksExamples {
     fun apiCall(): Task<String> {
         return Task.execute {
             httpClient(shouldLogHttpRequests = true) {
-            }.get("https://run.mocky.io/v3/bd5794ef-64dd-4d69-90f1-f820f7f850be") {
+            }.get("https://run.mocky.io/v3/c069d5d4-57db-424c-9f43-a05c906df140") {
                 headers.append(HttpHeaders.Accept, "text/plain")
             }.body<String>()
         }
@@ -216,10 +217,7 @@ object TasksExamples {
     @JvmStatic
     fun testUploadFile(file: FileRequest): Task<String> {
         return Task.execute {
-            val res = Http.post(
-                client = httpClient(),
-                urlString = "https://tmpfiles.org/api/v1/upload"
-            ) {
+            val res = httpClient().post("https://tmpfiles.org/api/v1/upload") {
                 setBody(MultiPartFormDataContent(formData {
                     append("file", file.getByteArray(), Headers.build {
                         append(HttpHeaders.ContentType, file.getType().toString())
@@ -233,20 +231,17 @@ object TasksExamples {
                     }
                 }
             }
-            res.parseBody<JsonObject>()["data"]?.jsonObject?.get("url")?.jsonPrimitive?.content
+            res.body<JsonObject>()["data"]?.jsonObject?.get("url")?.jsonPrimitive?.content
                 ?: ""
         }
     }
 
     fun testHttp(): Task<String> {
         return Task.execute {
-            Http.get(
-                client = httpClient { },
-                urlString = "https://run.mocky.io/v3/c95c5b91-1fa8-44d7-8c6a-c52c20863bde"
-            ) {
+            httpClient().get("https://run.mocky.io/v3/c95c5b91-1fa8-44d7-8c6a-c52c20863bde") {
                 headers.append("key", "value")
                 headers.append("key", "value2")
-            }.textBody()
+            }.body<String>()
         }
     }
 

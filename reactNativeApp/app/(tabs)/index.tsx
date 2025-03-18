@@ -10,7 +10,7 @@ import {
     setupStorage,
     fileRequestWithName,
     TasksExamples,
-    watch,
+    collectFlow,
 } from '@telereso/core';
 import {useEffect, useState} from "react";
 import 'react-native-get-random-values';
@@ -40,12 +40,12 @@ export default function HomeScreen() {
                 const count = await Tasks.async(TasksExamples.testPersistSettings())
                 console.log("count", count)
 
-                // watch(TasksExamples.testWebSockets(),(data) => {
-                //     console.log(data);
-                //     setHi(data)
-                // }, (error) => {
-                //     console.log(error)
-                // })
+                collectFlow(TasksExamples.testWebSockets(),(data) => {
+                    console.log(data);
+                    setHi(data)
+                }, (error) => {
+                    console.log(error)
+                })
 
             } catch (e) {
                 console.error("fetch error",e)

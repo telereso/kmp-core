@@ -7,7 +7,7 @@ import {
     fileRequestWithProgress,
     getCoreClient,
     taskConfigBuilder,
-    watch
+    watchFlow
 } from "@telereso/core";
 
 
@@ -31,7 +31,7 @@ function App(block) {
         //   console.log("catch",e)
         // })
 
-        watch(Tasks.async(TasksExamples.testWebSockets()),(data) => {
+        watchFlow(Tasks.async(TasksExamples.testWebSockets()),(data) => {
             console.log(data);
         }, (error) => {
             console.log(error)
@@ -41,14 +41,14 @@ function App(block) {
         TasksExamples.testVerify(getCoreClient())
 
         // #1 watching flow in JS
-        let job1 = watch(TasksExamples.getFlowPayload(), (data) => {
+        let job1 = watchFlow(TasksExamples.getFlowPayload(), (data) => {
             console.log(data);
         }, (error) => {
             console.log(error)
         })
 
         // #2 watching flow in JS
-        // let job2 = CoreClient.TasksExamples.getFlowPayload().watch((data, error) => {
+        // let job2 = CoreClient.TasksExamples.getFlowPayload().watchFlow((data, error) => {
         //     if (error != null) {
         //         console.log(error)
         //     } else {
@@ -56,7 +56,7 @@ function App(block) {
         //     }
         // })
 
-        let job3 = watch(TasksExamples.getDelayedFlowString(), (data) => {
+        let job3 = watchFlow(TasksExamples.getDelayedFlowString(), (data) => {
             console.log(data);
         }, (error) => {
             console.log(error)

@@ -10,8 +10,8 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "expo lint",
-    "r": "cd .. && ./gradlew core:jsBrowserProductionLibraryDistribution && cd lib/build/dist/js/productionLibrary && npm pack && cd ../../../../../ && cd reactNativeApp && npm i file:../lib/build/dist/js/productionLibrary/telereso-core-0.0.1.tgz",
-    "rs": "npm run r && npm run ios"
+    "r": "yarn remove @telereso/core || true && cd .. && ./gradlew core:jsBrowserProductionLibraryDistribution && cd reactNativeApp && yarn add file:../lib/build/dist/js/productionLibrary/",
+    "rs": "yarn r && yarn web"
   },
   "jest": {
     "preset": "jest-expo"
@@ -21,8 +21,7 @@
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
-    "@telereso/core": "file:../lib/build/dist/js/productionLibrary/telereso-core-0.0.1.tgz",
-    "@telereso/core-test": "file:../core-test/build/dist/js/productionLibrary/telereso-core-test-0.0.1.tgz",
+    "@telereso/core": "file:../lib/build/dist/js/productionLibrary/",
     "expo": "~52.0.37",
     "expo-blur": "~14.0.3",
     "expo-constants": "~17.0.7",

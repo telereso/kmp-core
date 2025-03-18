@@ -33,6 +33,7 @@ import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
+import io.ktor.client.engine.js.Js
 import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
@@ -42,6 +43,8 @@ import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.browser.window
 import org.w3c.dom.Worker
+
+internal var isReactNativePlatform = false
 
 /**
  * A class we define platform specific  or actual implementations for JS Target
@@ -70,7 +73,7 @@ actual fun httpClient(
     interceptors: List<Any?>?,
     userAgent: String?,
     config: HttpClientConfig<*>.() -> Unit
-) = HttpClient(CoreJs) {
+) = HttpClient(if (isReactNativePlatform) CoreJs else Js) {
 
     config(this)
 
