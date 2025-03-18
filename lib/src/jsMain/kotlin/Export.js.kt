@@ -5,6 +5,8 @@ import io.telereso.kmp.core.CoreClient
 import io.telereso.kmp.core.DispatchersProvider
 import io.telereso.kmp.core.Task
 import io.telereso.kmp.core.TaskConfig
+import io.telereso.kmp.core.await
+import io.telereso.kmp.core.isReactNativePlatform
 import io.telereso.kmp.core.models.ClientException
 import io.telereso.kmp.core.models.FileRequest
 import io.telereso.kmp.core.models.asClientException
@@ -122,6 +124,24 @@ fun <T> Task<CommonFlow<T>>.collectAsyncFlow(
         } catch (exception: Throwable) {
             if (exception !is CancellationException)
                 error(exception.asClientException())
+        }
+    }
+    return CommonFlow.Job(scope.coroutineContext[Job]!!)
+}
+
+@JsExport
+fun <T> Task<CommonFlow<T>>.asyncCollectFlow(
+    stream: (T) -> Unit,
+    error: (ClientException) -> Unit,
+    scope: CoroutineScope = ContextScope.get(DispatchersProvider.Default)
+): CommonFlow.Job {
+    scope.promise {
+        try {
+            await().collect {
+                stream(it)
+            }
+        } catch (exception: Throwable) {
+            error(exception.asClientException())
         }
     }
     return CommonFlow.Job(scope.coroutineContext[Job]!!)

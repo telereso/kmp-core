@@ -32,6 +32,7 @@ import io.ktor.client.plugins.websocket.webSocket
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.get
+import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
@@ -216,10 +217,7 @@ object TasksExamples {
     @JvmStatic
     fun testUploadFile(file: FileRequest): Task<String> {
         return Task.execute {
-            val res = Http.post(
-                client = httpClient(),
-                urlString = "https://tmpfiles.org/api/v1/upload"
-            ) {
+            val res = httpClient().post("https://tmpfiles.org/api/v1/upload") {
                 setBody(MultiPartFormDataContent(formData {
                     append("file", file.getByteArray(), Headers.build {
                         append(HttpHeaders.ContentType, file.getType().toString())
