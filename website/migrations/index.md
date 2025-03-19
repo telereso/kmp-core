@@ -80,8 +80,6 @@ plugins {
     alias(kmpLibs.plugins.buildkonfig)
     alias(kmpLibs.plugins.telereso.kmp)
 +   alias(kmpLibs.plugins.sqldelight)
-    alias(airasiaLibs.plugins.detekt)
-
 -   id("com.squareup.sqldelight")
 }
 

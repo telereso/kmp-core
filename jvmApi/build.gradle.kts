@@ -6,7 +6,7 @@ plugins {
 	kotlin("jvm")
 }
 
-group = "com.airasia"
+group = "io.telereso"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
