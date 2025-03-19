@@ -1,0 +1,7 @@
+<view class="map_container">
+  <button class="btn-service" open-type="contact" bindcontact="handleContact">客服服务</button>
+
+  <button class="btn-service" bindtap="handlePermission">授权订阅</button>
+
+  <image class="checked ha-tab-image" src="/img/record-na.png"></image>
+</view>

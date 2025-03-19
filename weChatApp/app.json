@@ -1,0 +1,42 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/customer-service/index",
+    "pages/search/search",
+    "pages/suggestion/suggestion",
+    "pages/geocoding/geocoding",
+    "pages/regeocoding/regeocoding",
+    "pages/weather/weather"
+  ],
+  "window":{
+    "backgroundTextStyle":"light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "Weixin",
+    "navigationBarTextStyle":"black"
+  },
+  "tabBar": {
+    "color": "#000",
+    "selectedColor": "#4db900",
+    "backgroundColor": "#fbfbfd",
+    "position": "bottom",
+    "list": [
+      {
+        "pagePath": "pages/search/search",
+        "text": "search"
+      },
+      {
+        "pagePath": "pages/suggestion/suggestion",
+        "text": "suggestion"
+      },
+      {
+        "pagePath": "pages/regeocoding/regeocoding",
+        "text": "regeocoding"
+      },
+      {
+        "pagePath": "pages/weather/weather",
+        "text": "weather"
+      }
+    ]
+  },
+  "sitemapLocation": "sitemap.json"
+}

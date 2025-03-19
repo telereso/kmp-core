@@ -184,6 +184,10 @@ kotlin {
             testTask {
                 useMocha()
             }
+            webpackTask {
+                outputFileName = "$scope-core.bundle.js"
+                output.libraryTarget = "umd" // Ensures compatibility
+            }
         }
         nodejs()
         binaries.library()
@@ -297,7 +301,7 @@ kotlin {
 
 tasks.named<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile>("compileKotlinJs").configure {
     dependsOn("jsCleanLibraryDistribution")
-//    kotlinOptions.moduleKind = "umd"
+    kotlinOptions.moduleKind = "umd"
 }
 
 tasks.register<Copy>("copyiOSTestResources") {
@@ -481,3 +485,10 @@ fun download(url: String, path: String) {
         destFile.createNewFile()
     ant.invokeMethod("get", mapOf("src" to url, "dest" to destFile))
 }
+
+tasks.register<Copy>("copyCoreBundle") {
+    from("${projectDir}/build/kotlin-webpack/js/productionExecutable/telereso-core.bundle.js")
+    into("${rootDir}/weChatApp/libs/")
+}
+
+tasks.findByName("jsBrowserProductionWebpack")?.finalizedBy("copyCoreBundle")

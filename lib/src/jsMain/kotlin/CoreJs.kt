@@ -66,6 +66,8 @@ import io.ktor.websocket.DefaultWebSocketSession
 import io.ktor.websocket.Frame
 import io.ktor.websocket.FrameType
 import io.ktor.websocket.WebSocketExtension
+import io.telereso.kmp.core.Log
+import io.telereso.kmp.core.isWeChatPlatform
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -98,7 +100,6 @@ import org.w3c.fetch.RequestRedirect
 import org.w3c.fetch.Response
 import org.w3c.files.Blob
 import org.w3c.files.FileReader
-import org.w3c.files.FileReaderSync
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -137,11 +138,17 @@ internal class CoreJsClientEngine(
         val clientConfig = data.attributes[CLIENT_CONFIG]
 
         if (data.isUpgradeRequest()) {
+            if (isWeChatPlatform)
+                return executeWxWebSocketRequest(data,callContext)
             return executeWebSocketRequest(data, callContext)
         }
 
         val requestTime = GMTDate()
         val rawRequest = data.toRaw(clientConfig, callContext)
+
+        if (isWeChatPlatform) {
+            return executeWxFetch(callContext, requestTime, data, rawRequest)
+        }
 
         val controller = AbortController()
         rawRequest.signal = controller.signal

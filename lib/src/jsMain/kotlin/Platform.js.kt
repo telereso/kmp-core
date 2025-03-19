@@ -36,6 +36,7 @@ import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.js.Js
 import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
@@ -45,6 +46,7 @@ import kotlinx.browser.window
 import org.w3c.dom.Worker
 
 internal var isReactNativePlatform = false
+internal var isWeChatPlatform = false
 
 /**
  * A class we define platform specific  or actual implementations for JS Target
@@ -73,7 +75,7 @@ actual fun httpClient(
     interceptors: List<Any?>?,
     userAgent: String?,
     config: HttpClientConfig<*>.() -> Unit
-) = HttpClient(if (isReactNativePlatform) CoreJs else Js) {
+) = HttpClient(if (isReactNativePlatform || isWeChatPlatform) CoreJs else Js) {
 
     config(this)
 

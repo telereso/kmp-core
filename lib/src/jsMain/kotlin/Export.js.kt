@@ -7,6 +7,7 @@ import io.telereso.kmp.core.Task
 import io.telereso.kmp.core.TaskConfig
 import io.telereso.kmp.core.await
 import io.telereso.kmp.core.isReactNativePlatform
+import io.telereso.kmp.core.isWeChatPlatform
 import io.telereso.kmp.core.models.ClientException
 import io.telereso.kmp.core.models.FileRequest
 import io.telereso.kmp.core.models.asClientException
@@ -85,6 +86,12 @@ fun <T> list(array: Array<T>) = array.toList()
 
 @JsExport
 fun <ResultT> asyncTask(task: Task<ResultT>) = task.async()
+
+@JsExport
+fun setupWeChat() {
+    isWeChatPlatform = true
+    //setupStorage(platform)
+}
 
 /**
  * Another way to consume common flows for JS ,
