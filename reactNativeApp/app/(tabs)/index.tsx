@@ -14,6 +14,7 @@ import {
 } from '@telereso/core';
 import {useEffect, useState} from "react";
 import 'react-native-get-random-values';
+import Job = io.telereso.kmp.core.CommonFlow.Job;
 
 
 export default function HomeScreen() {
@@ -24,6 +25,7 @@ export default function HomeScreen() {
 
         setupStorage(Platform.OS)
 
+        let job : Job;
         const fetchData = async () => {
             try {
                 // const base64 =
@@ -40,7 +42,7 @@ export default function HomeScreen() {
                 const count = await Tasks.async(TasksExamples.testPersistSettings())
                 console.log("count", count)
 
-                collectFlow(TasksExamples.testWebSockets(),(data) => {
+                job = collectFlow(TasksExamples.testWebSockets(),(data) => {
                     console.log(data);
                     setHi(data)
                 }, (error) => {
@@ -55,6 +57,10 @@ export default function HomeScreen() {
 
         fetchData(); // Call the async function inside useEffect
 
+    return () => {
+        console.log("Cleaning up...");
+        job?.cancel()
+    };
 
     }, []);
     return (

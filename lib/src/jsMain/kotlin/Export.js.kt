@@ -1,20 +1,3 @@
-import io.telereso.kmp.core.CommonFlow
-import io.telereso.kmp.core.Config
-import io.telereso.kmp.core.ContextScope
-import io.telereso.kmp.core.CoreClient
-import io.telereso.kmp.core.DispatchersProvider
-import io.telereso.kmp.core.Task
-import io.telereso.kmp.core.TaskConfig
-import io.telereso.kmp.core.await
-import io.telereso.kmp.core.isReactNativePlatform
-import io.telereso.kmp.core.models.ClientException
-import io.telereso.kmp.core.models.FileRequest
-import io.telereso.kmp.core.models.asClientException
-import io.telereso.kmp.core.models.contentType
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.promise
-
 /*
  * MIT License
  *
@@ -38,6 +21,24 @@ import kotlinx.coroutines.promise
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+import io.telereso.kmp.core.CommonFlow
+import io.telereso.kmp.core.Config
+import io.telereso.kmp.core.ContextScope
+import io.telereso.kmp.core.CoreClient
+import io.telereso.kmp.core.DispatchersProvider
+import io.telereso.kmp.core.Task
+import io.telereso.kmp.core.TaskConfig
+import io.telereso.kmp.core.await
+import io.telereso.kmp.core.isReactNativePlatform
+import io.telereso.kmp.core.models.ClientException
+import io.telereso.kmp.core.models.FileRequest
+import io.telereso.kmp.core.models.asClientException
+import io.telereso.kmp.core.models.contentType
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.promise
+import kotlin.coroutines.cancellation.CancellationException
 
 
 /**
@@ -71,7 +72,8 @@ fun <T> CommonFlow<T>.collectFlow(
                 stream(it)
             }
         } catch (exception: Throwable) {
-            error(exception.asClientException())
+            if (exception !is CancellationException)
+                error(exception.asClientException())
         }
     }
     return CommonFlow.Job(scope.coroutineContext[Job]!!)
@@ -89,7 +91,8 @@ fun <T> Task<CommonFlow<T>>.asyncCollectFlow(
                 stream(it)
             }
         } catch (exception: Throwable) {
-            error(exception.asClientException())
+            if (exception !is CancellationException)
+                error(exception.asClientException())
         }
     }
     return CommonFlow.Job(scope.coroutineContext[Job]!!)
