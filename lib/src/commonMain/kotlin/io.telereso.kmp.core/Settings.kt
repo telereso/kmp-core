@@ -58,8 +58,10 @@ import com.russhwolf.settings.coroutines.getStringOrNullFlow
 interface Settings {
 
     companion object {
+        internal var reactNativeSettings: ((Duration?) -> Settings)? = null
+
         fun get(clearExpiredKeysDuration: Duration? = null): Settings =
-            SettingsImpl(clearExpiredKeysDuration = clearExpiredKeysDuration)
+            reactNativeSettings?.invoke(clearExpiredKeysDuration) ?: SettingsImpl(clearExpiredKeysDuration = clearExpiredKeysDuration)
 
         fun getInMemory(clearExpiredKeysDuration: Duration? = null): Settings =
             InMemorySetting(clearExpiredKeysDuration = clearExpiredKeysDuration)

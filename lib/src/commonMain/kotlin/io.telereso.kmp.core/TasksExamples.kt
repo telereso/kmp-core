@@ -97,7 +97,7 @@ object TasksExamples {
     fun apiCall(): Task<String> {
         return Task.execute {
             httpClient(shouldLogHttpRequests = true) {
-            }.get("https://run.mocky.io/v3/c069d5d4-57db-424c-9f43-a05c906df140") {
+            }.get("https://run.mocky.io/v3/9212237d-1896-4c1c-8006-68ae784ca5f4") {
                 headers.append(HttpHeaders.Accept, "text/plain")
             }.body<String>()
         }
@@ -289,9 +289,15 @@ object TasksExamples {
         }
     }
 
+    fun testFlowSettings(): Task<CommonFlow<Int?>> {
+        return Task.execute {
+            persistSettings.getIntFlow("count").asCommonFlow()
+        }
+    }
+
     fun testInMemorySettings(): Task<Int> {
         return Task.execute {
-            inMemorySettings["count"] = (persistSettings["count"] ?: 0) + 1
+            inMemorySettings["count"] = (inMemorySettings["count"] ?: 0) + 1
             inMemorySettings["count"] ?: 0
         }
     }

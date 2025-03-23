@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+import Tasks.async
 import io.telereso.kmp.core.CommonFlow
 import io.telereso.kmp.core.Config
 import io.telereso.kmp.core.ContextScope
@@ -39,6 +40,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.promise
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.js.Promise
 
 
 /**
@@ -50,10 +52,16 @@ fun getCoreClient(): CoreClient {
 }
 
 @JsExport
-fun setupReactNative(platform: String? = null) {
+fun setupReactNative(): Promise<Int> {
     isReactNativePlatform = true
-    setupStorage(platform)
+    return setupReactNativeStorage()
 }
+
+@JsExport
+fun <T> array(list: List<T>) = list.toTypedArray()
+
+@JsExport
+fun <ResultT> asyncTask(task: Task<ResultT>) = task.async()
 
 /**
  * Another way to consume common flows for JS ,
@@ -80,7 +88,7 @@ fun <T> CommonFlow<T>.collectFlow(
 }
 
 @JsExport
-fun <T> Task<CommonFlow<T>>.asyncCollectFlow(
+fun <T> Task<CommonFlow<T>>.collectAsyncFlow(
     stream: (T) -> Unit,
     error: (ClientException) -> Unit,
     scope: CoroutineScope = ContextScope.get(DispatchersProvider.Default)
