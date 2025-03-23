@@ -1,3 +1,6 @@
+const coreLob = require('libs/telereso-core.bundle.js');
+coreLob.setupWeChat()
+
 //app.js
 App({
   onHide() {

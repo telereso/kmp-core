@@ -1,5 +1,3 @@
-import io.ktor.client.fetch.Headers
-
 /*
  * MIT License
  *
@@ -25,7 +23,7 @@ import io.ktor.client.fetch.Headers
  */
 
 
-val AsyncStorage: dynamic = try {
+private val AsyncStorage: dynamic = try {
    js("require('@react-native-async-storage/async-storage')").default
 } catch (e: Throwable) {
     console.warn("⚠️ AsyncStorage not found. Falling back to in-memory storage.")
@@ -33,10 +31,10 @@ val AsyncStorage: dynamic = try {
 }
 
 // In-memory fallback storage
-val syncStorage = mutableMapOf<String, String>()
+private val syncStorage = mutableMapOf<String, String>()
 
 @JsExport
-fun setupStorage(platform: String? = null) {
+fun setupReactNativeStorage(platform: String? = null) {
     if (platform == "web") return
 
     val localStorage: dynamic = js("{}")

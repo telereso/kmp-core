@@ -59,9 +59,12 @@ interface Settings {
 
     companion object {
         internal var reactNativeSettings: ((Duration?) -> Settings)? = null
+        internal var weChatSettings: ((Duration?) -> Settings)? = null
 
         fun get(clearExpiredKeysDuration: Duration? = null): Settings =
-            reactNativeSettings?.invoke(clearExpiredKeysDuration) ?: SettingsImpl(clearExpiredKeysDuration = clearExpiredKeysDuration)
+            reactNativeSettings?.invoke(clearExpiredKeysDuration)
+                ?: weChatSettings?.invoke(clearExpiredKeysDuration)
+                ?: SettingsImpl(clearExpiredKeysDuration = clearExpiredKeysDuration)
 
         fun getInMemory(clearExpiredKeysDuration: Duration? = null): Settings =
             InMemorySetting(clearExpiredKeysDuration = clearExpiredKeysDuration)
