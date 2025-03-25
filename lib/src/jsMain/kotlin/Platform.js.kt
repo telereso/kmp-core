@@ -24,6 +24,7 @@
 
 package io.telereso.kmp.core
 
+import CoreJs
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
@@ -42,6 +43,8 @@ import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.browser.window
 import org.w3c.dom.Worker
+
+internal var isReactNativePlatform = false
 
 /**
  * A class we define platform specific  or actual implementations for JS Target
@@ -70,7 +73,9 @@ actual fun httpClient(
     interceptors: List<Any?>?,
     userAgent: String?,
     config: HttpClientConfig<*>.() -> Unit
-) = HttpClient(Js) {
+) = HttpClient(if (isReactNativePlatform) CoreJs else Js) {
+
+    config(this)
 
     install(UserAgent) {
         agent = userAgent ?: getPlatform().userAgent

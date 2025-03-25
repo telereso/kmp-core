@@ -1,3 +1,4 @@
+
 /*
  * MIT License
  *
@@ -22,61 +23,43 @@
  * SOFTWARE.
  */
 
+
+import app.cash.sqldelight.async.coroutines.awaitAsList
+import io.telereso.kmp.core.SqlDriverFactory
 import io.telereso.kmp.core.Task
-import io.telereso.kmp.core.TaskConfig
-import kotlinx.coroutines.asDeferred
-import kotlin.js.Promise
+import io.telereso.kmp.core.extensions.destructiveMigration
+import io.telereso.kmp.core.test.TestSqlDriverFactory
+import io.telereso.kmp.core.test.cache.CoreClientTestDatabase
 
 @JsExport
-object Tasks {
-    fun <ResultT> Task<ResultT>.async(): Promise<ResultT> {
-        return Promise { success: (ResultT) -> Unit, failure: (Throwable) -> Unit ->
-            onSuccess {
-                success(it)
-            }.onFailure {
-                failure(it)
-            }
-        }
-    }
-
-    fun <ResultT> create(action: () -> ResultT): Task<ResultT> {
-        return create(TaskConfig(),action)
-    }
-
-    @JsName("createWithConfig")
-    fun <ResultT> create(config: TaskConfig, action: () -> ResultT): Task<ResultT> {
-        return Task.execute(config = config) {
-            action()
-        }
-    }
-
-    fun <ResultT> from(action: Promise<ResultT>): Task<ResultT> {
+object TestDataBase {
+    private var db: CoreClientTestDatabase? = null
+    fun initDb(): Task<Boolean> {
         return Task.execute {
-            action.asDeferred().await()
+            val factory = TestSqlDriverFactory(
+                SqlDriverFactory("test.db", CoreClientTestDatabase.Schema.destructiveMigration()),
+                overrideName = false
+            )
+            db = CoreClientTestDatabase(factory.createDriver())
+            true
         }
     }
 
-    fun fromString(action: Promise<String>): Task<String> {
+    fun addUser(name: String): Task<Boolean> {
         return Task.execute {
-            action.asDeferred().await()
+            db?.coreClientTestDatabaseQueries?.insertUser(name)
+            true
         }
     }
 
-    fun fromNumber(action: Promise<Int>): Task<Int> {
+    fun getUsers(): Task<Array<String>> {
         return Task.execute {
-            action.asDeferred().await()
-        }
-    }
-
-    fun fromBoolean(action: Promise<Boolean>): Task<Boolean> {
-        return Task.execute {
-            action.asDeferred().await()
-        }
-    }
-
-    fun fromVoid(action: Promise<Unit>): Task<Unit> {
-        return Task.execute {
-            action.asDeferred().await()
+            db?.coreClientTestDatabaseQueries
+                ?.selectAll()?.awaitAsList()?.toList()
+                ?.map { it.name }
+                ?.toTypedArray()
+                ?: emptyArray()
         }
     }
 }
+

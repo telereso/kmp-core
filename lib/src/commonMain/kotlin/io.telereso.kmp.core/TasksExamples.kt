@@ -26,14 +26,19 @@ package io.telereso.kmp.core
 
 import io.ktor.client.call.body
 import io.ktor.client.plugins.onUpload
+import io.ktor.client.plugins.websocket.*
+import io.ktor.client.plugins.websocket.pingInterval
+import io.ktor.client.plugins.websocket.webSocket
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import io.ktor.client.statement.bodyAsText
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
+import io.ktor.websocket.Frame
+import io.ktor.websocket.readText
+import io.ktor.websocket.send
 import io.telereso.kmp.core.Consumer.Companion.android
 import io.telereso.kmp.core.Consumer.Companion.ios
 import io.telereso.kmp.core.Consumer.Companion.website
@@ -44,15 +49,26 @@ import io.telereso.kmp.core.models.JwtPayload
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlin.js.JsExport
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 @JsExport
 object TasksExamples {
+    private val persistSettings by lazy {
+        Settings.get()
+    }
+
+    private val inMemorySettings by lazy {
+        Settings.getInMemory()
+    }
+
     @JvmStatic
     fun hi(): Task<String> {
         return Task.execute {
@@ -80,7 +96,10 @@ object TasksExamples {
     @JvmStatic
     fun apiCall(): Task<String> {
         return Task.execute {
-            httpClient {  }.get("https://run.mocky.io/v3/7a7a924f-72dd-4cd7-aefa-12be3608e839").bodyAsText()
+            httpClient(shouldLogHttpRequests = true) {
+            }.get("https://run.mocky.io/v3/9212237d-1896-4c1c-8006-68ae784ca5f4") {
+                headers.append(HttpHeaders.Accept, "text/plain")
+            }.body<String>()
         }
     }
 
@@ -212,7 +231,74 @@ object TasksExamples {
                     }
                 }
             }
-            res.body<JsonObject>()["data"]?.jsonObject?.get("url")?.jsonPrimitive?.content ?: ""
+            res.body<JsonObject>()["data"]?.jsonObject?.get("url")?.jsonPrimitive?.content
+                ?: ""
+        }
+    }
+
+    fun testHttp(): Task<String> {
+        return Task.execute {
+            httpClient().get("https://run.mocky.io/v3/c95c5b91-1fa8-44d7-8c6a-c52c20863bde") {
+                headers.append("key", "value")
+                headers.append("key", "value2")
+            }.body<String>()
+        }
+    }
+
+    fun testWebSockets(): CommonFlow<String> {
+        val flow = MutableStateFlow("")
+        Task.execute {
+            val client = httpClient(true){
+                install(WebSockets) {
+                    pingInterval = 20000.toDuration(DurationUnit.MILLISECONDS)
+                }
+            }
+            runCatching {
+                client.webSocket("wss://echo.websocket.org") {
+                    val ws = this
+                    Task.execute {
+                        repeat(3){i->
+                            delay(1500)
+                            ws.send("hi $i")
+                        }
+                    }
+
+                    incoming.receiveAsFlow().collect { message ->
+                        when (message) {
+                            is Frame.Text -> {
+                                val m = message.readText()
+                                flow.emit(m)
+                                Log.d("websockets", "Received: $m")
+                            }
+
+                            else -> {
+                                Log.d("websockets", "Received: ${message.frameType}")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return flow.asCommonFlow()
+    }
+
+    fun testPersistSettings(): Task<Int> {
+        return Task.execute {
+            persistSettings["count"] = (persistSettings["count"] ?: 0) + 1
+            persistSettings["count"] ?: 0
+        }
+    }
+
+    fun testFlowSettings(): Task<CommonFlow<Int?>> {
+        return Task.execute {
+            persistSettings.getIntFlow("count").asCommonFlow()
+        }
+    }
+
+    fun testInMemorySettings(): Task<Int> {
+        return Task.execute {
+            inMemorySettings["count"] = (inMemorySettings["count"] ?: 0) + 1
+            inMemorySettings["count"] ?: 0
         }
     }
 }

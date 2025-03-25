@@ -24,6 +24,7 @@
 
 package io.telereso.kmp.core
 
+import kotlin.js.JsExport
 import kotlin.jvm.JvmOverloads
 
 expect class CoreClient {
@@ -59,6 +60,7 @@ expect class CoreClient {
     fun verifyConsumer(vararg allowed: Consumer)
 }
 
+@JsExport
 data class Consumer(
     val platform: Platform.Type,
     /**
