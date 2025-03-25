@@ -2,12 +2,13 @@ import logo from './logo.svg';
 import './App.css';
 import React, {useState, useEffect} from 'react';
 import {
+    asyncTask,
     Tasks,
     TasksExamples,
     fileRequestWithProgress,
     getCoreClient,
     taskConfigBuilder,
-    watchFlow
+    collectFlow
 } from "@telereso/core";
 
 
@@ -31,7 +32,7 @@ function App(block) {
         //   console.log("catch",e)
         // })
 
-        watchFlow(Tasks.async(TasksExamples.testWebSockets()),(data) => {
+        collectFlow(asyncTask(TasksExamples.testWebSockets()),(data) => {
             console.log(data);
         }, (error) => {
             console.log(error)
@@ -41,7 +42,7 @@ function App(block) {
         TasksExamples.testVerify(getCoreClient())
 
         // #1 watching flow in JS
-        let job1 = watchFlow(TasksExamples.getFlowPayload(), (data) => {
+        let job1 = collectFlow(TasksExamples.getFlowPayload(), (data) => {
             console.log(data);
         }, (error) => {
             console.log(error)
@@ -56,7 +57,7 @@ function App(block) {
         //     }
         // })
 
-        let job3 = watchFlow(TasksExamples.getDelayedFlowString(), (data) => {
+        let job3 = collectFlow(TasksExamples.getDelayedFlowString(), (data) => {
             console.log(data);
         }, (error) => {
             console.log(error)

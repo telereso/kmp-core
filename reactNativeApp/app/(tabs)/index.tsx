@@ -9,6 +9,8 @@ import {
     asyncTask,
     collectFlow,
     collectAsyncFlow,
+    list,
+    consumerCompanion,
     fileRequestWithName,
     TasksExamples,
 } from '@telereso/core';
@@ -21,7 +23,14 @@ export default function HomeScreen() {
     const [hi, setHi] = useState("")
     useEffect(() => {
 
-        getCoreClient().debugLogger()
+        const coreClient = getCoreClient()
+        coreClient.debugLogger()
+
+        coreClient.verifyConsumer(list([
+            consumerCompanion().website("localhost:*"),
+            consumerCompanion().android("io.telereso.kmp.core.app","27:CD:DF:48:77:3E:9B:CF:FA:A4:6D:44:BF:8A:FC:23:96:F0:2F:71:C5:79:5C:C9:A0:1B:63:C6:BD:B1:05:6A"),
+            consumerCompanion().ios("io.telereso.kmp.core.app"),
+        ]))
 
         let job : Job;
         let counterJob : Job;
@@ -43,7 +52,7 @@ export default function HomeScreen() {
 
                 counterJob = collectAsyncFlow(TasksExamples.testFlowSettings(),
                     (data) => {
-                      console.log("count",data)
+                      //console.log("count",data)
                     },(e) => {
                        console.error(e)
                     }

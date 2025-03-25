@@ -25,6 +25,7 @@
 import Tasks.async
 import io.telereso.kmp.core.CommonFlow
 import io.telereso.kmp.core.Config
+import io.telereso.kmp.core.Consumer
 import io.telereso.kmp.core.ContextScope
 import io.telereso.kmp.core.CoreClient
 import io.telereso.kmp.core.DispatchersProvider
@@ -36,6 +37,8 @@ import io.telereso.kmp.core.models.ClientException
 import io.telereso.kmp.core.models.FileRequest
 import io.telereso.kmp.core.models.asClientException
 import io.telereso.kmp.core.models.contentType
+import io.telereso.kmp.core.models.toJson
+import io.telereso.kmp.core.models.toJsonPretty
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.promise
@@ -59,6 +62,9 @@ fun setupReactNative(): Promise<Int> {
 
 @JsExport
 fun <T> array(list: List<T>) = list.toTypedArray()
+
+@JsExport
+fun <T> list(array: Array<T>) = array.toList()
 
 @JsExport
 fun <ResultT> asyncTask(task: Task<ResultT>) = task.async()
@@ -146,3 +152,20 @@ fun taskBuilder() = Task.Builder()
 
 @JsExport
 fun taskCompanion() = Task.Companion
+
+@JsExport
+fun consumerCompanion() = Consumer.Companion
+
+// converters
+
+@JsExport
+fun clientExceptionToJson(clientException: ClientException) = clientException.toJson()
+
+@JsExport
+fun clientExceptionToJsonPretty(clientException: ClientException) = clientException.toJsonPretty()
+
+@JsExport
+fun fileRequestToJson(fileRequest: FileRequest) = fileRequest.toJson()
+
+@JsExport
+fun fileRequestToJsonPretty(fileRequest: FileRequest) = fileRequest.toJsonPretty()

@@ -64,11 +64,23 @@ actual class CoreClient {
      * @param allowed a list of [Consumer] depending on the sdk platforms
      */
     actual fun verifyConsumer(allowed: List<Consumer>) {
-        if (!allowed.any {
-                it.platform == Platform.Type.BROWSER && it.appId.replace("*", ".*").toRegex()
-                    .matches(window.location.host)
-            }) {
-            throw ClientException("Website (${window.location.host}) not allowed to use this sdk")
+        runCatching {
+            if (!allowed.any {
+                    it.platform == Platform.Type.BROWSER && it.appId.replace("*", ".*").toRegex()
+                        .matches(window.location.host)
+                }) {
+                throw ClientException("Website (${window.location.host}) not allowed to use this sdk")
+            }
+        }.getOrElse {
+            when {
+                isReactNativePlatform -> {
+                    // TODO check how to handle android/ios for react native
+                }
+
+                else -> {
+                    throw it
+                }
+            }
         }
     }
 
