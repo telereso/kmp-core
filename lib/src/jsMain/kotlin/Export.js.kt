@@ -25,6 +25,7 @@
 import Tasks.async
 import io.telereso.kmp.core.CommonFlow
 import io.telereso.kmp.core.Config
+import io.telereso.kmp.core.Consumer
 import io.telereso.kmp.core.ContextScope
 import io.telereso.kmp.core.CoreClient
 import io.telereso.kmp.core.DispatchersProvider
@@ -37,10 +38,14 @@ import io.telereso.kmp.core.models.ClientException
 import io.telereso.kmp.core.models.FileRequest
 import io.telereso.kmp.core.models.asClientException
 import io.telereso.kmp.core.models.contentType
+import io.telereso.kmp.core.models.toJson
+import io.telereso.kmp.core.models.toJsonPretty
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.promise
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.js.Promise
+
 
 /**
  * Return Singleton CoreClient
@@ -57,19 +62,16 @@ fun setupReactNative(): Promise<Int> {
 }
 
 @JsExport
-fun <T> array(list: List<T>) = list.toTypedArray()
-
-@JsExport
-fun <T> list(array: Array<T>) = array.toList()
-
-@JsExport
-fun <ResultT> asyncTask(task: Task<ResultT>) = task.async()
-
-@JsExport
 fun setupWeChat() {
     isWeChatPlatform = true
     setupWeChatStorage()
 }
+
+@JsExport
+fun <T> array(list: List<T>) = list.toTypedArray()
+
+@JsExport
+fun <T> list(array: Array<T>) = array.toList()
 
 @JsExport
 fun <ResultT> asyncTask(task: Task<ResultT>) = task.async()
@@ -88,25 +90,6 @@ fun <T> CommonFlow<T>.collectFlow(
     scope.promise {
         try {
             collect {
-                stream(it)
-            }
-        } catch (exception: Throwable) {
-            if (exception !is CancellationException)
-                error(exception.asClientException())
-        }
-    }
-    return CommonFlow.Job(scope.coroutineContext[Job]!!)
-}
-
-@JsExport
-fun <T> Task<CommonFlow<T>>.collectAsyncFlow(
-    stream: (T) -> Unit,
-    error: (ClientException) -> Unit,
-    scope: CoroutineScope = ContextScope.get(DispatchersProvider.Default)
-): CommonFlow.Job {
-    scope.promise {
-        try {
-            await().collect {
                 stream(it)
             }
         } catch (exception: Throwable) {

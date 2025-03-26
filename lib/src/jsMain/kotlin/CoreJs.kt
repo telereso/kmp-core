@@ -66,7 +66,6 @@ import io.ktor.websocket.DefaultWebSocketSession
 import io.ktor.websocket.Frame
 import io.ktor.websocket.FrameType
 import io.ktor.websocket.WebSocketExtension
-import io.telereso.kmp.core.Log
 import io.telereso.kmp.core.isWeChatPlatform
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred

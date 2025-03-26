@@ -52,6 +52,12 @@ cd react-native-core-client && yarn && yarn bootstrap && yarn example android &&
 
 then open `react-native-core-client` in intellij Idea or VSCode and check `README.md` file
 
+## WeChat
+
+```shell
+./gradlew :core:jsBrowserProductionWebpack
+```
+
 # Unit Test
 
 ## All Tetes

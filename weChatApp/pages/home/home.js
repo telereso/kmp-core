@@ -24,7 +24,7 @@ Page({
                console.error(e)
             })
 
-      setInterval(() => coreLib.TasksExamples.testPersistSettings(), 3000);
+      //setInterval(() => coreLib.TasksExamples.testPersistSettings(), 3000);
 
 
       // coreLob.TasksExamples.apiCall().onSuccess((res)=>{

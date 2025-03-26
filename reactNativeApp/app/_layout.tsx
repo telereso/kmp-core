@@ -5,7 +5,6 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
-
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { setupReactNative } from '@telereso/core';
 
@@ -24,7 +23,6 @@ export default function RootLayout() {
     if (loaded && setup) {
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
 
     setupReactNative().then(() => setSetup(true))
 

@@ -185,7 +185,7 @@ kotlin {
                 useMocha()
             }
             webpackTask {
-                outputFileName = "$scope-core.bundle.js"
+                mainOutputFileName = "$scope-core.bundle.js"
                 output.libraryTarget = "umd" // Ensures compatibility
             }
         }
@@ -301,7 +301,6 @@ kotlin {
 
 tasks.named<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile>("compileKotlinJs").configure {
     dependsOn("jsCleanLibraryDistribution")
-    kotlinOptions.moduleKind = "umd"
 }
 
 tasks.register<Copy>("copyiOSTestResources") {
