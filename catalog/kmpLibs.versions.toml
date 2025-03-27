@@ -1,6 +1,6 @@
 [versions]
 # catalog
-catalog = "1.16"
+catalog = "1.17"
 
 #Java
 java = "17"
