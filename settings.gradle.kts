@@ -1,12 +1,15 @@
 val teleresoKmpCatalog: String by settings
+val localProperties = loadLocalProperties()
 
 pluginManagement {
+    fun loadLocalProperties() = java.util.Properties().apply { File(rootDir, "local.properties").takeIf { it.exists() }?.inputStream()?.use(::load) }
+    val localProperties = loadLocalProperties()
     repositories {
         maven {
             url = uri("https://maven.pkg.github.com/edna-aa/sqldelight")
             credentials {
-                username = "edna-aa"
-                password = ""
+                username = localProperties.getProperty("gihtub.username")
+                password = localProperties.getProperty("gihtub.pat")
             }
             // Restrict this repository to specific versions containing "-wasm"
             content {
@@ -31,8 +34,8 @@ dependencyResolutionManagement {
         maven {
             url = uri("https://maven.pkg.github.com/edna-aa/sqldelight")
             credentials {
-                username = "edna-aa"
-                password = ""
+                username = localProperties.getProperty("gihtub.username")
+                password = localProperties.getProperty("gihtub.pat")
             }
             // Restrict this repository to specific versions containing "-wasm"
             content {
@@ -82,3 +85,5 @@ if (publishGradlePlugin.toBoolean()) {
     include(":jvmApi")
 
 }
+
+fun loadLocalProperties() = java.util.Properties().apply { File(rootDir, "local.properties").takeIf { it.exists() }?.inputStream()?.use(::load) }

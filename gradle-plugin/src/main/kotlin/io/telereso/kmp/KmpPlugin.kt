@@ -143,21 +143,21 @@ class KmpPlugin : Plugin<Project> {
                 "allTests"
             )
 
-            tasks.findByName("compileReleaseKotlinAndroid")
-                ?.dependsOn("kspCommonMainKotlinMetadata")
+            tasks.findByName("compileReleaseKotlinAndroid")?.dependsOn("kspCommonMainKotlinMetadata")
             tasks.findByName("compileDebugKotlinAndroid")?.dependsOn("kspCommonMainKotlinMetadata")
             tasks.findByName("compileKotlinJvm")?.dependsOn("kspCommonMainKotlinMetadata")
             tasks.findByName("compileKotlinIosArm64")?.dependsOn("kspCommonMainKotlinMetadata")
-            tasks.findByName("compileKotlinIosSimulatorArm64")
-                ?.dependsOn("kspCommonMainKotlinMetadata")
+            tasks.findByName("compileKotlinIosSimulatorArm64")?.dependsOn("kspCommonMainKotlinMetadata")
             tasks.findByName("compileKotlinIosX64")?.dependsOn("kspCommonMainKotlinMetadata")
             tasks.findByName("compileKotlinJs")?.dependsOn("kspCommonMainKotlinMetadata")
+            tasks.findByName("compileKotlinWasmJs")?.dependsOn("kspCommonMainKotlinMetadata")
             tasks.findByName("jsSourcesJar")?.dependsOn("kspCommonMainKotlinMetadata")
             tasks.findByName("iosArm64SourcesJar")?.dependsOn("kspCommonMainKotlinMetadata")
             tasks.findByName("sourcesJar")?.dependsOn("kspCommonMainKotlinMetadata")
             tasks.findByName("iosX64SourcesJar")?.dependsOn("kspCommonMainKotlinMetadata")
             tasks.findByName("iosSimulatorArm64SourcesJar")?.dependsOn("kspCommonMainKotlinMetadata")
             tasks.findByName("jvmSourcesJar")?.dependsOn("kspCommonMainKotlinMetadata")
+            tasks.findByName("wasmJsSourcesJar")?.dependsOn("kspCommonMainKotlinMetadata")
 
 
             tasks.findByName("jsProductionExecutableCompileSync")?.let {

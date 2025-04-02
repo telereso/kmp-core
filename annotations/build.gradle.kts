@@ -9,6 +9,7 @@ group = rootProject.group
 version = rootProject.version
 
 kotlin {
+  applyDefaultHierarchyTemplate()
 
   jvm {
     compilations.all {
@@ -35,11 +36,21 @@ kotlin {
     binaries.executable()
   }
 
+  wasmJs()
+
   sourceSets {
 
     all {
       languageSettings.optIn("kotlin.js.ExperimentalJsExport")
     }
+
+    val noneJsMain by creating { dependsOn(commonMain.get()) }
+
+    jvmMain.get().dependsOn(noneJsMain)
+    androidMain.get().dependsOn(noneJsMain)
+    iosMain.get().dependsOn(noneJsMain)
+    wasmJsMain.get().dependsOn(noneJsMain)
+    watchosMain.get().dependsOn(noneJsMain)
   }
 }
 

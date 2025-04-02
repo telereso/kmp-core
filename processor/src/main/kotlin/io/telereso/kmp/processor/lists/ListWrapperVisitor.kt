@@ -110,14 +110,14 @@ class ListWrapperVisitor(
             """
                 |package $packageString
                 |
-                |import kotlin.js.JsExport
+                |import io.telereso.kmp.annotations.JsOnlyExport
                 |import kotlinx.serialization.Serializable
                 |
                 |@Serializable
                 |data class ${className}List(val list: List<$className>)
                 |
                 |@Serializable
-                |@JsExport
+                |@JsOnlyExport
                 |data class ${className}Array(val array: Array<${className}>) {
                 |    override fun equals(other: Any?): Boolean {
                 |        if (this === other) return true
@@ -177,7 +177,7 @@ class ListWrapperVisitor(
             |import io.telereso.kmp.core.Task
             |import io.telereso.kmp.core.Log
             |import io.telereso.kmp.core.asCommonFlow
-            |import kotlin.js.JsExport
+            |import io.telereso.kmp.annotations.JsOnlyExport
             |import kotlinx.coroutines.flow.map
             |
             |import $modelPackageString.$modelClass.*
@@ -191,7 +191,7 @@ class ListWrapperVisitor(
             |* Generated function to provide a wrapper for an array response
             |*/
             |$annotations
-            |@JsExport
+            |@JsOnlyExport
             |fun $originalClass.$arrayFunName($typedParams): Task<CommonFlow<${modelClass}Array>> {
             |   Log.d("$originalClass","$arrayFunName")
             |   return Task.execute {
@@ -261,7 +261,7 @@ class ListWrapperVisitor(
             |import $modelPackageString.$modelClass.*
             |import $modelPackageString.${modelClass}List
             |import $modelPackageString.${modelClass}Array
-            |import kotlin.js.JsExport
+            |import io.telereso.kmp.annotations.JsOnlyExport
             |$annotationsImports
             |
             |/**
@@ -270,7 +270,7 @@ class ListWrapperVisitor(
             |* Generated function to provide a wrapper for an array response
             |*/
             |$annotations
-            |@JsExport
+            |@JsOnlyExport
             |fun $originalClass.$arrayWrapperFunName($typedParams): Task<${modelClass}Array> {
             |   Log.d("$originalClass","$funName")
             |   return Task.execute {
