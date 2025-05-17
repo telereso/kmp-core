@@ -257,17 +257,13 @@ open class ReactNativeSettings(
     }
 }
 
-private val AsyncStorage: dynamic = try {
-    js("require('@react-native-async-storage/async-storage')").default
-} catch (e: Throwable) {
-    console.warn("⚠️ AsyncStorage not found. Falling back to in-memory storage.")
-    null
-}
+private var AsyncStorage: dynamic = null
 
 @OptIn(DelicateCoroutinesApi::class)
 @JsExport
-fun setupReactNativeStorage(platform: String? = null): Promise<Int> {
+fun setupReactNativeStorage(asyncStorage: dynamic): Promise<Int> {
     Settings.reactNativeSettings = { ReactNativeSettings(it) }
+    AsyncStorage = asyncStorage
     return GlobalScope.promise {
         ReactNativeSettings.setup()
     }
