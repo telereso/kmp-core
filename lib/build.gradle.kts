@@ -171,6 +171,10 @@ kotlin {
         }
     }
 
+    wasmJs {
+        browser()
+    }
+
     /**
      * Adding JS target to this lib. initially when creating this project, on Android studio the JS option is missing
      * for KKM Library.
@@ -290,6 +294,12 @@ kotlin {
                 implementation(devNpm("copy-webpack-plugin", kmpLibs.versions.copy.webpack.plugin.get()))
 
                 implementation(npm("sql.js", kmpLibs.versions.sqlJs.get()))
+            }
+        }
+
+        wasmJsMain {
+            dependencies {
+                implementation(kmpLibs.sqldelight.web.worker.driver)
             }
         }
     }

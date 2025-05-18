@@ -72,8 +72,13 @@ class ModelVisitor(
         val jsExportAnnotation = classDeclaration.annotations.firstOrNull {
             it.shortName.asString() == "JsExport"
         }
+        val jsOnlyExportAnnotation = classDeclaration.annotations.firstOrNull {
+            it.shortName.asString() == "JsOnlyExport"
+        }
 
         val commentJsExport = if (jsExportAnnotation != null) "" else "// "
+        val commentJsOnlyExport = if (jsOnlyExportAnnotation != null) "" else "// "
+        val commentJsName = if (jsExportAnnotation != null || jsOnlyExportAnnotation != null) "" else "// "
 
 
         outputStream.write(
@@ -83,35 +88,41 @@ class ModelVisitor(
             |import kotlinx.serialization.builtins.ListSerializer
             |import kotlinx.serialization.decodeFromString
             |import kotlinx.serialization.json.Json
+            |${commentJsOnlyExport}import io.telereso.kmp.annotations.JsOnlyExport
             |${commentJsExport}import kotlin.js.JsExport
-            |${commentJsExport}import kotlin.js.JsName
+            |${commentJsName}import kotlin.js.JsName
             |
             |${commentJsExport}@JsExport()
-            |${commentJsExport}@JsName("${className}ToJson")
+            |${commentJsOnlyExport}@JsOnlyExport()
+            |${commentJsName}@JsName("${className}ToJson")
             |${internalString}fun $className.toJson(): String {
             |   return ${convertersClassName}JsonSerializer.encodeToString($className.serializer(), this)
             |}
             |
             |${commentJsExport}@JsExport()
-            |${commentJsExport}@JsName("${className}ToJsonPretty")
+            |${commentJsOnlyExport}@JsOnlyExport()
+            |${commentJsName}@JsName("${className}ToJsonPretty")
             |${internalString}fun $className.toJsonPretty(): String {
             |   return ${convertersClassName}JsonPrettySerializer.encodeToString($className.serializer(), this)
             |}
             |
             |${commentJsExport}@JsExport
-            |${commentJsExport}@JsName("${className}FromJson")
+            |${commentJsOnlyExport}@JsOnlyExport
+            |${commentJsName}@JsName("${className}FromJson")
             |${internalString}fun $className.Companion.fromJson(json:String?): $className{
             |   return ${convertersClassName}JsonSerializer.decodeFromString(json ?: "{}")
             |}
             |
             |${commentJsExport}@JsExport
-            |${commentJsExport}@JsName("${className}ToJsonArray")
+            |${commentJsOnlyExport}@JsOnlyExport
+            |${commentJsName}@JsName("${className}ToJsonArray")
             |${internalString}fun $className.Companion.toJson(array: Array<$className>): String {
             |   return ${convertersClassName}JsonSerializer.encodeToString(ListSerializer($className.serializer()), array.toList())
             |}
             |
             |${commentJsExport}@JsExport
-            |${commentJsExport}@JsName("${className}FromJsonArray")
+            |${commentJsOnlyExport}@JsOnlyExport
+            |${commentJsName}@JsName("${className}FromJsonArray")
             |${internalString}fun $className.Companion.fromJsonArray(json:String?): Array<$className> {
             |   return ${convertersClassName}JsonSerializer.decodeFromString(ListSerializer($className.serializer()), json ?: "[]").toTypedArray()
             |}

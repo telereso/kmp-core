@@ -55,9 +55,9 @@ fun getCoreClient(): CoreClient {
 }
 
 @JsExport
-fun setupReactNative(): Promise<Int> {
+fun setupReactNative(asyncStorage: dynamic): Promise<Int> {
     isReactNativePlatform = true
-    return setupReactNativeStorage()
+    return setupReactNativeStorage(asyncStorage)
 }
 
 @JsExport

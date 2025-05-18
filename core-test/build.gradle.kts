@@ -147,6 +147,10 @@ kotlin {
         generateTypeScriptDefinitions()
     }
 
+    wasmJs {
+        browser()
+    }
+
     sourceSets {
 
         /**

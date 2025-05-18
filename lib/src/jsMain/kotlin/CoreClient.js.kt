@@ -24,10 +24,11 @@
 
 package io.telereso.kmp.core
 
+import io.telereso.kmp.annotations.JsOnlyExport
 import io.telereso.kmp.core.models.ClientException
 import kotlinx.browser.window
 
-@JsExport
+@JsOnlyExport
 actual class CoreClient {
     actual companion object {
         private val instant: CoreClient by lazy {

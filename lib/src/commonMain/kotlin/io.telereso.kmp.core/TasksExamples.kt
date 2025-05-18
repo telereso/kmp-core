@@ -53,13 +53,13 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import kotlin.js.JsExport
+import io.telereso.kmp.annotations.JsOnlyExport
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
-@JsExport
+@JsOnlyExport
 object TasksExamples {
     private val persistSettings by lazy {
         Settings.get()

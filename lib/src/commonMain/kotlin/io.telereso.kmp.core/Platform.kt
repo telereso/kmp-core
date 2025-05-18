@@ -29,12 +29,12 @@ import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
-import kotlin.js.JsExport
+import io.telereso.kmp.annotations.JsOnlyExport
 
 /**
  * Defines the supported platforms by the sdks
  */
-@JsExport
+@JsOnlyExport
 abstract class Platform {
 
     /**
