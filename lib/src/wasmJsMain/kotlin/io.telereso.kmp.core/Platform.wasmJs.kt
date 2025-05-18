@@ -27,6 +27,7 @@ package io.telereso.kmp.core
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
+import app.cash.sqldelight.driver.worker.createDefaultWebWorkerDriver
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
@@ -107,6 +108,6 @@ actual open class SqlDriverFactory actual constructor(
 ) {
     actual open fun getSchema(): SqlSchema<QueryResult.Value<Unit>>? = null
     actual open suspend fun createDriver(): SqlDriver {
-        return TODO("Support SqlDriverFactory wasm")
+        return createDefaultWebWorkerDriver()
     }
 }
