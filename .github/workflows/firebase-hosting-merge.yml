@@ -25,3 +25,4 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_TELERESO_25746 }}'
           channelId: live
           projectId: telereso-25746
+          entryPoint: core-preview
