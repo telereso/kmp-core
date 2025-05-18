@@ -74,7 +74,7 @@ jobs:
       # Setup gcloud CLI
     - name: Set up Cloud SDK
       if: github.ref == 'refs/heads/main'
-      uses: google-github-actions/setup-gcloud@v1
+      uses: google-github-actions/setup-gcloud@v2
     - name: Restore public docs
       if: github.ref == 'refs/heads/main'
       run: |-
@@ -158,7 +158,7 @@ jobs:
         # Setup gcloud CLI
       - name: Set up Cloud SDK
         if: github.ref == 'refs/heads/main'
-        uses: google-github-actions/setup-gcloud@v1
+        uses: google-github-actions/setup-gcloud@v2
 
       - name: Upload docs to bucket
         if: github.ref == 'refs/heads/main'
